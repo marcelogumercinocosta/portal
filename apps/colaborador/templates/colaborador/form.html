@@ -1,0 +1,31 @@
+{% extends "admin/base.html" %}
+{% load static %}
+{% load garb_form %}
+
+{% block content %}
+    <form method="post" id="_form" novalidate>
+        {% csrf_token %}
+        {{ form|render }}
+    </form>
+{% endblock %}
+
+{% block extrajs %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'js/jquery.mask.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.validate.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'colaborador/js/form.js' %}"></script>
+    <script type="text/javascript" src="{% static 'colaborador/js/endereco.js' %}"></script>
+
+    <script type="text/javascript">
+        $('.btn-loading').on("click", function () {
+            if( ! $(this).prop("target")){
+                $('.btn').addClass('button_click');
+                $(this).removeClass('button_click');
+                const text =  $(this).html()
+                $(this).html(text + ' <span class="spinner-button"></span>')
+            }
+        });
+    </script>
+{% endblock %}
+
+</head>

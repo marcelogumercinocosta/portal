@@ -1,0 +1,169 @@
+{% extends "admin/base.html" %}
+{% load static %}
+{% block extrastyle %}
+    <link rel="stylesheet" type="text/css" href="{% static 'colaborador/css/timeline.css' %}" />
+{% endblock %}
+
+
+{% block content %}
+<div class="content">
+  <div class="row">
+      <div class="col-7">
+        <div class="row align-items-center how-it-works d-flex">
+          <div class="col-2 text-center bottom d-inline-flex justify-content-center align-items-center">
+            <div class="circle font-weight-bold">in&iacute;cio</div>
+          </div>
+          <div class="col-9">
+            <h4 class="text-success">Bem vindo!</h4>
+            <p>Antes de Come&ccedil;ar voc&ecirc; precisa conhecer seus <b>Diretos</b> e <b>Deveres</b></p>
+            <ul class="list-group">
+              <li class="list-group-item">Leia RE/DIR-518 Normas de uso aceit&aacute;vel dos recursos computacionais do INPE</li>
+              <li class="list-group-item">Leia Pol&iacute;tica de distribui&ccedil;&atilde;o de dados do CPTEC/INPE </li>
+              <li class="list-group-item">Leia Pol&iacute;tica de acesso aos Dados e Servidores do CPTEC/INPE</li>
+            </ul>
+          </div>
+        </div>
+        <!--path between 1-2-->
+        <div class="row timeline">
+          <div class="col-2">
+            <div class="corner top-right"></div>
+          </div>
+          <div class="col-8">
+            <hr/>
+          </div>
+          <div class="col-2">
+            <div class="corner left-bottom"></div>
+          </div>
+        </div>
+        <!--second section-->
+        <div class="row align-items-center justify-content-end how-it-works d-flex">
+          <div class="col-9 text-right">
+            <h4 class="text-success">Realize o cadastro</h4>
+            <p class="text-justify">Escolha ao lado qual tipo de cadastro que voc&ecirc; necessita, preencha todas as informa&ccedil;&otilde;oes solicitadas, confirme a leitura dos documentos listados no item 1 e envie o cadastro.</p>
+          </div>
+          <div class="col-2 text-center full d-inline-flex justify-content-center align-items-center">
+            <div class="circle font-weight-bold">1</div>
+          </div>
+        </div>
+        <!--path between 2-3-->
+        <div class="row timeline">
+          <div class="col-2">
+            <div class="corner right-bottom ajuste"></div>
+          </div>
+          <div class="col-8">
+            <hr/>
+          </div>
+          <div class="col-2">
+            <div class="corner top-left "></div>
+          </div>
+        </div>
+        <!--third section-->
+        <div class="row align-items-center how-it-works d-flex">
+          <div class="col-2 text-center full d-inline-flex justify-content-center align-items-center">
+            <div class="circle font-weight-bold">2</div>
+          </div>
+          <div class="col-9">
+            <h4 class="text-success">V&aacute; a secret&aacute;ria</h4>
+            <p class="text-justify"> Seu cadastro ser&aacute; enviado para secretaria da Divis&atilde;o correspondente, as informa&ccedil;&otilde;es ser&atilde;o conferidas e os respectivos formul&aacute;rios impressos para aquisi&ccedil;&atilde;o das assinaturas necess&aacute;rias. Incluse a sua assinatura! ent&atilde;o  v&aacute; a secret&aacute;ria </p>
+          </div>
+        </div>
+        <!--path between 3-4-->
+        <div class="row timeline">
+          <div class="col-2">
+            <div class="corner top-right ajuste"></div>
+          </div>
+          <div class="col-8">
+            <hr/>
+          </div>
+          <div class="col-2">
+            <div class="corner left-bottom "></div>
+          </div>
+        </div>
+        <!--4 section-->
+        <div class="row align-items-center justify-content-end how-it-works d-flex">
+          <div class="col-9 text-right">
+            <h4 class="text-success">Agora &eacute; com o respons&aacute;vel</h4>
+            <p class="text-justify">Ap&oacute;s todos documentos assinados e conferidos, a secret&aacute;ria aprova seu cadastro, ent&atilde;o o respons&aacute;vel cadastrado recebe
+              uma solicita&ccedil;&atilde;o para definir qual o Grupo de Trabalho voc&ecirc; pertence e qual sua fun&ccedil;&atilde;o no grupo.
+              </p>
+          </div>
+          <div class="col-2 text-center full d-inline-flex justify-content-center align-items-center">
+            <div class="circle font-weight-bold">3</div>
+          </div>
+        </div>
+        <!--path between 2-3-->
+        <div class="row timeline">
+          <div class="col-2">
+            <div class="corner right-bottom ajuste"></div>
+          </div>
+          <div class="col-8">
+            <hr/>
+          </div>
+          <div class="col-2">
+            <div class="corner top-left"></div>
+          </div>
+        </div>
+        <!--third section-->
+        <div class="row align-items-center how-it-works d-flex">
+          <div class="col-2 text-center full d-inline-flex justify-content-center align-items-center">
+            <div class="circle font-weight-bold">4</div>
+          </div>
+          <div class="col-9">
+            <h4 class="text-success">Suporte</h4>
+            <p class="text-justify"> Com o grupo de trabalho definido a Equipe de Suporte, vai solicitar a cria&ccedil;&atilde;o de email se necess&aacute;rio,
+              confirmar o nome de usu&aacute;rio e criar a conta, ecaminhando as informa&ccedil;&otilde;s para seu primeiro acesso.</p>
+          </div>
+        </div>
+        <!--path between 1-2-->
+        <div class="row timeline">
+          <div class="col-2">
+            <div class="corner top-right ajuste"></div>
+          </div>
+          <div class="col-8">
+            <hr/>
+          </div>
+          <div class="col-2">
+            <div class="corner left-bottom "></div>
+          </div>
+        </div>
+        <!--second section-->
+        <div class="row align-items-center justify-content-end how-it-works d-flex">
+
+          <div class="col-2 text-center full d-inline-flex justify-content-center align-items-center">
+            <div class="circle font-weight-bold">FIM</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-5">
+          <br><br><br>
+          <h4 class="text-success text-center">Qual o tipo de cadastro voc&ecirc; precisa?</h4>
+          <br>
+          <div class="col-12 py-2">
+                  <div class="card text-white bg-primary">
+                      <div class="card-body">
+                          <h3 class="card-title">ATUALIZAR O CADASTRO</h3>
+                          <p class="card-text">Voc&ecirc; j&aacute; possui email @inpe.br, precisamos atualizar seus dados para liberar o acesso aos Dados e Servidores.</p>
+                          <form action="{% url 'colaborador_open:novo'  %}" method="get" >
+                              <input type="hidden" name="motivo" value="atualizar">
+                              <button type="submit" class="btn btn-light ">Continuar</button>
+                          </form>
+                      </div>
+                  </div>
+          </div>
+          <br>
+          <div class="col-12 py-2">
+                    <div class="card text-white bg-success">
+                        <div class="card-body">
+                            <h3 class="card-title">CHEGOU AGORA?</h3>
+                            <p class="card-text">N&atilde;o possui email @inpe.br ainda, ent&atilde;o realize o cadastro, siga todos os passos descritos ao lado para liberar o acesso aos Dados e Servidores.</p>
+                            <form action="{% url 'colaborador_open:novo' %}" method="get" >
+                              <input type="hidden" name="motivo" value="novo">
+                              <button type="submit" class="btn  btn-light ">Continuar</button>
+                            </form>
+                        </div>
+                    </div>
+            </div>
+      </div>
+  </div>
+</div>
+{% endblock %}

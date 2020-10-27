@@ -1,0 +1,73 @@
+{% load static %}
+{% load templatetags %}
+{% if numero %}
+    <div class="row p-0 m-0">
+        <div class="col-12 p-1">
+            <div id="grafico_{{supercomputador.id}}" style="width: 100%; height: 259px"> </div>
+        </div>
+        <div class="col-3 p-1">
+            <div class="card shadow-menu border-0">
+                <div class="card-body black-text green {{ numero.get_alerta.0 }} m-0 p-0 card-grupo-numero ">
+                    <div class="card-text ml-2 mt-1px mr-1px mb-1px pl-3 pt-1 green {{ numero.get_alerta.1 }} lighten-2 card-grupo-data">
+                        running node: <b> <h1 class="text-center p-2">{{ numero.get_used }}</h1> </b>
+                    </div>
+                </div>
+                <div class="card-body p-0 m-0 text-left green {{ numero.get_alerta.0 }} white-text card-grupo-numero">
+                    <div class="card-text ml-2 mr-1px mb-1px pl-3 pt-0 pb-1 green {{ numero.get_alerta.0 }} card-grupo-data-d">
+                        use nodes: <b> {{ numero.get_used_percent|floatformat:0 }}%</b>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-3 p-1">
+            <div class="card shadow-menu border-0">
+                <div class="card-body black-text alerta {{ numero.get_alerta.2 }} darken-4 m-0 p-0 card-grupo-numero ">
+                    <div class="card-text ml-2 mt-1px mr-1px mb-1px pl-3 pt-1 {{ numero.get_alerta.2 }} lighten-2 card-grupo-data">
+                        down node: <b> <h1 class="text-center p-2">{{ numero.get_downs }}</h1>  </b>
+                    </div>
+                </div>
+                <div class="card-body p-0 m-0 text-left {{ numero.get_alerta.2 }} darken-4 white-text card-grupo-numero">
+                    <div class="card-text ml-2 mr-1px mb-1px pl-3 pt-0 pb-1 {{ numero.get_alerta.2 }}  darken-4 card-grupo-data-d">
+                        off nodes: <b> {{ numero.get_down_percent|floatformat:0 }}%</b>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-3 p-1">
+            <div class="card shadow-menu border-0">
+                <div class="card-body black-text orange {{ numero.get_alerta.0 }} m-0 p-0 card-grupo-numero ">
+                    <div class="card-text ml-2 mt-1px mr-1px mb-1px pl-3 pt-1 orange {{ numero.get_alerta.1 }} lighten-2 card-grupo-data">
+                        free nodes: <b> <h1 class="text-center p-2">{{ numero.get_frees }}</h1> </b>
+                    </div>
+                </div>
+                <div class="card-body p-0 m-0 text-left orange {{ numero.get_alerta.0 }} white-text card-grupo-numero">
+                    <div class="card-text ml-2 mr-1px mb-1px pl-3 pt-0 pb-1 orange {{ numero.get_alerta.0 }} card-grupo-data-d">
+                        service node: <b>{{ numero.get_services }}</b>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-3 p-1">
+            <div class="card shadow-menu border-0 mb-2">
+                <div class="card-body black-text blue-grey darken-4 m-0 p-0 card-grupo-numero ">
+                    <div class="card-text ml-2 mt-1px mr-1px mb-1px pl-3 pt-1 blue-grey lighten-2 card-grupo-data">
+                        <p class="pt-1 pb-2 mb-1"> jobs running:<b> {{ numero.jobs }}</b></p>
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow-menu border-0 mb-2">
+                <div class="card-body black-text {{ numero.get_alerta_time }} darken-4 m-0 p-0 c card-update">
+                    <div class="card-text ml-2 mt-1px mr-1px mb-1px pl-3 pt-1  {{ numero.get_alerta_time }} lighten-2  card-update">
+                        <p class="pt-1 pb-2 mb-1"> update:<b> {{ numero.get_last }}</b></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/echarts.min.js' %}"></script>
+    <script type="text/javascript">
+        var chart = echarts.init(document.getElementById("grafico_{{supercomputador.id}}"));
+        chart.setOption({{ grafico.export | safe | echart_safe }});
+    </script>
+{% endif %}

@@ -1,0 +1,7 @@
+{% extends 'base_email.html' %}
+{% load garb_tags %}
+{% block content %}
+    <p>Ol&aacute;,</p>
+    <p><b>{{name}}</b>, sua solicita&ccedil;&atilde;o de acesso ao grupo <b>{{ grupo }}</b> foi <b>APROVADA</b>.</p>
+    <p>Obrigado, bom trabalho</p>
+{% endblock content %}

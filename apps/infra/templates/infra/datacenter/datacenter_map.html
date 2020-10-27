@@ -1,0 +1,35 @@
+{% load i18n static %}
+{% load templatetags %}
+{{ block.super }}
+
+<table class="table-datacenter">
+    <tbody>
+        {% for linha in matriz_datacenter %}
+            {% with index=forloop.counter0 %}
+            <tr>
+                {% for cell in linha reversed %}
+                    {% if cell.index_coluna %}
+                        <th class="text-center index-color align-middle col_{{ cell.index_coluna }} " scope="col">{{ cell.index_coluna }}</th>
+                    {% elif cell.index_linha %}
+                        <th class="text-center index-color align-middle linha " scope="row" id="{{ cell.index_linha }}">{{ cell.index_linha|upper }}</th>
+                    {% else %}
+                        <td class="col_{{ forloop.revcounter0 }} index_{{ index }} {{ cell.edit }}">
+                            {% if cell.rack %}
+                                <div class="rack {{ cell.rack }} {{ cell.border }}" data-select="true" data-element="#rack_{{ cell.rack }}" data-name="{{ cell.rack }}">
+                                    {% if cell.name %} {{cell.name}} {% endif %}
+                                </div>
+                            {% endif %}
+                            {% if cell.area %}
+                                <div class="area {{ cell.area }}"></div>
+                            {% endif %}
+                            {% if cell.escala %}
+                                <div style="background-color:{{cell.escala}}" class="area_sensor" data-toggle="tooltip" data-placement="top" data-html="true" title="{{cell.temperatura}}&#186;"></div>
+                            {% endif %}
+                        </td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+            {% endwith %}
+        {% endfor %}
+    </tbody>
+</table> 

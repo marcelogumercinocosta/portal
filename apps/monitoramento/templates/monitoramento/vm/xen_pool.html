@@ -1,0 +1,40 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block extrastyle %}
+    <link href="{% static 'monitoramento/css/vm.css' %}" type="text/css" rel="stylesheet"/>
+{% endblock %}
+
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+        <ul class="breadcrumb {{ align }}">
+            <li>
+                <a href="{% url 'monitoramento:vms_xen' %}">AMBIENTE VIRTUAL</a>
+                <span class="divider">/</span>
+            </li>
+            <li class="active">
+                {{title}}
+            </li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main" >
+    <div id='view_xen'>
+        <div class="d-flex p-5">
+            <br><br><br>
+            <button class="btn btn-success shadow-sm p-1" type="button" disabled>
+                <span class="spinner-grow " role="status" aria-hidden="true"></span>
+                <b class="p-3">Gerando informa&ccedil;&otilde;es, aguarde alguns segundos...</b>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+    <script>
+        $("#view_xen").load("{% url 'monitoramento:vms_xen_pool_list' pk=ambiente.id %}");
+    </script>
+{% endblock %}

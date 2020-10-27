@@ -1,0 +1,10 @@
+{% extends 'base_email.html' %}
+{% load static %}
+{% block content %}
+    <p>Ol&aacute;,</p>
+    <p>{% if sexo == 'Masculino' %} O colaborador {% else %} A colaboradora  {% endif %} <b>{{ name }}</b> da <b>{{ divisao }}</b>, realizou o cadastro no <b>3S PORTAL</b> para ter acesso aos recursos Computacionais</p>
+    <p>Por favor, voc&ecirc; precisa conferir as informa&ccedil;&otilde;es cadastradas, imprimir, recolher as assinaturas e armazenar o termo de compromisso</p>
+    <p style="text-align:center;"><a  href="{{scheme}}://{{host}}{% url 'colaborador:secretaria' %}" class="btn">Ver as informa&ccedil;&otilde;es</a></p>
+    <p>Confirme que todos os dados est&atilde;o corretos e que os respectivos formul&aacute;rios est&atilde;o assinados por todos os envolvidos, antes de autorizar o pr&oacute;ximo passo.</p>
+    <p>Obrigado, bom trabalho</p>
+{% endblock content %}

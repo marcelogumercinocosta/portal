@@ -1,0 +1,97 @@
+.rack-super{
+    padding: 0px!important;
+}
+
+.rack {
+    padding: 2px;
+    text-align: center;
+}
+
+.rack.node {
+    width: 12.5%;
+    height: 11px;
+    border: 0.0625em solid black;
+    background-color: green;
+    float:left;
+    display: block;
+}
+
+.rack.node.free_batch {
+    background-color: #0277bd;
+}
+.rack.node.service {
+    background-color: orange;
+}
+.rack.node.free_interactive {
+    background-color: #0277bd;
+}
+.rack.node.allocated_interactive {
+    background-color: OliveDrab;
+}
+.rack.node.waiting {
+    background-color: DarkCyan;
+}
+.rack.node.down {
+    background-color: red;
+}
+.rack.node.suspect {
+    background-color:  #FF1493;
+}
+.rack.node.admindown {
+    background-color: white;
+}
+
+.rack.node.noexist{
+    background-color: #ccc;
+}
+
+.rack.node.legenda {
+    height: 20px;
+    color: white;
+    padding: 3px;
+    padding-top: 0px;
+    margin: 3px;
+}
+
+
+.vertical-text {
+        float: left;
+		transform: rotate(90deg);
+		transform-origin: left top 0;
+		padding: 10px;
+		font-size: 2.8em;
+		text-transform: uppercase;
+}
+
+.vertical-text {
+    margin-left: 100px;
+    margin-top: 120px;
+}
+
+.vertical-label.oper {
+        border-left: 10px #eeeeee solid;
+}
+
+.boder-header {
+    border: 2px #455a64 solid;
+}
+
+.badge {
+    cursor:pointer;
+}
+
+.card-body {
+    padding: 1px;
+    border-radius: 0 0 calc(.25rem - 1px);
+}
+
+.card-body .white {
+    position: relative;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.tooltip-inner p {
+    text-align:left;
+    margin-bottom:0;
+}

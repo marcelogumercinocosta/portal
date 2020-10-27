@@ -1,0 +1,25 @@
+{% load i18n static garb_tags %}
+<!DOCTYPE html>
+<html lang="en" >
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>{% block title %}{{ title|default_if_none:None|garb_title }}{% endblock %}</title>
+        {% block before_suit_styles %}{% endblock %}
+        <link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.8.0/css/solid.css">
+        <link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.8.0/css/fontawesome.css">
+        <link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap/bootstrap-reboot.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap/bootstrap.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.min.css' %}">
+    </head>
+    <body>
+        <div class="card-header text-center blue darken-4 p-0 w-25 border border-dark">
+            <h1 class="card-title text-white m-0 p-2">{{ title|default_if_none:None|garb_title }}</h1>
+        </div>
+        <div class="card-body text-center w-25 border border-dark">
+            <p class="card-text"> <img src="data:image/png;base64,{{qrcode}}" alt="Location Histogram" /></p>
+        </div>
+        <div class="card-footer text-muted text-center blue darken-4 p-0 w-25 border border-dark" >
+            <h1 class="site-name-azul display-3 text-white" >{{ rack }}</h1>
+        </div>
+    </body>
+</html>

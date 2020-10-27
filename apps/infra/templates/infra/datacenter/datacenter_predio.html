@@ -1,0 +1,148 @@
+{% extends "admin/base.html" %}
+{% load i18n static  %}
+
+{% block extrastyle %}
+    <link rel="stylesheet" type="text/css" href="{% static 'infra/css/dataCenter.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+        <ul class="breadcrumb {{ align }}">
+            <li>
+                <a href="{% url 'infra:datacenter' %}">MONITORAMENTO DATACENTER</a>
+                <span class="divider">/</span>
+            </li>
+            <li class="active">
+                {{title}}
+            </li>
+        </ul>
+    </div>
+{% endblock %}
+
+
+{% block content %}
+    <div class="content" id='datacenter_sensor'>
+        <div class="row m-0">
+            <div class="col-2 p-1">
+                <div class="card shadow-menu blue-grey lighten-5">
+                    <p class="p-2 pr-4 m-0">Racks: <b class="float-right">{{ quantidade_racks }}</b></p>
+                </div>
+            </div>
+            <div class="col-2 p-1">
+                <div class="card shadow-menu blue-grey lighten-5">
+                    <p class="p-2 pr-4 m-0">Equipamentos: <b class="float-right">{{ quantidade_equipamentos }}</b></p>
+                </div>
+            </div>
+            <div class="col-2 p-1"></div>
+
+            <div class="col-4 p-1 ">
+                <div class="toolbar-content p-0 ">
+                    <div id="toolbar">
+                        <div class="search-container">
+                            <div class="input-group">
+                                <input type="search"  size="40" id="search" placeholder="Procurar equipamento" class='mr-0' >
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1"><i class="fas fa-search"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2 p-1">
+                <button type="button" class="button float-right" id="view_monitoramento" data-name="view_datacenter">
+                    <i class="fa fa-eye fa-lg p-1"></i>
+                </button>
+            </div>
+        </div>
+        <div class="row m-0 p-1" >
+                <div class="col-10 p-2 d-flex justify-content-center border rounded ">
+                    {% include "./datacenter_map.html" %}
+                </div>
+                <div class="col-2 m-0 p-1">
+                    <div class="row p-0 m-0">
+                        {% if sensores %}
+                            <div class="col-12 h5 pt-2 text-center "> SENSORES</div>
+                            {% for sensor in sensores %}
+                                {% if sensor.tipo == "M" %}
+                                    <div class="col-6 p-0 m-0  mb-1 pl-1 sensor" data-name=".col_{{ sensor.get_col }}.index_{{ sensor.get_index }} div" >
+                                        <div class="card shadow-menu border-0">
+                                            <div class="card-body  black-text {{ sensor.get_status }} darken-4 m-0 card-grupo-numero  card-body-sensor ">
+                                                <h5 class="card-title p-1 pt-0 m-0  text-white">{{ sensor}}</h5>
+                                                <div class="card-text p-0 pr-0  {{ sensor.get_status }} lighten-2 card-grupo-data">
+                                                    <div class="row p-0 pt-1 m-0 sensor-info">
+                                                        <div class="col-6 p-1"> <i class="fa fa-temperature-low  infoi "></i>&nbsp;<b>{{ sensor.temperatura }}&#186;</b></div>
+                                                        <div class="col-6 p-1"> <i class="fa fa-tint infoi"></i>&nbsp;<b>{{ sensor.umidade }}%</b></div>
+                                                        <div class="col-12 p-1"> <i class="fa fa-clock  infoi "></i>&nbsp;{{ sensor.atualizacao|date:"d/m H:i" }} </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+        </div> 
+    </div>
+
+    <div class="modal fade" id="rack_detail" tabindex="-1" role="dialog" aria-labelledby="rack_detailabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document" id="rack_detail_content"> </div>
+    </div>
+{% endblock %}
+
+{% block extrajs %}
+    <script src="{% static 'js/garb_page_wide.js' %}"></script>
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip({ boundary: 'window' })
+        })
+    </script>
+    <script>
+        $(".rack").click(function (e) {
+            $("div.rack").removeClass("blue darken-4");
+            var rack = $(this).attr('data-name')
+            $(".rack."+rack).addClass("blue darken-4");
+            $.ajax({
+                url: "{% url 'infra:datacenter_rack_detail' %}",
+                data: ({ 'pk': $(this).attr('data-name'), 'search': $('#search').val()}),
+                type: "GET",
+                success: function (data) {
+                    $("#rack_detail_content").html(data)
+                    $('#rack_detail').modal('show')
+                },
+            });
+        });
+        $('#rack_detail').on('hidden.bs.modal', function () {
+            $("div.rack").removeClass("blue darken-4");
+            $('div.rack').removeClass("green darken-4")
+            $('#search').val("")
+        })
+        $('#search').on("keyup", function (e) {
+            $('#rack_detail').modal('hide')
+            $('div.rack').removeClass("blue darken-4")
+            $('div.rack').removeClass("green darken-4")
+            if ((e.keyCode === 13) && ($(this).val() !== '')) {
+                $.ajax({
+                    dataType: "json",
+                    url: "{% url 'infra:datacenter_search' %}",
+                    data: ({ 'search': $(this).val() }),
+                    type: "GET",
+                    success: function (data) {
+                        $.each(data, function (index) {
+                            $(data[index]).addClass("green darken-4");
+                        });
+                    },
+                });
+                return;
+            }
+        });
+
+        $(".sensor").hover(function(){
+            $($(this).attr('data-name')).toggleClass(" red accent-4 ");
+        });
+
+        setInterval(function () { window.location.reload(); }, 180000);
+    </script>
+{% endblock %}

@@ -1,0 +1,21 @@
+.div-solicitacao {
+    height: 60px;
+    padding-top: 5px;
+}
+
+.row-solicitacao {
+    min-height: 100px;
+}
+
+
+.help-block {
+    font-size: 12px;
+}
+
+.field-data {
+    width: 220px;
+}
+
+.field-acao  {
+    width: 150px;
+}

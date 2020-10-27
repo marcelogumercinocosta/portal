@@ -1,0 +1,65 @@
+<div class='wrapper'>
+    <div class='header'>
+        <p>Termo de Compromisso-RE/DIR-029 </p>
+    </div>
+</div>
+<h6>TERMO DE COMPROMISSO</h6>
+<br>
+<div class='informacoes2'>
+    Eu <b>{{ colaborador.full_name }}</b>, {{ colaborador.get_documento_principal|safe }}, estado civil <b>{{ colaborador.estado_civil }}(a)</b>,  residente à <b>{{ colaborador.endereco }}</b>, nº <b>{{ colaborador.numero }}</b>,
+    na cidade de <b>{{ colaborador.cidade }} - {{ colaborador.estado }}</b>, na qualidade de <b>{{ colaborador.vinculo }}</b> no Instituto Nacional de Pesquisas
+    Espaciais - INPE, assumo inteira responsabilidade por eventuais danos que venha a causar
+    a qualquer bem do Instituto, comprometendo-me, independente de qualquer notificação
+    judicial ou extrajudicial, a ressarcir o INPE dos prejuízos daí decorrentes, conforme
+    valor a ser oportunamente calculado. Da mesma forma respeitarei todas as normas internas
+    do Instituto e devolverei o <b> crachá de identificação </b> à Unidade Responsável,
+    segundo a RE/DIR-029, em São José dos Campos, {% now "d/m/Y" %}.
+</div>
+<br>
+<table>
+    <tr>
+        <td></td>
+        <td style="font-size:10px; width:30%; border-left: 1px solid #000; padding-left:2px;">Nome por extenso</td>
+        <td style="font-size:10px; width:10%; border-left: 1px solid #000; padding-left:2px;">Data</td>
+    </tr>
+    <tr style="height:30px">
+        <td></td>
+        <td style="font-size:12px; width:30%; border-left: 1px solid #000; padding-left:2px;"> <b>{{ colaborador.full_name }}</b></td>
+        <td style="border-left: 1px solid #000; "></td>
+    </tr>
+    <tr style="height:20px">
+        <td style="width:40%; font-size:10px; text-align:center; border-top: 1px solid #000; padding-top:2px;">Solicitante</td>
+        <td style="width:40%; border-top: 1px solid #000; "></td>
+        <td style="width:20%; border-top: 1px solid #000; "></td>
+    </tr>
+</table>
+
+<br/><br/>
+<h6>TERMO DE COMPROMISSO - SERVIDOR RESPONSÁVEL</h6>
+<br>
+<div class='informacoes2'>
+    Eu <b>{{colaborador.responsavel.full_name}}</b>, servidor do Instituto Nacional de Pesquisas Espaciais - INPE, registro nº
+    <b>{{ colaborador.responsavel.registro_inpe}}</b>, nos termos das normas vigentes no INPE, assumo, no período de
+    <b>{{ colaborador.data_inicio|date:"d/m/Y"}}</b> a <b>{{colaborador.data_fim|date:"d/m/Y" }}</b>, a responsabilidade solid&aacute;ria pelos
+    atos e eventuais danos praticados por <b>{{colaborador.full_name}}</b> acima identificado sob a minha
+    assistência/orientação, comprometendo-me a ressarcir o INPE dos prejuízos da&iacute; recorrentes, conforme valor a ser oportunamente calculado.
+    <br/><br/>
+    São José dos Campos, {% now "d/m/Y" %}
+</div>
+<table>
+    <tr>
+        <td></td>
+        <td style="font-size:10px; width:30%; border-left: 1px solid #000; padding-left:2px;">Nome por extenso</td>
+        <td style="font-size:10px; width:10%; border-left: 1px solid #000; padding-left:2px;">Data</td>
+    </tr>
+    <tr style="height:30px">
+        <td></td>
+        <td style="font-size:12px; width:30%; border-left: 1px solid #000; padding-left:2px;"><b> {{ colaborador.responsavel.full_name }}</b></td>
+        <td style="border-left: 1px solid #000; "></td>
+    </tr>
+    <tr style="height:20px">
+        <td style="width:40%; text-align:center; font-size:10px;  border-top: 1px solid #000; padding-top:2px;">Respons&aacute;vel</td>
+        <td style="width:40%; border-top: 1px solid #000; "></td>
+        <td style="width:20%; border-top: 1px solid #000; "></td>
+    </tr>
+</table>

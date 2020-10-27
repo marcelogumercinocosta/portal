@@ -1,0 +1,32 @@
+version: '3.3'
+
+services:
+  redis:
+    image: redis
+    container_name: test_redis
+    command: redis-server
+    networks:
+      - storm
+    ports:
+      - "6379:6379"
+  django-celery:
+    build:
+      context: .
+      dockerfile: ./docker/django_dev_pesq/Dockerfile
+    container_name: test_django-celery
+    network_mode: host
+    environment:
+      django_settings_module: 'portal.settings.test'
+    command: 
+      - /bin/bash
+      - -c
+      - |
+        python manage.py makemigrations
+        celery -A portal worker -l info -E
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+networks:
+  storm:
+    external: true

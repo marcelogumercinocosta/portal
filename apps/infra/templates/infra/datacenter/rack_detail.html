@@ -1,0 +1,66 @@
+    <div class="modal-content">
+        <div class="modal-header blue darken-4 p-1">
+            <h5 class="modal-title text-center text-white font-weight-bold w-100" id="exampleModalLabel">RACK {{ rack.rack|cut:" " }}</h5>
+            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body p-1">
+            <div class="row m-0 rack_border_color ">
+                <div class="col-1 m-0 p-0 rack_position_col ">
+                    {% for posicao in  rack.posicoes %}
+                        <div class="rack_detail rack_position align-middle">{{ posicao }}</div>
+                    {% endfor %}
+                </div>
+                <div class="col-5 m-0 p-0 rack_detail_col">
+                    {% for posicao in rack.equipamentos %}
+                        {% if posicao.equipamento %}
+                            <div class="rack_detail rack_server_color  rack-t{{posicao.equipamento.rack_tamanho}} align-middle {{posicao.search}}" 
+                                data-toggle="tooltip" data-placement="right" data-html="true" title="<p><br> Nome: <b>{{posicao.equipamento.nome}}</b><br><br>
+                                                                                                        Tipo: <b>{{ posicao.equipamento.tipo }}</b><br>
+                                                                                                        Descrição: <b>{{ posicao.equipamento.descricao }}</b><br>
+                                                                                                        Grupo: <b>{{ posicao.equipamento.grupo_acesso_name }}</b><br>
+                                                                                                        Tipo: <b>{{ posicao.equipamento.tipo_uso }}</b><br><br>
+                                                                                                        Marca: <b>{{ posicao.equipamento.marca }}</b><br>
+                                                                                                        Modelo: <b>{{ posicao.equipamento.modelo }}</b><br>
+                                                                                                        Patrimônio: <b>{{ posicao.equipamento.patrimonio }}</b><br>
+                                                                                                        Serial: <b>{{ posicao.equipamento.serie }}</b><br>
+                                                                                                        Garantia: <b>{{ posicao.equipamento.garantia }}</b><br>
+                                                                                                        Consumo: <b>{{ posicao.equipamento.consumo|default:"--" }} watts</b>
+                                                                                                    </p>"
+                            >
+                                <div class="equipamento_nome text-white"> {{ posicao.equipamento.nome }}</div>
+                                {% for ocorrencia in posicao.equipamento.ocorrencia_set.all %}
+                                    <div class="alerta {{ ocorrencia.get_status }}"></div>
+                                {% endfor %}
+                            </div>
+                        {% elif posicao.kvm %}
+                            <div class="rack_detail rack_kvm_color rack_kvm">KVM</div>
+                        {% else %}
+                            {% if not posicao.continuacao %}
+                                <div class="rack_detail rack_closed_espace_color">{{posicao.continuacao}}</div>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="col-6 m-0 p-0 white  pb-1 pl-1 rack_detail_detail">
+                    <div class="card">
+                        <div class="card-body grey lighten-4">
+                            Marca: <b>{{ rack.marca }}</b> <br>
+                            Modelo: <b>{{ rack.modelo }}</b> <br>
+                            Patrimônio: <b>{{ rack.patrimonio }}</b> <br><br>
+                            Limite: <b>{{ rack.consumo|default:"--" }}<small> watts</small></b> <br>
+                            Disponível: <b>{{ rack.disponivel|default:"--"  }}<small> watts</small></b> <br>
+                            Primeiro PDU: <b>{{ rack.pdu1|default:"--" }}</b><br>
+                            Segundo PDU: <b>{{ rack.pdu2|default:"--" }}</b>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip({ boundary: 'window' })
+    })
+</script>

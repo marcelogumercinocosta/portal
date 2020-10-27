@@ -1,0 +1,14 @@
+{% extends 'base_email.html' %}
+{% load static %}
+{% block content %}
+    <p>Ol&aacute;,</p>
+    <p>&emsp;{% if sexo == 'Masculino' %} O colaborador {% else %} A colaboradora {% endif %} <b>{{ name }}</b> da <b>{{ divisao }}</b>, solicitou no <b>3SPORTAL</b> o acesso aos recursos computacionais do Grupo <b>{{ grupo }}</b></p>
+    <p>Por favor, como respons&aacute;vel do <b>GRUPO</b> avalie o pedido</p>
+    <br>
+    <p style="text-align:center;"><a  href="{{scheme}}://{{host}}{% url 'colaborador:responsavel' %}" class="btn">Avaliar o pedido</a></p>
+    <br>
+    <p>&emsp;Todos os dados do colaborador solicitante est&atilde;o dispon&iacute;veis no 3SPORTAL.</p>
+    <p>&emsp;Obrigado, bom trabalho</p>
+    <br>
+    <span style="font-size: 10px;">*Esse email foi enviado para todos os respons&aacute;veis do grupo de trabalho, voc&ecirc;s devem se organizar para aprovar ou reprovar o pedido.</span>
+{% endblock content %}

@@ -1,0 +1,193 @@
+from django.contrib import admin
+from apps.core.forms import GrupoTrabalhoForm, ResponsavelGrupoTrabalhoInLineForm, DivisaoForm
+from apps.core.models import GrupoTrabalho, GrupoAcesso, Divisao, GrupoPortal, ResponsavelGrupoTrabalho, ColaboradorGrupoAcesso, Predio
+from apps.core.utils.freeipa import FreeIPA
+from apps.infra.admin import StorageAreaGrupoTrabalhoInLine, GrupoAcessoEquipamentoInLineRead
+from django.contrib.auth.models import Group
+
+
+class GroupInLine(admin.TabularInline):
+    model = Group.user_set.through
+    extra = 0
+    verbose_name = "Grupo no Portal"
+    verbose_name_plural = "Grupos no Portal"
+
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super(GroupInLine, self).get_formset(request, obj, **kwargs)
+        formset.form.base_fields["group"].label = "Grupo no Portal"
+        return formset
+
+
+class ResponsavelGrupoTrabalhoInLine(admin.TabularInline):
+    model = ResponsavelGrupoTrabalho
+    fields = ("responsavel",)
+    extra = 0
+    form = ResponsavelGrupoTrabalhoInLineForm
+
+
+class GrupoAcessoInLine(admin.TabularInline):
+    model = GrupoAcesso
+    fields = ("grupo_acesso", "data")
+    readonly_fields = ("grupo_acesso", "data")
+    verbose_name = "Grupo de Acesso"
+    verbose_name_plural = "Grupos de Acesso"
+    extra = 0
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
+class ColaboradorGrupoAcessoInLineRead(admin.TabularInline):
+    model = ColaboradorGrupoAcesso
+    fields = ("grupo_acesso", "status", "atualizacao")
+    readonly_fields = ("grupo_acesso", "status", "atualizacao")
+    extra = 0
+    can_delete = False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+class GrupoAcessoColaboradorInLineRead(admin.TabularInline):
+    model = ColaboradorGrupoAcesso
+    fields = ("nome", "username", "ramal", "email", "status")
+    readonly_fields = ("nome", "username", "ramal", "email", "status")
+    can_delete = False
+    extra = 0
+    verbose_name = "Colaborador"
+    verbose_name_plural = "Colaboradores"
+
+    def nome(self, obj):
+        return obj.colaborador.full_name
+
+    nome.short_description = "colaborador"
+
+    def username(self, obj):
+        return obj.colaborador.username
+
+    username.short_description = "user"
+
+    def ramal(self, obj):
+        return obj.colaborador.ramal
+
+    ramal.short_description = "ramal"
+
+    def email(self, obj):
+        return obj.colaborador.email
+
+    email.short_description = "email"
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(Divisao)
+class DivisaoAdmin(admin.ModelAdmin):
+    search_fields = ["divisao"]
+    list_display = ["divisao", "email", "chefe_nome", "chefe_ativo", "chefe_substituto_nome", "chefe_substituto_ativo"]
+    readonly_fields = []
+    form = DivisaoForm
+
+    def chefe_nome(self, obj):
+        return f"{obj.chefe.first_name} {obj.chefe.last_name} | {obj.chefe.email}"
+    chefe_nome.short_description = "Chefe"
+
+    def chefe_substituto_nome(self, obj):
+        return f"{obj.chefe_substituto.first_name} {obj.chefe_substituto.last_name} | {obj.chefe_substituto.email}"
+    chefe_substituto_nome.short_description = "Chefe Substituto"
+
+    def change_view(self, request, object_id, form_url="", extra_context=None):
+        self.readonly_fields = ["divisao"]
+        return super(DivisaoAdmin, self).change_view(request, object_id, form_url, extra_context)
+
+
+
+@admin.register(Predio)
+class PredioAdmin(admin.ModelAdmin):
+    search_fields = ["predio"]
+    list_display = ("predio", "predio_sistema", "linhas","colunas", "sensores")
+
+@admin.register(GrupoAcesso)
+class GrupoAcessoAdmin(admin.ModelAdmin):
+    search_fields = ["grupo_acesso"]
+    list_display = (
+        "grupo_acesso",
+        "grupo_trabalho",
+        "hbac_freeipa",
+        "tipo",
+        "data",
+    )
+    list_filter = ("tipo",)
+    readonly_fields = ("grupo_acesso", "grupo_trabalho", "hbac_freeipa", "tipo", "data")
+    inlines = (GrupoAcessoColaboradorInLineRead, GrupoAcessoEquipamentoInLineRead)
+    change_form_template = "core/admin/change_form_grupo_acesso.html"
+
+    def has_add_permission(self, request):
+        return False
+
+
+@admin.register(GrupoTrabalho)
+class GrupoTrabalhoAdmin(admin.ModelAdmin):
+    model = GrupoTrabalho
+    change_form_template = "core/admin/change_form_grupo_trabalho.html"
+    list_display = ("grupo", "divisao", "oper", "dev", "pesq", "doc", "share", "data_criado", "confirmacao")
+    readonly_fields = ["data_criado","confirmacao"]
+    list_filter = ("divisao",)
+    search_fields = ["grupo"]
+    ordering = ("grupo", "divisao")
+
+    form = GrupoTrabalhoForm
+    inlines = (ResponsavelGrupoTrabalhoInLine, StorageAreaGrupoTrabalhoInLine, GrupoAcessoInLine)
+
+    def oper(self, obj):
+        return obj.operacional
+    oper.short_description = "oper"
+    oper.boolean = True
+
+    def dev(self, obj):
+        return obj.desenvolvimento
+    dev.short_description = "dev"
+    dev.boolean = True
+
+    def pesq(self, obj):
+        return obj.pesquisa
+    pesq.short_description = "pesq"
+    pesq.boolean = True
+
+    def doc(self, obj):
+        return obj.documento
+    doc.short_description = "doc"
+    doc.boolean = True
+
+    def change_view(self, request, object_id, form_url="", extra_context=None):
+        extra_context = extra_context or {}
+        self.readonly_fields = ["data_criado","confirmacao"]
+        if GrupoTrabalho.objects.get(pk=object_id).data_criado:
+            self.readonly_fields = ["grupo_sistema", "gid", "divisao", "data_criado","confirmacao"]
+        return super(GrupoTrabalhoAdmin, self).change_view(request, object_id, form_url, extra_context)
+
+    def delete_model(self, request, obj):
+        if obj.data_criado and FreeIPA(request).group_find_count(cn=obj.grupo_sistema) == 1:
+            FreeIPA(request).remove_grupo(obj)
+        super(GrupoTrabalhoAdmin, self).delete_model(request, obj)
+
+    def add_view(self, request, form_url="", extra_context=None):
+        self.readonly_fields = ["data_criado","confirmacao"]
+        return super(GrupoTrabalhoAdmin, self).add_view(request, form_url, extra_context)
+
+
+
+@admin.register(GrupoPortal)
+class GrupoPortalAdmin(admin.ModelAdmin):
+    model = GrupoPortal
+    search_fields = ("name",)
+    ordering = ("name",)
+    filter_horizontal = ("permissions",)

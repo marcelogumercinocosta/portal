@@ -1,0 +1,125 @@
+/* ---------------------------------------------------
+    SIDEBAR STYLE
+----------------------------------------------------- */
+
+ul.ulstorage  {
+    list-style-type: none;
+    margin-bottom: 0px;
+}
+
+
+ul.ulstorage li a {
+    border-bottom: 1px solid rgba(0,0,0,.125);
+    display: block;
+    padding: 0px 10px 0px 10px;
+    color: #000;
+    text-decoration: none;
+    position: relative;
+    background-color: #f6f7f8;
+    font-size: 14px;
+    text-shadow: none;
+
+}
+
+.border-last{
+    border: 0px solid #ddd!important;
+}
+
+
+.right-item {
+    width: 24%;
+    display: inline-block;
+}
+
+.left-item {
+    width: 73%;
+    display: inline-block;
+}
+
+
+.col-m {
+        -ms-flex: 0 0 4.166667%;
+        flex: 0 0 4.166667%;
+        max-width: 4.166667%;
+        position: relative;
+        width: 100%;
+}
+
+.col-1m {
+        -ms-flex: 0 0 9.999999%;
+        flex: 0 0 9.999999%;
+        max-width: 9.999999%;
+        position: relative;
+        width: 100%;
+}
+
+.lin-s {
+        border-bottom: 1px solid #ddd;
+        border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+        border-top: 1px solid #ddd;
+}
+
+.lin-l {
+        border-left: 1px solid #ddd;
+}
+
+.lin-r {
+        border-right: 1px solid #ddd;
+}
+
+.grupo-head {
+    height: 200px;
+    border-right: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+}
+
+.tile_count .tile_stats_count span {
+    font-size: 13px;
+}
+
+.tile_count .tile_stats_count .count {
+    font-size: 38px;
+    line-height: 47px;
+    font-weight: bold;
+}
+
+.tile_count .tile_stats_count:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    height: 65px;
+    border-left: 2px solid #ADB2B5;
+    margin-top: 10px;
+}
+
+.tile_count .tile_stats_count.first:before {
+    border-left: 0;
+}
+
+.btn.btn-app {
+    padding: 5px;
+    min-width: 80px;
+    box-shadow: none;
+    border-radius: 0;
+    text-align: center;
+    color: #666;
+    border: 1px solid #ddd;
+    background-color: #fafafa;
+    font-size: 12px;
+}
+
+p.alertas {
+    font-size: 40px;
+    line-height: 47px;
+    font-weight: 600;
+}
+
+p .text-danger {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+p .text-danger span {
+    font-size: 14px;
+}

@@ -1,0 +1,61 @@
+{% load templatetags %}
+<div class="row p-0 pt-2 m-0">
+    {% for rack in supercomputador.racks %}
+        <div class="col-3 p-1">
+            <div class="card shadow-menu border-0">
+                <div class="card-header p-0 text-center blue-grey darken-2 white-text rounded-0">
+                    <h6 class="card-title p-1 m-0"><b>{{ supercomputador.modelo }} {{ rack }}</b></h6>
+                </div>
+                <div class="card-body m-0 blue-grey darken-2 ">
+                    <div class="white p-0 m-0 ">
+                        <div class="card-text card-grupo-data
+                            {% if forloop.revcounter == 0 or forloop.revcounter == 4 %}  tooltipleft
+                            {% elif forloop.revcounter == 2 or  forloop.revcounter == 6  or  forloop.revcounter == 14 %} tooltipright
+                            {% else %} tooltiptop {% endif %}">
+                            {% for no in rack.nos %}
+                                <div class="rack node {{no.get_classe_html}} {{no.usuario|to_replace_dot}} "
+                                    {% if  no.usuario  %} 
+                                        data-toggle="tooltip" data-html="true" title="<p> User: <b>{{no.usuario}}</b><br>
+                                                                                        Number of Nodes: <b>{{no.size}}</b><br>
+                                                                                        Running for: <b>{{no.tempo}}</b><br>
+                                                                                        Script: <b>{{no.comando}}</b><br>
+                                                                                        Position: <b>{{no}}</b>
+                                                                                    </p>" 
+                                    {% else %}
+                                        {% if no.get_classe_html != 'noexist' %}
+                                            data-toggle="tooltip" data-html="true" title="<p> Position: <b>{{no}}</b></p>" 
+                                        {% endif%}
+                                    {% endif %}
+                                    >
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="row">
+            <h1 class="display-4 text-danger p-5"> ERRO!!</h1>
+        </div>
+    {% endfor %}
+</div>
+<div class="col-12 p-1 m-0">
+    {% for user in users %}
+        <span class="badge badge-info m-1 p-1 shadow-sm" id='{{ user|to_replace_dot }} '>{{ user }}</span>
+    {% endfor %}
+</div>
+
+<script>
+    $(".badge").on("mouseover", function () {
+        classe = $(this).attr('id')
+        $(".node").css({ opacity: 0.3 });
+        $("." + classe).css({ opacity: 1 });
+    }).on("mouseout", function () {
+        $(".node").css({ opacity: 1 });
+    });
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip({ boundary: 'window' })
+    })
+</script>

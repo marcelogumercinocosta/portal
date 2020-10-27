@@ -1,0 +1,170 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block extrastyle %}
+    <link href="{% static 'monitoramento/css/storage.css' %}" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+{% block breadcrumbs %}
+    {% include "admin/includes/breadcrumbs.html" with nivel=1 breadcrumbs_action='Monitoramento Backbone' %}
+{% endblock %}
+
+
+{% block content %}
+    <div class="content">
+        <div class="row p-0 m-0">
+            <div class="col-5 p-1 ">
+                <div class="card shadow-menu border-0">
+                    <div class="card-header p-0 text-center border-bottom-0 bg_cor_primaria white-text card-grupo-header">
+                        <h5 class="card-title p-2 m-0"><b>Distribution_1 - Traffic - ethernet1/16 - INPE Cachoeira Paulista 10Gbps</b></h5>
+                    </div>
+                    <div class="card-body black-text bg_cor_primaria m-0 p-0 card-grupo-header">
+                        <div class="card-text ml-2 p-3 grey lighten-5 card-grupo-data">
+                            <img class="graphimage mx-auto img-fluid d-block" id="graph_107"
+                            src="http://cacti.pop-sp.rnp.br/cacti/graph_image.php?action=view&local_graph_id=296&rra_id=1"
+                            border="0"
+                            alt="Distribution_1 - Traffic - ethernet1/16 - INPE Cachoeira Paulista 10Gbps">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-1 p-1"></div>
+            <div class="col-5 p-1 ">
+                <div class="card shadow-menu border-0">
+                    <div class="card-header p-0 text-center border-bottom-0 bg_cor_primaria white-text card-grupo-header">
+                        <h5 class="card-title p-2 m-0"><b>INPE CHP - Traffic - ethernet1/6 - Ligacao PoP-RJ 1Gbps</b></h5>
+                    </div>
+                    <div class="card-body black-text bg_cor_primaria m-0 p-0 card-grupo-header">
+                        <div class="card-text ml-2 p-3 grey lighten-5 card-grupo-data">
+                            <img class="graphimage mx-auto img-fluid d-block" id="graph_203"
+                            src="http://cacti.pop-sp.rnp.br/cacti/graph_image.php?action=view&amp;local_graph_id=203&amp;rra_id=1"
+                            border="0" alt="INPE CHP - Traffic - ethernet1/6 - Ligacao PoP-RJ 1Gbps">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-1 p-1">
+                <button type="button" class="button float-right" id="view_monitoramento" data-name="view_rnp">
+                    <i class="fa fa-eye fa-lg p-1"></i>
+                </button>
+            </div>
+        </div>
+        <div class="row p-0 m-0 mt-2">
+            <div class="col-12 p-1 ">
+                <div class="card shadow-menu border-0">
+                    <div class="card-header p-0 text-center border-bottom-0 bg_cor_primaria white-text card-grupo-header">
+                        <h5 class="card-title p-2 m-0"><b>Nível de Ocupação dos Enlaces da Rede Ipê</b></h5>
+                    </div>
+                    <div class="card-body black-text bg_cor_primaria m-0 p-0 card-grupo-header">
+                        <div class="card-text ml-2 p-3 grey lighten-5 card-grupo-data">
+                                <img class="graphimage mx-auto img-fluid d-block"
+                                    src="https://iframe-memoria.rnp.br/ceo/trafego/panorama.php?img=rnp.png" border="0"
+                                    alt="Nível de Ocupação dos Enlaces da Rede Ipê"> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row p-0 m-0">
+            <div class="col-5 p-1 ">
+                <div class="card shadow-menu border-0">
+                    <div class="card-header p-0 text-center border-bottom-0 bg_cor_primaria white-text card-grupo-header">
+                        <h5 class="card-title p-2 m-0"><b>Distribution_1 - Traffic - ethernet1/16 - INPE Cachoeira Paulista 10Gbps</b></h5>
+                    </div>
+                    <div class="card-body black-text bg_cor_primaria m-0 p-0 card-grupo-header">
+                        <div class="card-text ml-2 p-3 grey lighten-5 card-grupo-data">
+                            <img class="graphimage mx-auto img-fluid d-block" id="graph_107"
+                            src="http://cacti.pop-sp.rnp.br/cacti/graph_image.php?action=view&local_graph_id=296&rra_id=2"
+                            border="0"
+                            alt="Distribution_1 - Traffic - ethernet1/16 - INPE Cachoeira Paulista 10Gbps">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-1 p-1"></div>
+            <div class="col-5 p-1 ">
+                <div class="card shadow-menu border-0">
+                    <div class="card-header p-0 text-center border-bottom-0 bg_cor_primaria white-text card-grupo-header">
+                        <h5 class="card-title p-2 m-0"><b>INPE CHP - Traffic - ethernet1/6 - Ligacao PoP-RJ 1Gbps</b></h5>
+                    </div>
+                    <div class="card-body black-text bg_cor_primaria m-0 p-0 card-grupo-header">
+                        <div class="card-text ml-2 p-3 grey lighten-5 card-grupo-data">
+                            <img class="graphimage mx-auto img-fluid d-block" id="graph_203"
+                            src="http://cacti.pop-sp.rnp.br/cacti/graph_image.php?action=view&amp;local_graph_id=203&amp;rra_id=2"
+                            border="0" alt="INPE CHP - Traffic - ethernet1/6 - Ligacao PoP-RJ 1Gbps">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row p-0 m-0">
+            <div class="col-5 p-1 ">
+                <div class="card shadow-menu border-0">
+                    <div class="card-header p-0 text-center border-bottom-0 bg_cor_primaria white-text card-grupo-header">
+                        <h5 class="card-title p-2 m-0"><b>Distribution_1 - Traffic - ethernet1/16 - INPE Cachoeira Paulista 10Gbps</b></h5>
+                    </div>
+                    <div class="card-body black-text bg_cor_primaria m-0 p-0 card-grupo-header">
+                        <div class="card-text ml-2 p-3 grey lighten-5 card-grupo-data">
+                            <img class="graphimage mx-auto img-fluid d-block" id="graph_107"
+                            src="http://cacti.pop-sp.rnp.br/cacti/graph_image.php?action=view&local_graph_id=296&rra_id=3"
+                            border="0"
+                            alt="Distribution_1 - Traffic - ethernet1/16 - INPE Cachoeira Paulista 10Gbps">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-1 p-1"></div>
+            <div class="col-5 p-1 ">
+                <div class="card shadow-menu border-0">
+                    <div class="card-header p-0 text-center border-bottom-0 bg_cor_primaria white-text card-grupo-header">
+                        <h5 class="card-title p-2 m-0"><b>INPE CHP - Traffic - ethernet1/6 - Ligacao PoP-RJ 1Gbps</b></h5>
+                    </div>
+                    <div class="card-body black-text bg_cor_primaria m-0 p-0 card-grupo-header">
+                        <div class="card-text ml-2 p-3 grey lighten-5 card-grupo-data">
+                            <img class="graphimage mx-auto img-fluid d-block" id="graph_203"
+                            src="http://cacti.pop-sp.rnp.br/cacti/graph_image.php?action=view&amp;local_graph_id=203&amp;rra_id=3"
+                            border="0" alt="INPE CHP - Traffic - ethernet1/6 - Ligacao PoP-RJ 1Gbps">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row p-0 m-0">
+            <div class="col-5 p-1 ">
+                <div class="card shadow-menu border-0">
+                    <div class="card-header p-0 text-center border-bottom-0 bg_cor_primaria white-text card-grupo-header">
+                        <h5 class="card-title p-2 m-0"><b>Distribution_1 - Traffic - ethernet1/16 - INPE Cachoeira Paulista 10Gbps</b></h5>
+                    </div>
+                    <div class="card-body black-text bg_cor_primaria m-0 p-0 card-grupo-header">
+                        <div class="card-text ml-2 p-3 grey lighten-5 card-grupo-data">
+                            <img class="graphimage mx-auto img-fluid d-block" id="graph_107"
+                            src="http://cacti.pop-sp.rnp.br/cacti/graph_image.php?action=view&local_graph_id=296&rra_id=4"
+                            border="0"
+                            alt="Distribution_1 - Traffic - ethernet1/16 - INPE Cachoeira Paulista 10Gbps">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-1 p-1"></div>
+            <div class="col-5 p-1 ">
+                <div class="card shadow-menu border-0">
+                    <div class="card-header p-0 text-center border-bottom-0 bg_cor_primaria white-text card-grupo-header">
+                        <h5 class="card-title p-2 m-0"><b>INPE CHP - Traffic - ethernet1/6 - Ligacao PoP-RJ 1Gbps</b></h5>
+                    </div>
+                    <div class="card-body black-text bg_cor_primaria m-0 p-0 card-grupo-header">
+                        <div class="card-text ml-2 p-3 grey lighten-5 card-grupo-data">
+                            <img class="graphimage mx-auto img-fluid d-block" id="graph_203"
+                            src="http://cacti.pop-sp.rnp.br/cacti/graph_image.php?action=view&amp;local_graph_id=203&amp;rra_id=4"
+                            border="0" alt="INPE CHP - Traffic - ethernet1/6 - Ligacao PoP-RJ 1Gbps">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+{% endblock %}
+
+{% block extrajs %}
+    <script src="{% static 'js/garb_page_wide.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,152 @@
+{% extends "admin/base.html" %}
+{% load static i18n %}
+
+{% block content %}
+	<div id="content-main" >
+		<div class="change-columns">
+			<div class="main-column">
+				<div class="box-garb">
+					<div class="module-header">
+						<div class="legend">Liberação de acesso de recursos do Grupo de Trabalho</div>
+					</div>
+					<p class="font-16">Voc&ecirc; &eacute; respon&aacute;vel por um importante controle dentro do CPTEC/INPE.</p>
+					<p>Foi solicitado autoriza&ccedil;&atilde;o para acesso de recursos do GRUPO DE TRABALHO que voc&ecirc; &eacute; respons&aacute;vel.</p>
+					<p>Com TUDO OK, voc&ecirc; pode <b class="text-success">AUTORIZAR</b> ou <b class="text-danger">NEGAR</b> o acesso.</p>
+					<p>O Formulário para Requisição / Atualização de Grupo de Trabalho precisar estar confirmado, qualquer duvida entre em contato com HELPDESK</p>
+					<small>* No acesso da PESQUISA / DESENVOLVIMENTO / DOCUMENTO com SERVIDORES em COMUM, colaborador autorizado para GRUPO &eacute; automaticamente liberado.</small>
+				</div>
+				{% for solicitacao in solicitacoes %}
+					<div class="box-garb">
+						<div id="accordion" role="tablist" aria-multiselectable="true">
+							<div class="panel panel-default">
+								<div class="panel-heading" role="tab" id="heading{{ solicitacao.id }}">
+									<div class="module-header">
+										<a role="button" class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ solicitacao.id }}" aria-expanded="false" aria-controls="collapse{{ solicitacao.id }}">
+											<div class="legend">{{ solicitacao.grupo_acesso}} - {{ solicitacao.colaborador.full_name }}</div>
+										</a>
+									</div>
+								</div>
+								<div id="collapse{{ solicitacao.id }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{ solicitacao.id }}">
+									<div class="panel-body">
+										<div class="row pr-2 pl-2">
+											<legend>Informa&ccedil;&otilde;es da Conta</legend>
+											<div class="col-sm-5 offset-1">
+												<div class="form-group">
+													<p><b class="font-weight-bold">Solicitante: </b>{{ solicitacao.colaborador.full_name }}</p>
+												</div>
+												<div class="form-group">
+													<p><b>Usu&aacute;rio: </b>{{ solicitacao.colaborador.username }}</p>
+												</div>
+											</div>
+											<div class="col-sm-5 ">
+												<div class="form-group">
+													<p><b class="font-weight-bold">Email: </b>{{ solicitacao.colaborador.email }}</p>
+												</div>
+												<div class="form-group">
+													<p><b>Uid: </b>{{ solicitacao.colaborador.uid }}</p>
+												</div>
+											</div>
+										</div>
+										<div class="row pr-2 pl-2">
+											<legend>Informa&ccedil;&otilde;es Profissionais</legend>
+											<div class="col-sm-5 offset-1">
+											
+												<div class="form-group">
+													<p><b>V&iacute;nculo: </b>{{ solicitacao.colaborador.vinculo }}</p>
+												</div>
+												<div class="form-group">
+													<p><b>Ramal: </b>{{ solicitacao.colaborador.ramal }}</p>
+												</div>
+												<div class="form-group">
+													<p><b>Data de In&iacute;cio: </b>{{ solicitacao.colaborador.data_inicio }}</p>
+												</div>
+												{% if solicitacao.colaborador.vinculo.vinculo == 'Servidor' %}
+												<div class="form-group">
+													<p><b>Matr&iacute;cula SIAPE: </b>{{ solicitacao.colaborador.registro_inpe }}</p>
+												</div>
+												{% else %}
+												<div class="form-group">
+													<p><b>Data de Fim: </b>{{ solicitacao.colaborador.data_fim }}</p>
+												</div>
+												{% endif %}
+											</div>
+											<div class="col-sm-5">
+												<div class="form-group">
+													<p><b>Pr&eacute;dio: </b>{{ solicitacao.colaborador.predio }}</p>
+												</div>
+												<div class="form-group">
+													<p><b>Divis&atilde;o: </b> {{ solicitacao.colaborador.divisao }}</p>
+												</div>
+												{% if solicitacao.colaborador.vinculo.vinculo == 'Terceiro' %}
+												<div class="form-group">
+													<p><b>Empresa Terceirizada: </b>{{ solicitacao.colaborador.empresa }}</p>
+												</div>
+												{% endif %}
+											</div>
+										</div>
+										<div class="module-footer">
+											<div class="buttons">
+												<button type="button" class="btn btn-danger width-btn-min negar"  data-toggle="modal" data-target=".modal" value="{{solicitacao.id}}">
+													Negar
+												</button>
+												<a href="{% url 'colaborador:responsavel_aprovar' solicitacao.id  %}" >
+													<button type="submit" class="btn btn-success width-btn-min aprovar"  value="{{solicitacao.id}}" >Autorizar</button>
+												</a>
+											</div>
+										</div> 
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				{% empty %}
+					<div class="box-garb">
+						<p>N&atilde;o existe solicita&ccedil;&atilde;o para ser avaliada.</p>
+					</div>
+				{% endfor %}
+			</div>
+			<div class="box-column box-garb">
+					<div class="module-header">
+						<div class="legend">Colaboradores</div>
+					</div>
+
+					<div id="status"></div>
+			</div>
+		</div>
+	</div>
+	<div class="modal" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header alert-danger">
+					<h5 class="modal-title">Ops!!! tem algo errado, negar o acesso.  </h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<form method="post" id="formValidate" action="{% url 'colaborador:responsavel_negar' %}"  >
+					<div class="modal-body">
+						{% csrf_token %}
+						{{  form_negar }}
+						<br>
+						<div class="module-footer">
+							<div class="buttons">
+								<button type="submit" class="btn btn-danger width-btn-min">Negar</button>
+								<button type="button" class="btn btn-secondary width-btn-min" data-dismiss="modal">Cancelar</button>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block extrajs %}
+	<script>
+		$(".negar").click(function() {
+			$("#id_motivo").val("");
+			$("#id_colaborador_grupoacesso").attr('value',  $(this).val());
+		});
+		$("#status").load("{% url 'colaborador:status' %}");
+	</script>
+{% endblock %}

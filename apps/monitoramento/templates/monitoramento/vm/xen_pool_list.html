@@ -1,0 +1,162 @@
+{% load humanize %}
+<div class="box-garb">
+    <div class="row p-0 m-0">
+        <div class="col-2 p-1">
+            <div class="card shadow-menu grey lighten-3">
+                <p class="p-2 pr-4 m-0">Servidores f&iacute;sicos: <b class="float-right">{{ pool.count_host }}</b></p>
+            </div>
+        </div>
+        <div class="col-2 p-1">
+            <div class="card shadow-menu grey lighten-3">
+                <p class="p-2 pr-4 m-0">M&aacute;quinas virtuais: <b class="float-right">{{ pool.count_vms }}</b></p>
+            </div>
+        </div>
+        <div class="col-2 p-1">
+            <div class="card shadow-menu grey lighten-3">
+                <p class="p-2 pr-4 m-0">Tempo de consulta: <b class="float-right">{{ pool.tempo|floatformat }}s</b></p>
+            </div>
+        </div>
+        <div class="col-2 p-1">
+            <div class="card shadow-menu  grey lighten-3">
+                <p class="p-2 m-0">Data: <b class="float-right">{{ pool.fim|date:"d/m/Y H:i:s" }}</b></p>
+            </div>
+        </div>
+        <div class="col-4 p-1">
+            <div class="toolbar-content p-0">
+                <div id="toolbar">
+                    <div class="search-container">
+                        <div class="input-group">
+                            <input type="search" size="40" id="search" placeholder="Procurar">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1"><i class="fas fa-search"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel-group p-0 " id="accordion" role="tablist" aria-multiselectable="true">
+    {% for host in pool.hosts %}
+        <div  id="accordion"  class='box-garb'>
+            <div class="panel panel-default" id="heading{{ host.uid  }}">
+                <div class="panel-heading " role="tab" >
+                        <a role="button" class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ host.uid }}" aria-expanded="false" aria-controls="collapse{{ host.uid }}">
+                            <div class="row  p-3  m-0">
+                                <div class="col-2 p-1">
+                                    <strong class="text-uppercase pb-2 text-primary"><b>{{host.nome}}</b></strong><br>
+                                    total de vms: <b>{{ host.count_vms }}</b>
+                                </div>
+                                <div class="col-3 p-1">
+                                    IP: <b>{{host.address}}</b><br>
+                                    id: {{ host.uid }}<br>
+                                </div>
+                                <div class="col-3 p-1">
+                                    {{ host.system_manufacturer }} {{ host.system_product_name }}<br>
+                                    {{ host.modelname }}<br>
+                                </div>
+                                <div class="col-2 p-1">
+                                    Mem&oacute;ria (GB): <b>{{ host.get_memory_used|floatformat:1|intcomma }} /
+                                    {{ host.get_memory_total|floatformat:1|intcomma}}&nbsp;&nbsp;{{ host.get_memory}}%</b>
+                                    <div class="pt-2">
+                                        <div class="progress">
+                                            <div class="progress-bar bg-success" role="progressbar"
+                                                style="width: {{ host.get_memory}}%" aria-valuenow="{{ host.get_memory}}"
+                                                aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2 p-1 pl-5">
+                                    CPU: {{ host.cpus }} core(s)<br>
+                                </div>
+                            </div>
+                        </a>
+                </div>
+                <div id="collapse{{ host.uid  }}" class="panel-collapse collapse in" role="tabpanel"
+                    aria-labelledby="heading{{ host.uid  }}">
+                    <div class="panel-body border-top border-left pt-1 ">
+                        {% for vm in host.vms %}
+                        <div class="row p-0 m-0  border-bottom vm">
+                            <div class="col-2 p-1 pt-4 pl-4">
+                                <b class="text-uppercase text-success">{{ vm.nome }}</b>
+                            </div>
+                            <div class="col-5 p-1 pt-2">
+                                <b>{{ vm.name_description }}</b><br>
+                            </div>
+                            <div class="col-2 p-1">
+                                IP: <b>{{ vm.networks }}</b> <br>
+                                CPU: <b> {{ vm.VCPUs_number }} core(s)</b> / Mem&oacute;ria (GB): <b>{{ vm.get_memory_total}}
+                                </b><br>
+                            </div>
+                            <div class="col-3 p-1">
+                                SO: <b>{{ vm.software_version|truncatechars:35 }}</b><br>
+                                id: {{ vm.uid }} <br>
+                            </div>
+                            {% for vdi in vm.vdis %}
+                            <div class="col-2 p-1 pt-3 pl-4"></div>
+                            <div class="col-2 pb-1 pl-1">
+                                Disco: {{ vdi.nome}}
+                            </div>
+                            <div class="col-2 pb-1">
+                                Tamanho (GB): <b> {{ vdi.get_virtual_size }} </b>
+                            </div>
+                            <div class="col-2 pb-1">
+                                Tipo: {{ vdi.type }}
+                            </div>
+                            <div class="col-4 pb-1">
+                                LUN: {{ vdi.sr_nome }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+    function collapsibleclose() {
+            $('.panel-collapse.in').collapse('hide');
+        }
+        function filter(element) {
+            searchTerm = $(element).val();
+            
+            $('#accordion > .panel ').each(function() {
+                panelContainerId = '#' + $(this).attr('id');
+                console.log(panelContainerId)
+                // Makes search to be case insesitive
+                $.extend($.expr[':'], {
+                    'contains': function(elem, i, match, array) {
+                        return (elem.textContent || elem.innerText || '').toLowerCase()
+                        .indexOf((match[3] || "").toLowerCase()) >= 0;
+                    }
+                });
+                // Show and Hide Triggers
+                $(panelContainerId + ':not(:contains(' + searchTerm + '))').parent().hide();
+                $(panelContainerId + ':contains(' + searchTerm + ')').parent().show();
+                $(".vm").each(function() {
+                    if ($(this).text().search(new RegExp(searchTerm, "i")) > -1) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+        }
+        $('#search').on("keyup", function(e) {
+            if( ( (e.keyCode == 8) || (e.keyCode === 27) || (e.keyCode === 46)) && ($(this).val() == '')) {
+                filter(this);
+                $('.panel-collapse.in').collapse('hide');
+                return;
+            } else if (e.keyCode === 13) {
+                filter(this);
+                $('.panel-collapse.in').collapse('show');
+                return;
+            }
+        });
+</script>

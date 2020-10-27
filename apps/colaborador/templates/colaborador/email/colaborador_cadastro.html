@@ -1,0 +1,10 @@
+{% extends 'base_email.html' %}
+{% load garb_tags %}
+{% block content %}
+    <p>Obrigado,</p>
+    <h3><b>{{colaborador}}</b></h3>
+    <br>
+    <p> Seu cadastro foi enviado para secretaria da sua Divis&atilde;o, as informa&ccedil;&otilde;es ser&atilde;o conferidas
+    e os respectivos formul&aacute;rios impressos para aquisi&ccedil;&atilde;o das assinaturas necess&aacute;rias. Incluindo a sua assinatura, ent&atilde;o
+    v&aacute; a secret&aacute;ria.</p>
+{% endblock content %}

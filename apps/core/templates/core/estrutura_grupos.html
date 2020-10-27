@@ -1,0 +1,192 @@
+{% extends "admin/base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block extrastyle %}
+    <link rel="stylesheet" type="text/css" href="{% static 'core/css/core.css' %}"/>
+{% endblock %}
+
+
+{% block content %}
+	<div id="content-main" >
+		<div class="change-columns">
+			<div class="main-column">
+				<div class="box-garb">
+					<div class="module-header">
+						<div class="legend">Grupos de Trabalho</div>
+					</div>
+					<br>
+                    <div class="toolbar-content">
+                        <div id="toolbar">
+                            <div class="search-container">
+                                <div class="input-group">
+                                    <input type="search"  size="40" id="search" placeholder="Procurar Grupo / Colaborador / Equipamento" >
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1"><i class="fas fa-search"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    {% for grupo in grupos %}
+                        <div  id="accordion"  class='box-garb'>
+                            <div class="panel panel-default" id="heading{{ grupo.id }}">
+                                <div class="panel-heading" role="tab" >
+                                    <div class="module-header">
+                                        <a role="button" class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ grupo.id }}" aria-expanded="false" aria-controls="collapse{{ grupo.id }}">
+                                            <div class="legend">{{ grupo }}</div>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div id="collapse{{ grupo.id }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{ grupo.id }}">
+                                    <div class="panel-body">
+                                        <div class="row pt-2">
+                                            <div class="col-2"></div>
+                                            <div class="col-10">
+                                                <div class="row p-0 m-0">
+                                                    <div class="col-2 text-center  align-self-center">
+                                                        <b>Respons&aacute;vel </b>
+                                                    </div>
+                                                    <div class="col-10 pl-0 ml-0">
+                                                        {% for responsavel in grupo.responsavelgrupotrabalho_set.all %}
+                                                            <div class="row m-0 p-0  ">
+                                                                <div class="col-4 p-2" >
+                                                                    <strong class="text-danger">{{ responsavel.responsavel.full_name }}</strong>
+                                                                </div>
+                                                                <div class="col-3 p-2" >
+                                                                    {{ responsavel.responsavel.username }}
+                                                                </div>
+                                                                <div class="col-4 p-2" >
+                                                                    {{ responsavel.responsavel.email }}
+                                                                </div>
+                                                                <div class="col-1 p-2" >
+                                                                    {{ responsavel.responsavel.ramal|default:"--"}}
+                                                                </div>
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% for grupo_acesso in grupo.grupoacesso_set.all %}
+                                            <div class="row align-items-center  border-top border-left m-0 mt-1 grupo_acesso" >
+                                                <div class="col-2 text-center align-middle">
+                                                    <b>{{ grupo_acesso.tipo }} </b>
+                                                </div>
+                                                <div class="col-10">
+                                                    <div class="row p-0 m-0 grupo_acesso_categoria  border-bottom">
+                                                        <div class="col-11 pl-0 ml-0">
+                                                            {% for colaboradorgrupoacesso in grupo_acesso.colaboradorgrupoacesso_set.all %}
+                                                                {% if colaboradorgrupoacesso.aprovacao == 1%}
+                                                                    <div class="row m-0 p-0  ">
+                                                                        <div class="col-4 p-2" >
+                                                                            <strong class="text-primary">{{ colaboradorgrupoacesso.colaborador.full_name }}</strong>
+                                                                        </div>
+                                                                        <div class="col-3 p-2" >
+                                                                            {{ colaboradorgrupoacesso.colaborador.username }}
+                                                                        </div>
+                                                                        <div class="col-4 p-2" >
+                                                                            {{ colaboradorgrupoacesso.colaborador.email }}
+                                                                        </div>
+                                                                        <div class="col-1 p-2" >
+                                                                            {{ colaboradorgrupoacesso.colaborador.ramal|default:"--"}}
+                                                                        </div>
+                                                                    </div>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </div>
+                                                        <div class="col-1  text-center  align-self-center ">
+                                                            <i class="fas fa-user-friends txt_cor_primaria fa-w-12 fa-3x"></i>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row p-0 m-0 grupo_acesso_categoria  ">
+                                                        <div class="col-11 pl-0 ml-0">
+                                                            {% for equipamentogrupoacesso in grupo_acesso.equipamentogrupoacesso_set.all %}
+                                                                <div class="row m-0 p-0 ">
+                                                                    <div class="col-3 p-2" >
+                                                                        <strong class="text-primary">{{ equipamentogrupoacesso.equipamento.nome }}</strong>
+                                                                    </div>
+                                                                    <div class="col-2 p-2" >
+                                                                        {{ equipamentogrupoacesso.equipamento.tipo }}
+                                                                    </div>
+                                                                    <div class="col-6 p-2" >
+                                                                        {{ equipamentogrupoacesso.equipamento.descricao }}
+                                                                    </div>
+                                                                    <div class="col-1 p-2" >
+                                                                        ldap: 
+                                                                        {% if equipamentogrupoacesso.equipamento.servidor.ldap %}
+                                                                            <img src="{% static "admin/img/icon-yes.svg" %}" >
+                                                                        {% else %}
+                                                                            <img src="{% static "admin/img/icon-no.svg" %}" >
+                                                                        {% endif %}
+                                                                    </div>
+                                                                </div>
+                                                            {% endfor %}
+                                                        </div>
+                                                        <div class="col-1  pr-0 mr-0 text-center align-self-center">
+                                                            <i class="fas fa-server fa-w-12 fa-3x txt_cor_primaria "></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="box-garb">
+                            <p>N&atilde;o existe grupos de trabaho.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="box-column box-garb">
+                        <div class="module-header">
+                            <div class="legend">Estrutura</div>
+                        </div>
+                        <div id="status"></div>
+                </div>
+            </div>
+        </div>
+{% endblock %}
+
+
+{% block extrajs %}
+    <script>
+        function collapsibleclose() {
+            $('.panel-collapse.in').collapse('hide');
+        }
+        function filter(element) {
+            searchTerm = $(element).val();
+            console.log(searchTerm)
+            $('#accordion > .panel ').each(function() {
+                panelContainerId = '#' + $(this).attr('id');
+                console.log(panelContainerId)
+                
+                // Makes search to be case insesitive
+                $.extend($.expr[':'], {
+                    'contains': function(elem, i, match, array) {
+                        return (elem.textContent || elem.innerText || '').toLowerCase()
+                        .indexOf((match[3] || "").toLowerCase()) >= 0;
+                    }
+                });
+                // Show and Hide Triggers
+                $(panelContainerId + ':not(:contains(' + searchTerm + '))').parent().hide();
+                $(panelContainerId + ':contains(' + searchTerm + ')').parent().show();
+            });
+        }
+        $('#search').on("keyup", function(e) {
+            if( ( (e.keyCode == 8) || (e.keyCode === 27) || (e.keyCode === 46)) && ($(this).val() == '')) {
+                filter(this);
+                $('.panel-collapse.in').collapse('hide');
+                return;
+            } else if (e.keyCode === 13) {
+                filter(this);
+                $('.panel-collapse.in').collapse('show');
+                return;
+            }
+        });
+        $("#status").load("{% url 'core_open:status' %}");
+    </script>
+{% endblock %} 

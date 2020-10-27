@@ -1,0 +1,32 @@
+{% load garb_form %}
+{% load static %}
+<div class="card pt-0">
+    <h5 class="card-header blue darken-4 text-white "><b>{{ equipamento.nome }}</b></h5>
+    <div class="card-body grey lighten-4">
+        Tipo: <b>{{ equipamento.tipo }}</b><br>
+        Descrição: <b>{{ equipamento.descricao }}</b><br>
+        Grupo: <b>{{ posicao.equipamento.grupo_acesso_name }}</b><br>
+        Tipo: <b>{{ posicao.equipamento.tipo_uso }}</b><br><br>
+        Marca: <b>{{ equipamento.marca }}</b><br>
+        Modelo: <b>{{ equipamento.modelo }}</b><br>
+        Patrimônio: <b>{{ equipamento.patrimonio }}</b><br>
+        Serial: <b>{{ equipamento.serie }}</b>
+    </div>
+</div>
+<br>
+<div class="card mt-1">
+    <h5 class="card-header blue darken-4 text-white"><b>Ops!!! tem algo errado?</b></h5>
+    <div class="card-body">
+        <form method="post" id="formValidate" action="{% url 'infra:ocorrencia_criar' %}"  >
+            <div class="modal-body p-0 form_ocorrencia">
+                {% csrf_token %}
+                {{ form_ocorrencia }}
+                <div class="row pr-3 pt-0 pl-2 float-right">
+                    <button type="submit" class="btn btn-danger">Abrir ocorrência</button>
+                </div>
+            </div>
+        </form> 
+    </div>
+</div>
+
+

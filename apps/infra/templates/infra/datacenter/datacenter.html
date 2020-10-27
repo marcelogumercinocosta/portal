@@ -1,0 +1,25 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div id="content-main">
+    <div class="change-columns">
+        <div class="main-column">
+            <div class="main-column-item">
+                <br>
+                {% for predio in predios %}
+                <div class="box-garb p-0 box-garb-hover">
+                    <div class="panel panel-default ">
+                        <div class="panel-heading" role="tab">
+                            <h4 class="panel-title m-0 ">
+                                <a role="button" class="d-block w-100 p-4" href="{% url 'infra:datacenter_predio' predio.id %}">
+                                    Datacenter: {{ predio.predio }}
+                                </a>
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endblock %}

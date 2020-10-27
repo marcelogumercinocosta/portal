@@ -1,0 +1,47 @@
+{% load static %}
+
+<html>
+<head>
+    <title>Termo de Compromisso</title>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <style type="text/css">
+        body { font-weight: 200; font-size: 14px;  }
+        .header { font-size: 20px; font-weight: 100; text-align: center; padding: 10px 0 -20px 0 ; }
+        .header p  { text-align: center; }
+        .informacoes {  width: 300px; border: 1px solid; padding: 15px; margin: 0px; text-align: justify; }
+        .informacoes2 {  width: 300px; text-align: justify;}
+        table {  width: 300px;   }
+        img { zoom: 60% }
+        h6{text-align: center; padding: 10px 0 -24px 0; }
+        .assinar{padding-left: 3000%; padding-top: -300%; }
+        .carimbo{ padding-left: 3200%; padding-top: -100%;}
+        .data{ padding-left: 150%;}
+        .assinar_titular{padding-left: 3000%; padding-top: -500%;}
+        .assinar_centralizado{ padding-left: 1700%; padding-top: -500%; }
+        .carimbo_centralizado{ padding-left: 2200%; padding-top: -100%; }
+
+    </style>
+</head>
+<body>
+<img src="{{ logo }}" class="logo">
+{% include "./redir518.html" %}
+
+{% if not colaborador.vinculo.vinculo == 'Servidor'  %}
+    {% if motivo == 'admissao'  %}
+    <pdf:nextpage>
+        <img src="{{ logo }}" class="logo">
+        {% include "./redir029.html" %}
+    </pdf:nextpage>
+    {% endif %}
+{% endif %}
+
+<pdf:nextpage>
+    <img src="{{ logo }}" class="logo">
+    {% include "./politicas.html" %}
+</pdf:nextpage>
+
+
+</body>
+
+
+</html>

@@ -1,0 +1,85 @@
+{% extends "admin/base.html" %}
+{% load static %}
+{% load templatetags %}
+{% load i18n %}
+
+{% block extrastyle %}
+    <link href="{% static 'monitoramento/css/storage.css' %}" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+{% block breadcrumbs %}
+    {% include "admin/includes/breadcrumbs.html" with nivel=1 breadcrumbs_action=title %}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-2 p-1 ">
+            <div class="card shadow-menu pb-1 grey lighten-3">
+                <p class="p-2 pr-4 mb-0">Capacidade: <b class="float-right">{{ storage.capacidade }} TB</b></p>
+            </div>
+        </div>
+        <div class="col-2 p-1">
+            <div class="card shadow-menu pb-1 grey lighten-3">
+                <p class="p-2 pr-4 mb-0">Reserva de manobra: <b class="float-right">266 TB</b></p>
+            </div>
+        </div>
+        <div class="col-2 p-1">
+            <div class="card shadow-menu pb-1 grey lighten-3">
+                <p class="p-2 pr-4 mb-0">Quotado: <b class="float-right">{{quotado|get_size_human_TB }}</b></p>
+            </div>
+        </div>
+        <div class="col-2 p-1">
+            <div class="card shadow-menu pb-1 grey lighten-3">
+                <p class="p-2 pr-4 mb-0">Utilizado: <b class="float-right">{{utilizado|get_size_human }}</b></p>
+            </div>
+        </div>
+        <div class="col-2 p-1">
+            <div class="card shadow-menu pb-1 grey lighten-3">
+                <p class="p-2 pr-4 mb-0">Quotas: <b class="float-right">{{quotas}}</b></p>
+            </div>
+        </div>
+        <div class="col-2 p-1">
+            <div class="card shadow-menu pb-1 grey lighten-3">
+                <p class="p-2 pr-4 mb-0">Update: <b class="float-right"></b>{{ storage.atualizacao|date:"d/m/Y H:i:s" }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="row ">
+        <div class="col-2 p-1 divisao_body">
+            <div class="card shadow-sidebar border-0">
+                <div class="card-header p-0 text-center border-bottom-0 grey darken-2 white-text">
+                    <h5 class="card-title p-2 m-0 text-center"><b>Grupos</b></h5>
+                </div>
+                <div class="card-body white-text grey darken-2 m-0 p-0">
+                    <ul class="ulstorage pl-2 mr-1px mb-1px">
+                        {% for grupo in grupos %}
+                        <li>
+                            <a class="grupo-content p-2 {{ grupo.divisao.get_color }}  lighten-2 {% if forloop.last %}border-last{% endif %}"
+                                href="#" data-select="true" data-element="#grupo_{{ grupo.id }}" data-name="{{ grupo.id }}">
+                                {{ grupo.grupo|upper }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-10 p-1 grupo_body" id="grupo_result" style="display:none"></div>
+    </div>
+{% endblock %}
+
+
+{% block extrajs %}
+    <script type="text/javascript">
+        $(".grupo-content").click(function (e) {
+            $(".grupo-content").removeClass("lighten-2");
+            $(".grupo-content").addClass("lighten-3");
+            $(".grupo_body").hide();
+            e.preventDefault();
+            $(this).removeClass("lighten-3");
+            url = "{% url 'monitoramento:storage_xe6quota_list' pk=0 %}".replace('0', $(this).attr('data-name'));
+            $(".grupo_body").load(url);
+            $(".grupo_body").show();
+        });
+    </script>
+{% endblock %}

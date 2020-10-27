@@ -1,0 +1,85 @@
+{% extends "admin/base.html" %}
+{% load static %}
+{% load templatetags %}
+{% load i18n %}
+
+{% block extrastyle %}
+    <link href="{% static 'monitoramento/css/uso.css' %}" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+
+{% block content %}
+<div id="content-main">
+    <div id='view_uso'>
+        {% for supercomputador in supercomputadores %}
+        <div class="d-flex row p-0 m-0 ">
+            <div class="box-garb m-0 p-0 col-12">
+                <div class="card-header p-0 text-center border-bottom-0 bg_cor_primaria white-text card-grupo-header">
+                    <h5 class="card-title p-2 m-0"><b>{{supercomputador}}</b></h5>
+                </div>
+                <div class="card-body black-text bg_cor_primaria m-0 p-0 ">
+                    <div class="card-text m-0 ml-2 p-2 white row ">
+                        <div class="col-6 p-0 mt-1" id="super_{{ supercomputador.id }}_hist"></div>
+                        <div class="col-6 p-0 pr-1" id="super_{{ supercomputador.id }}_rack"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        {% endfor %}
+        <div class="box-garb">
+            <div class="d-flex row ">
+                <div class="col text-right">
+                    Legenda:
+                </div>
+                <div class="col rack node legenda free_batch pb-1">
+                    free node
+                </div>
+                <div class="col rack node legenda service  pb-1 ">
+                    service node
+                </div>
+                <div class="col rack node legenda  pb-1">
+                    processing node
+                </div>
+                <div class="col rack node legenda waiting   pb-1">
+                    waiting node
+                </div>
+                <div class="col rack node legenda allocated_interactive  pb-1">
+                    allocated
+                </div>
+                <div class="col  rack node legenda suspect  pb-1">
+                    suspect node
+                </div>
+                <div class="col  rack node legenda down  pb-1">
+                    down node
+                </div>
+                <div class="col  rack node legenda noexist  pb-1">
+                    nonexistent node
+                </div>
+                <div class="col  rack node legenda noexist  pb-1">
+                    nonexistent node
+                </div>
+                <div class="col ">
+                <button type="button" class="button float-right" id="view_monitoramento" data-name="view_uso">
+                    <i class="fa fa-eye fa-lg p-1"></i>
+                </button>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extrajs %}
+    <script src="{% static 'js/garb_page_wide.js' %}"></script>
+    <script>
+        function load() {
+            {% for supercomputador in supercomputadores %}
+                $("#super_{{ supercomputador.id }}_rack").load("{% url 'monitoramento:uso_supercomputador_nodes' pk=supercomputador.id  %}");
+                $("#super_{{ supercomputador.id }}_hist").load("{% url 'monitoramento:uso_supercomputador_hist' pk=supercomputador.id %}");
+            {% endfor %}
+        }
+        load();
+        setInterval(function () { load() }, 180000);
+        setInterval(function () { window.location.reload(); }, 6000000);
+    </script>
+{% endblock %}

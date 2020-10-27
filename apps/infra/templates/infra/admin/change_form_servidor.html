@@ -1,0 +1,27 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static  %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'infra/css/servidor.css' %}">
+{% endblock %}
+
+{% block extrajs %}
+    <script>
+        {% if add %}
+            $('#id_tipo').prop('disabled', false);
+            $('#id_tipo').selectpicker('refresh');
+            $('#id_tipo_uso').prop('disabled', false);
+            $('#id_tipo_uso').selectpicker('refresh');
+            $("[name='_addanother']").hide()
+        {% endif %}
+    </script>
+    <script src="{% static 'infra/js/form.js' %}"></script>
+{% endblock %}
+
+{% block submit_buttons_extra_bottom %}
+    {% if  object_id and not original.ldap  %}
+        <a href="{% url 'infra:criar_servidor' object_id  %}" class=" btn btn-info btn-verify-form" >Criar no FreeIPA</a>
+    {% endif %}
+{% endblock %}
+

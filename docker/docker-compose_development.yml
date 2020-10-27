@@ -1,0 +1,62 @@
+version: '3.3'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: dev_mysql
+    command:
+        --default-authentication-plugin=mysql_native_password
+        --performance-schema --secure-file-priv=""
+    environment:
+      MYSQL_USER: root
+      MYSQL_DATABASE: 'portal'
+      MYSQL_ROOT_PASSWORD: 'password'
+    networks:
+      - storm
+    expose:
+      - '3306'
+    ports:
+    - target: 3306
+      published: 3306
+      protocol: tcp
+      mode: host
+    volumes:
+      - ./docker/data/dev_db:/var/lib/mysql
+    healthcheck:
+        test: "/usr/bin/mysql --user=root --password=password --execute \"SHOW DATABASES;\""
+        interval: 5s
+        timeout: 30s
+        retries: 10
+  redis:
+    image: redis
+    container_name: dev_redis
+    command: redis-server
+    networks:
+      - storm
+    ports:
+      - "6379:6379"
+    depends_on:
+    - mysql
+  django-celery:
+    build:
+      context: .
+      dockerfile: ./docker/django_dev/Dockerfile
+    container_name: dev_django-celery
+    network_mode: host
+    environment:
+      django_settings_module: 'portal.settings.development'
+    command: 
+      - /bin/bash
+      - -c
+      - |
+        celery -A portal worker -l info -E
+    volumes:
+      - .:/app
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+networks:
+  storm:
+    external: true
+

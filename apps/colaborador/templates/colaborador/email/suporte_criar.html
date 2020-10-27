@@ -1,0 +1,14 @@
+{% extends 'base_email.html' %}
+{% load garb_tags %}
+{% block content %}
+    <p>Ol&aacute;,</p>
+    <p><b>{{ name }}</b>, sua conta foi <b>CRIADA</b>,</p>
+    <p>Agora &eacute; s&oacute; logar no 3S PORTAL com: </p>
+    <p>user: <b>{{ username }}</b></p>
+    <p>password: <b>{{ password }}</b></p>
+    <br>
+    <p>Voc&ecirc; j&aacute; pode solicitar acesso ao <b>Grupo de trabalho:</b></p>
+    <p>1 - Entre em conta, no menu no canto superior direito</p>
+    <p>2 - Solicite acesso</p>
+    <p>3 - Depois de Aprovado,  &eacute; s&oacute; logar no servidor do grupo e comec&ccedil;ar a trabalhar  </p>
+{% endblock %}

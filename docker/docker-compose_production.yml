@@ -1,0 +1,78 @@
+version: '3.3'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: prod_mysql
+    command:
+        --default-authentication-plugin=mysql_native_password
+        --performance-schema --secure-file-priv=""
+    environment:
+      MYSQL_USER: root
+      MYSQL_DATABASE: 'portal'
+      MYSQL_ROOT_PASSWORD: 'password'
+    expose:
+      - '3306'
+    ports:
+    - target: 3306
+      published: 3306
+      protocol: tcp
+      mode: host
+    volumes:
+      - ./docker/data/prod_db:/var/lib/mysql
+    healthcheck:
+        test: "/usr/bin/mysql --user=root --password=password --execute \"SHOW DATABASES;\""
+        interval: 5s
+        timeout: 30s
+        retries: 10
+  redis:
+    image: redis
+    container_name: prod_redis
+    command: redis-server
+    ports:
+      - "6379:6379"
+    depends_on:
+    - mysql
+  django-celery:
+    build:
+      context: .
+      dockerfile: ./docker/django_prod/Dockerfile
+    container_name: prod_django-celery
+    environment:
+      django_settings_module: 'portal.settings.production'
+    command: 
+      - /bin/bash
+      - -c
+      - |
+        celery -A portal worker -l info -E
+    volumes:
+      - .:/app
+    depends_on:
+      mysql:
+        condition: service_healthy
+  gunicorn:
+    restart: always
+    container_name: prod_gunicorn
+    build:
+      context: .
+      dockerfile: ./docker/django_prod/Dockerfile
+    expose:
+      - "8000"
+    volumes:
+      - .:/app
+      - ./staticfiles:/app/staticfiles
+    environment:
+      django_settings_module: 'portal.settings.production'
+    command: bash -c "python manage.py collectstatic --clear  && python manage.py migrate && gunicorn portal.wsgi:application -b 0.0.0.0:8000 --workers 3"
+  nginx:
+    restart: always
+    container_name: prod_nginx
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+      - ./staticfiles:/app/staticfiles
+      - ./media:/app/media
+    depends_on:
+      - gunicorn

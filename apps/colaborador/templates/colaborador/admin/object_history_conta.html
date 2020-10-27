@@ -1,0 +1,15 @@
+{% extends "admin/object_history.html" %}
+
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+        <ul class="breadcrumb {{ align }}">
+            <li>
+                <a href="{% url 'colaborador:conta' %}">{{user.first_name|upper}} {{user.last_name|upper}}</a>
+                <span class="divider">/</span>
+            </li>
+            <li class="active">
+                HISTÓRICO
+            </li>
+        </ul>
+    </div>
+{% endblock %}

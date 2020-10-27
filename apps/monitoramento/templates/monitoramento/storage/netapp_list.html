@@ -1,0 +1,107 @@
+{% load static %}
+{% load templatetags %}
+<div class="card shadow-menu border-0">
+    <div class="card-header p-0 text-center border-bottom-0  {{ storage_area_grupo_trabalho.grupo.divisao.color }} darken-4 white-text card-grupo-header">
+        <h5 class="card-title p-2 pl-5 m-0 text-left white-text"><b>{{ storage_area_grupo_trabalho.grupo.grupo|upper }} </b></h5>
+    </div>
+    <div class="card-body m-0 p-0">
+        <div class="row p-0 m-0 white grupo-head">
+            <div class="col-5 p-0">
+                <div class="row p-0 m-0 tile_count">
+                    <div class="col-12 pt-3 pl-4 pr-4 pb-3">
+                        <div class="pt-1 pb-1">
+                            <div class="progress">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: {{storage_area_grupo_trabalho.area_total_usado_porcentagem}}%" aria-valuenow="{{storage_area_grupo_trabalho.area_total_usado_porcentagem}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar bg-success" role="progressbar" style="width: {{storage_area_grupo_trabalho.area_total_liberado_corrigido_porcentagem}}%" aria-valuenow="{{storage_area_grupo_trabalho.area_total_liberado_corrigido_porcentagem}}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4 tile_stats_count first ">
+                        <span class="count_top">Utilizado</span>
+                        <div class="count text-danger text-right">{{ storage_area_grupo_trabalho.area_total_usado|get_size_human_number }}<span>{{ storage_area_grupo_trabalho.area_total_usado|get_size_human_size }}</span></div>
+                        <span class="count_bottom">{{storage_area_grupo_trabalho.area_total_usado_porcentagem}}% do quotado</span>
+                    </div>
+                    <div class="col-4 tile_stats_count">
+                        <span class="count_top">Liberado</span>
+                        <div class="count text-right text-success">{{ storage_area_grupo_trabalho.area_total_liberado|get_size_human_number }}<span>{{ storage_area_grupo_trabalho.area_total_liberado|get_size_human_size }}</span></div>
+                        <span class="count_bottom">{{storage_area_grupo_trabalho.area_total_liberado_porcentagem}}% do quotado</span>
+                    </div>
+                    <div class="col-4 tile_stats_count">
+                        <span class="count_top">Quotado</span>
+                        <div class="count text-right">{{ storage_area_grupo_trabalho.quota_KB|get_size_human_number }}<span>{{ storage_area_grupo_trabalho.quota_KB|get_size_human_size }}</span></div>
+                        <span class="count_bottom">{{ storage_area_grupo_trabalho.area_set.all|length }} Volume(s)</span>
+                    </div>
+                    <div class="col-12 pt-3 pl-4 pr-4">
+                        {% if storage_area_grupo_trabalho_previsao_30d > 0 %}
+                            <p class="p-0 m-0">Predi&ccedil;&atilde;o para {{ 30|add_days|date:"d/m" }}: <b class="text-danger"> {{ storage_area_grupo_trabalho_previsao_30d|get_size_human_number }}<span>{{ storage_area_grupo_trabalho_previsao_30d|get_size_human_size }}</span></b>&nbsp;&nbsp;<small class="text-muted">Com base nos &uacute;ltimos 30 dias</small></p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 p-1 pt-2">
+                {% if storage_area_grupo_trabalho_grafico_historico %}
+                    <div id="grafico_{{storage_area_grupo_trabalho.grupo.id}}" style="width: 100%; height: 200px"> </div>
+                {% endif %}
+            </div>
+            <div class="col-1 pt-3 pr-3 pl-1 pb-3 text-center">
+                {% if storage_area_grupo_trabalho_grafico_historico %}
+                <br>
+                <div class="mb-3">
+                    <p class="alertas text-danger pb-0 mb-0"> {{ combined_alerts }}</p>
+                    Alertas
+                </div>
+                <a href="#" class="button width_auto info"><i class="fa fa-search-plus infoi"></i> info </a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="row p-0 m-0 font-weight-bold {{ storage_area_grupo_trabalho.grupo.divisao.color }} lighten-1">
+            <div class="col-5 pt-2 pb-2 pl-0 pr-0 text-center">nome do volume</div>
+            <div class="col-1m pt-2 pb-2 pl-0 pr-0 text-center">disco</div>
+            <div class="col-1m pt-2 pb-2 pl-0 pr-0 text-right">disco utilizado</div>
+            <div class="col-m pt-2 pb-2 pl-3 pr-2 text-center">%</div>
+            <div class="col-1m pt-2 pb-2 pl-0 pr-0 text-right">snap</div>
+            <div class="col-m pt-2 pb-2 pl-3 pr-2 text-center">%</div>
+            <div class="col-1m pt-2 pb-2 pl-0 pr-0 text-center">total disco</div>
+            <div class="col-1m pt-2 pb-2 pl-0 pr-0 text-center">svm</div>
+        </div>
+        {% for volume in storage_area_grupo_trabalho.area_set.all %}
+        <div class="row p-0 m-0 lin-s grey lighten-5 ">
+            <div class="col-5 pt-2 pb-2 pl-3 pr-0 text-left">{{ volume.area|truncatechars:75}}</div>
+            <div class="col-1m pt-2 pb-2 pl-0 pr-3 text-right">{{ volume.disco|get_size_human}}</div>
+            <div class="col-1m pt-2 pb-2 pl-0 pr-1 text-right">{{ volume.disco_used|get_size_human}}</div>
+            <div class="col-m pt-2 pb-2 pl-0 pr-2 text-right {% if volume.porcentagem_disco_used >= 95 %} text-danger {% endif %}">{{ volume.porcentagem_disco_used}}%</div>
+            <div class="col-1m pt-2 pb-2 pl-0 pr-1 text-right">{{ volume.disco_used|get_size_human}}</div>
+            <div class="col-m pt-2 pb-2 pl-0 pr-2 text-right {% if volume.porcentagem_snap >= 95 %} text-danger {% endif %}">{{ volume.porcentagem_snap}}%</div>
+            <div class="col-1m pt-2 pb-2 pl-0 pr-1 text-right">{{ volume.total_disco|get_size_human}}</div>
+            <div class="col-1m pt-2 pb-2 pl-0 pr-0 text-center">{{ volume.svm_name}}</div>
+        </div>
+        <div class="row p-0 m-0 lin-r lin-l white plus-info" style="display:none">
+            <div class="col-4 pt-2 pb-2 pl-3 pr-0 text-left">Path: {{ volume.path }}</div>
+            <div class="col-3 pt-2 pb-2 pl-0 pr-0 text-left">Deduplication: {{ volume.deduplication|get_size_human }} - {{ volume.porcentagem_deduplication }} %</div>
+            <div class="col-3 pt-2 pb-2 pl-0 pr-0 text-left">Snapshot Policy: {{ volume.snapshot_policy }}</div>
+            <div class="col-2 pt-2 pb-2 pl-0 pr-0 text-left">Snapshot Autodelete: {% if volume.snapshot_autodelete %} True {% else %} False {% endif %}</div>
+        </div>
+        <div class="row p-0 m-0 lin-r lin-l  white plus-info" style="display:none">
+            <div class="col-4 pt-2 pb-2 pl-3 pr-0 text-left">Export_Policy: {{ volume.export_policy }}</div>
+            <div class="col-3 pt-2 pb-2 pl-0 pr-0 text-left">Aggregate: {{ volume.aggregate }}</div>
+            <div class="col-3 pt-2 pb-2 pl-0 pr-0 text-left {% if volume.snapshot_size_used >= 95 %} text-danger {% endif %}">Snapshot Size Used: {{ volume.snapshot_size_used }}%</div>
+            <div class="col-2 pt-2 pb-2 pl-0 pr-0 text-left">Node: {{ volume.node }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<script src="{% static 'js/echarts.min.js' %}"></script>
+<script type="text/javascript">
+        var chart = echarts.init(document.getElementById("grafico_{{storage_area_grupo_trabalho.grupo.id}}"));
+        chart.setOption({{ storage_area_grupo_trabalho_grafico_historico.export|safe|echart_safe }});
+</script>
+<script type="text/javascript">
+            $(".info").click(function(e){
+                e.preventDefault();
+                $(this).toggleClass("btn-primary");
+                $(this).toggleClass("btn-info");
+                $(".infoi").toggleClass("fa-search-plus");
+                $(".infoi").toggleClass("fa-search-minus");
+                $('.plus-info').toggle();
+            });
+</script>

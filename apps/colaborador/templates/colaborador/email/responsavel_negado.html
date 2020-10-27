@@ -1,0 +1,8 @@
+{% extends 'base_email.html' %}
+{% load garb_tags %}
+{% block content %}
+    <p>Ol&aacute;,</p>
+    <p><b>{{ name }}</b>, sua solicita&ccedil;&atilde;o de acesso aos recursos do Grupo de trabalho: <b>{{ grupo }}</b> foi <b>NEGADA</b>,</p>
+    <p>motivo: <b>{{ motivo }}</b></p>
+    <p>Entre em contato com respons&aacute;vel do grupo, para melhores informa&ccedil;&otilde;es</p>
+{% endblock content %}

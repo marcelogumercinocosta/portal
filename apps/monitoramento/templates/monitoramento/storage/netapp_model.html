@@ -1,0 +1,164 @@
+{% extends "admin/base.html" %}
+{% load static %}
+{% load templatetags %}
+{% load i18n %}
+
+{% block extrastyle %}
+    <link href="{% static 'monitoramento/css/storage.css' %}" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+        <ul class="breadcrumb {{ align }}">
+            <li>
+                <a href="{% url 'monitoramento:storage_netapp' %}">ARMAZENAMENTO CORPORATIVO</a>
+                <span class="divider">/</span>
+            </li>
+            <li class="active">
+                {{title}}
+            </li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div class="row p-0 m-0">
+            <div class="col-2 p-1 ">
+                <div class="card shadow-menu pb-1 grey lighten-3">
+                    <p class="pl-3 pr-3 pt-1 mb-0">Capacidade: <b class="float-right">2832,8 TB</b></p>
+                    <p class="pl-3 pr-3 pt-1 mb-0">Sistema: <b class="float-right">795,6 TB</b></p>
+                </div>
+            </div>
+            <div class="col-2 p-1">
+                <div class="card shadow-menu pb-1 grey lighten-3">
+                    <p class="pl-3 pr-3 pt-1 mb-0">Dispon&iacute;vel: <b class="float-right">1629,8 TB</b></p>
+                    <p class="pl-3 pr-3 pt-1 mb-0">Reserva (snapshot): <b class="float-right">407,4 TB</b></p>
+                </div>
+            </div>
+            <div class="col-2 p-1">
+                <div class="card shadow-menu pb-1 grey lighten-3">
+                    <p class="pl-3 pr-3 pt-1 mb-0">Quotado: <b class="float-right">{{quotado|get_size_human_TB }}</b></p>
+                    <p class="pl-3 pr-3 pt-1 mb-0">Reserva utilizada: <b class="float-right">{{reserva_utilizada|get_size_human }}</b></p>
+                </div>
+            </div>
+            <div class="col-2 p-1">
+                <div class="card shadow-menu pb-1 grey lighten-3">
+                    <p class="pl-3 pr-3 pt-1 mb-0">Liberado: <b class="float-right">{{liberado|get_size_human_TB }}</b></p>
+                    <p class="pl-3 pr-3 pt-1 mb-0">Utilizado: <b class="float-right">{{utilizado|get_size_human_TB }}</b></p>
+                </div>
+            </div>
+            <div class="col-2 p-1">
+                <div class="card shadow-menu pb-1 grey lighten-3">
+                    <p class="pl-3 pr-3 pt-1 mb-0">Deduplica&ccedil;&atilde;o: <b class="float-right">{{deduplicacao|get_size_human }}</b></p>
+                    <p class="pl-3 pr-3 pt-1 mb-0">Volumes: <b class="float-right">{{volumes}}</b></p>
+                </div>
+            </div>
+            <div class="col-1 p-1">
+                <div class="card shadow-menu pb-1 grey lighten-3">
+                    <p class="pl-3 pr-1 pt-1 mb-0">Update:</p>
+                    <p class="pl-3 pr-1 pt-1 mb-0"><b class="float-right">{{ storage.atualizacao|date:"d/m H:i" }}</b></p>
+                </div>
+            </div>
+            <div class="col-1 p-1">
+                <button type="button" class="button float-right" id="view_monitoramento" data-name="view_netapp">
+                    <i class="fa fa-eye fa-lg p-1"></i>
+                </button>
+            </div>
+        </div>
+        <div class="row p-0 m-0">
+            {% for divisao in divisoes %}
+            <div class="col p-1 {% if forloop.first %} primeiro {% endif %}">
+                <a href="#" class="grupo-header" data-element="#divisao_{{ divisao.obj.id }}">
+                    <div class="card shadow-menu border-0">
+                        <div
+                            class="card-header p-0 text-center border-bottom-0 {{ divisao.obj.color }} darken-4 white-text card-grupo-header">
+                            <h5 class="card-title p-2 m-0"><b>{{ divisao.obj }}</b></h5>
+                        </div>
+                        <div class="card-body black-text {{ divisao.obj.color }} darken-4 m-0 p-0 card-grupo-header">
+                            <div class="card-text ml-2 mr-1px mb-1px pb-1 {{ divisao.obj.color }} lighten-2 card-grupo-data">
+                                <div class="p-3 white">
+                                    <div class="progress">
+                                        <div class="progress-bar bg-danger" role="progressbar"
+                                            style="width: {{ divisao.area_total_usado_porcentagem }}%"
+                                            aria-valuenow="{{ divisao.area_total_usado_porcentagem }}" aria-valuemin="0"
+                                            aria-valuemax="100"></div>
+                                        <div class="progress-bar bg-success" role="progressbar"
+                                            style="width: {{ divisao.area_total_liberado_porcentagem }}%"
+                                            aria-valuenow="{{ divisao.area_total_liberado_porcentagem }}" aria-valuemin="0"
+                                            aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                                <p class="pl-2 pr-2 pt-1 mb-0">Utilizado: <b
+                                        class="float-right">{{ divisao.area_total_usado|get_size_human }}</b></p>
+                                <p class="pl-2 pr-2 pt-1 mb-0">Liberado: <b
+                                        class="float-right">{{ divisao.area_total_liberado|get_size_human }}</b></p>
+                                <p class="pl-2 pr-2 pt-1 mb-0">Quotado: <b
+                                        class="float-right">{{ divisao.quota_total|get_size_human }}</b></p>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="row p-0 m-0">
+            {% for divisao in divisoes %}
+            <div class="col-2 p-1 divisao_body" style="display:none" id="divisao_{{ divisao.obj.id }}">
+                <div class="card shadow-sidebar border-0">
+                    <div class="card-header p-0 text-center border-bottom-0  {{ divisao.obj.color }} darken-4 white-text">
+                        <h5 class="card-title p-2 m-0 text-center"> <b>{{ divisao.obj }}</b></h5>
+                    </div>
+                    <div class="card-body white-text {{ divisao.obj.color }} darken-4 m-0 p-0">
+                        <ul class="ulstorage pl-2 mr-1px mb-1px">
+                            {% for grupo in divisao.obj.grupotrabalho_set.all %}
+                            <li>
+                                <a class="grupo-content p-2 {{ divisao.obj.color }}  lighten-2 {% if forloop.last %}border-last{% endif %}"
+                                    href="#" data-select="true" data-element="#grupo_{{ divisao.obj.id }}"
+                                    data-name="{{ grupo.id }}">
+                                    {{ grupo.grupo|upper  }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-10 p-1 grupo_body" id="grupo_{{ divisao.obj.id }}" style="display:none"></div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block extrajs %}
+    <script src="{% static 'js/garb_page_wide.js' %}"></script>
+    <script type="text/javascript">
+        $(".grupo-header").click(function (e) {
+            $(".divisao_body").hide();
+            $(".grupo_body").hide();
+            $(".progress-bar").hide();
+            $(".grupo-content").removeClass("lighten-1");
+            $(".card-grupo-header").removeClass("darken-4");
+            $(".card-grupo-header").addClass("grey");
+            $(".card-grupo-data").addClass("grey");
+            $(this).children('.card').children('.card-grupo-header').removeClass("grey");
+            $(this).children('.card').children('.card-grupo-header').addClass("darken-4");
+            $(this).children('.card').children('.card-grupo-header').children('.card-grupo-data').removeClass("grey");
+            $(this).children('.card').children('.card-grupo-header').children('.card-grupo-data').children('div').children('.progress').children('.progress-bar').show();
+            e.preventDefault();
+            el = $(this).data('element');
+            $(el).show();
+        });
+        $(".grupo-content").click(function (e) {
+            $(".grupo-content").removeClass("lighten-1");
+            $(".grupo_body").hide();
+            e.preventDefault();
+            $(this).addClass("lighten-1");
+            el = $(this).data('element');
+            url = "{% url 'monitoramento:storage_netapp_list' pk=0 %}".replace('0', $(this).attr('data-name'));
+            $(el).load(url);
+            $(el).show();
+        });
+    </script>
+{% endblock %}

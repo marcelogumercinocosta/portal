@@ -1,0 +1,7 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls  %}
+{% block submit_buttons_extra_bottom %}
+    {% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}
+    <a href="{% add_preserved_filters history_url %}" class="btn btn-secondary">{% trans "History" %}</a>
+{% endblock %}
+

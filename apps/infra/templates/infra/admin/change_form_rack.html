@@ -1,0 +1,88 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+{% load templatetags %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'infra/css/dataCenter.css' %}">
+{% endblock %}
+
+
+{% block submit_buttons_extra_bottom %}
+    {% if  object_id %}
+        <a href="{% url 'infra:rack_qrcode' object_id  %}" class=" btn btn-info" target="_blank">Gerar QRCode</a>
+    {% endif %}
+{% endblock %}
+
+
+{% block after_field_sets %}
+    <fieldset class="module aligned ">
+        {{ block.super }}
+        <div class="form-row field-tamanho" id="rack_field1">
+            <div class="form-row-box">
+                <div class="form-row-label">
+                    <label for="id_tamanho">Rack Posi&ccedil;&atilde;o:</label>
+                </div>
+                <div class="form-row-field">
+                    <div class="readonly" id="show_field"></div>
+                    <div class="form-row-error"></div>
+                </div>
+            </div>
+        </div>
+        <div id="datacenter_add"> 
+            <div class="col-12 p-1 d-flex justify-content-center border" >
+                <div class="d-flex justify-content-center p-5">
+                    <br><br><br>
+                    <b class="p-3  text-dark">Selecione um prédio.</b>
+                </div>
+            </div>
+        </div>
+        <div id="datacenter_body_add">
+            <div class="col-12 p-0 pt-1 pb-1">
+                <p class="index-color align-middle text-center border m-0 p-1 ">Clique sobre as células abaixo para mapear o
+                    rack, primeiramente, a Linha/Coluna Inicial e, em seguida, a Linha/Coluna Final do rack a ser cadastrado.
+                </p>
+            </div>
+            <div class="col-12 p-1 d-flex justify-content-center border" id="datacenter_body">
+                <div class="d-flex justify-content-center p-5">
+                    <br><br><br>
+                    <button class="btn index-color align-middle  shadow-sm " type="button" disabled>
+                        <span class="spinner-grow  text-dark" role="status" aria-hidden="true"></span>
+                        <b class="p-3  text-dark">Gerando mapa, aguarde alguns segundos...</b>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+{% endblock %}
+
+{% block extrajs %}
+    <script src="{% static 'infra/js/datacenter.js' %}"></script>
+    <script>
+            {% if add %}
+                $('#datacenter_body_add').hide()
+                function montar_map() {
+                    const predio = $('select#id_predio').val()
+                    if (predio) {
+                        $('#datacenter_add').hide()
+                        $('#datacenter_body_add').show()
+                        var url = "{% url 'infra:datacenter_map' 0 %}".replace(0, predio);
+                        $("#datacenter_body").load(url)
+                    } else {
+                        $('#datacenter_body_add').hide()
+                        $('#datacenter_add').show()
+                    }
+                }
+                $("select#id_predio").change(function () {
+                    montar_map()
+                    $("#show_field").val('');
+                });
+                montar_map()
+            {% else %}
+                $('#datacenter_add').hide()
+                $('#datacenter_body_add').show()
+                $("#datacenter_body").load("{% url 'infra:datacenter_map_edit' original.pk %} ");
+            {% endif %} 
+        
+    </script>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div id="content-main">
+    <div class="change-columns">
+        <div class="main-column">
+            <div class="main-column-item">
+                <br>
+                <div class="panel-group p-0 " id="accordion" role="tablist" aria-multiselectable="true">
+                    {% for tipo in tipos_monitoramento %}
+                    <div  id="accordion"  class='box-garb'>
+                        <div class="panel panel-default" id="heading{{ host.uid  }}">
+                            <div class="panel-heading " role="tab" >
+                                <h4 class="panel-title panel-title-xen m-0 ">
+                                    <a role="button" class="d-block w-100  p-3" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ tipo.id }}" aria-expanded="false" aria-controls="collapse{{ tipo.id  }}">
+                                        Monitoramento: {{ tipo }}
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapse{{ tipo.id  }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{ host.uid  }}">
+                                <div class="panel-body border-top border-left pt-1 ">
+                                    {% for monitoramento in tipo.monitoramento_set.all %}
+                                    <div class="card-body">
+                                        <div class="row pr-2 pl-2">
+                                            <div class="col-4 text-right ">
+                                                <strong class="text-primary">{{ monitoramento.nome }}</strong>
+                                            </div>
+                                            <div class="col-7 text-left">
+                                                <a href="{{ monitoramento.url }}"
+                                                    target="_blank">{{ monitoramento.url|truncatechars:80 }}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% empty %}
+                                    <p> Não há monitoramentos</p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

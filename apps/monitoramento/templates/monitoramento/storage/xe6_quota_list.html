@@ -1,0 +1,99 @@
+{% load static %}
+{% load templatetags %}
+{% load humanize %}
+<div class="card shadow-menu border-0">
+    <div class="card-header p-0 text-center border-bottom-0  {{ storage_area_grupo_trabalho.grupo.divisao.get_color }} darken-4 white-text card-grupo-header">
+        <a class="card-link" data-toggle="collapse" href="#collapse_{{ grupo.id }}">
+            <h5 class="card-title p-2 pl-5 m-0 text-left white-text"><b>{{ storage_area_grupo_trabalho.grupo|upper }} </b></h5>
+        </a>
+    </div>
+    <div class="card-body m-0 p-0">
+        <div class="row p-0 m-0 white grupo-head">
+            <div class="col-5 p-0">
+                <div class="row p-0 m-0 tile_count">
+                    <div class="col-12 pt-3 pl-4 pr-4 pb-3">
+                        <div class="pt-1 pb-1">
+                            <div class="progress">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: {{storage_area_grupo_trabalho.area_total_usado_porcentagem}}%" aria-valuenow="{{storage_area_grupo_trabalho.area_total_usado_porcentagem}}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-2"></div>
+                    <div class="col-4 tile_stats_count first ">
+                        <span class="count_top">Utilizado</span>
+                        <div class="count text-danger text-right">{{ storage_area_grupo_trabalho.area_total_usado|get_size_human_number }}<span>{{ storage_area_grupo_trabalho.area_total_usado|get_size_human_size }}</span></div>
+                        <span class="count_bottom">{{storage_area_grupo_trabalho.area_total_usado_porcentagem}}% do quotado</span>
+                    </div>
+                    <div class="col-4 tile_stats_count">
+                        <span class="count_top">Quotado</span>
+                        <div class="count text-right">{{ storage_area_grupo_trabalho.quota_KB|get_size_human_number }}<span>{{ storage_area_grupo_trabalho.quota_KB|get_size_human_size }}</span></div>
+                         <span class="count_bottom">{{ quota_utilizadas|length }} Quotas(s)</span>
+                    </div>
+                    <div class="col-2"></div>
+                </div>
+            </div>
+            <div class="col-6 p-1 pt-2">
+
+            </div>
+
+        </div>
+        <div class="row p-0 m-0 font-weight-bold {{ storage_area_grupo_trabalho.grupo.divisao.get_color }}  lighten-1 ">
+            <div class="col-1 pt-2 pb-2 pl-3 pr-2 text-center"></div>
+            <div class="col-5 pt-2 pb-2 pl-0 pr-0 text-center">nome do volume</div>
+            <div class="col-1 pt-2 pb-2 pl-0 pr-0 text-center">quota</div>
+            <div class="col-1 pt-2 pb-2 pl-0 pr-0 text-center">limite</div>
+            <div class="col-1 pt-2 pb-2 pl-0 pr-0 text-right">utilizada :</div>
+            <div class="col-1 pt-2 pb-2 pl-3 pr-2 text-center">%</div>
+        </div>
+        {% for quotautilizada in quota_utilizadas %}
+        <div class="row p-0 m-0 lin-s grey lighten-5 ">
+            <div class="col-2 pt-2 pb-2 pl-3 pr-0 text-center">
+                <a class="btn btn-primary btn-xs info " data-toggle="collapse" href="#collapse_{{ quotautilizada.id }}" role="button" aria-expanded="false" >
+                    <i class="fa fa-search-plus infoi"></i> info
+                </a>
+            </div>
+            <div class="col-4 pt-3 pb-2 pl-3 pr-0 text-left">{{ quotautilizada.area|truncatechars:75}}</div>
+            <div class="col-1 pt-3 pb-2 pl-0 pr-3 text-right">{{ quotautilizada.quota|get_size_human}}</div>
+            <div class="col-1 pt-3 pb-2 pl-0 pr-1 text-right">{{ quotautilizada.limite|get_size_human}}</div>
+            <div class="col-1 pt-3 pb-2 pl-0 pr-1 text-right">{{ quotautilizada.usado|get_size_human}}</div>
+            <div class="col-1 pt-3 pb-2 pl-0 pr-2 text-center {% if quotautilizada.porcentagem >= 95 %} text-danger {% endif %}">{{ quotautilizada.porcentagem|intcomma }}%</div>
+        </div>
+        <div class="collapse" id="collapse_{{ quotautilizada.id }}">
+            <div class="card card-body border-bottom-0 border-top-0  p-0 m-0 ">
+                {% for quota_utilizada_item in quotautilizada.quotautilizadalista_set.all %}
+                <div class="row p-0  m-0  white">
+                    <div class="col-2"></div>
+                    <div class="col-1 pt-2 pb-2 pl-3 pr-2 text-left">
+                        {% if quota_utilizada_item.detalhe == '+' %}
+                        Status: <b class="float-right"><i class="fa fa-user-check infoi text-success"></i></b>
+                        {% else %}
+                        Status: <b class="float-right"><i class="fa fa-user-times infoi text-danger"></i></b>
+                        {% endif %}
+                    </div>
+                    <div class="col-2 pt-2 pb-2 pl-5 pr-0 text-left">Tipo: <b>{{ quota_utilizada_item.get_tipo }}</b></div>
+                    <div class="col-3 pt-2 pb-2 pl-0 pr-0 text-left">Conta: <b>{{ quota_utilizada_item.conta }}</b></div>
+                    <div class="col-2 pt-2 pb-2 pl-4 pr-4 text-left">Utilizado: <b class="float-right">{{ quota_utilizada_item.usado|get_size_human }}</b></div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="row p-0 pt-1 m-0 lin-r lin-l white">
+                <div class="col-4"></div>
+                <div class="col-7">
+                    <small>* Usu&aacute;rios com Status: <i class="fa fa-user-times infoi text-danger"></i> est&atilde;o no disco, n&atilde;o necessariamente na quota do grupo</small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<script type="text/javascript">
+            $(".info").click(function(e){
+                e.preventDefault();
+                $(this).toggleClass("btn-primary");
+                $(this).toggleClass("btn-info");
+                $(this).children().toggleClass("fa-search-plus");
+                $(this).children().toggleClass("fa-search-minus");
+                $('.plus-info').toggle();
+            });
+</script>
+
