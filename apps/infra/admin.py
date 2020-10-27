@@ -2,7 +2,6 @@ from collections import OrderedDict
 from distutils.command import clean
 from distutils.command.clean import clean
 from secrets import choice
-from tkinter.filedialog import SaveAs
 
 import numpy as np
 from django.contrib import admin, messages
