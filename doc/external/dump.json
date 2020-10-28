@@ -4,9 +4,7 @@
   "pk": 1,
   "fields": {
     "name": "Responsavel",
-    "permissions": [
-      141
-    ]
+    "permissions": []
   }
 },
 {
@@ -14,13 +12,7 @@
   "pk": 2,
   "fields": {
     "name": "Secretaria",
-    "permissions": [
-      138,
-      142,
-      140,
-      26,
-      28
-    ]
+    "permissions": []
   }
 },
 {
@@ -28,52 +20,7 @@
   "pk": 3,
   "fields": {
     "name": "Suporte",
-    "permissions": [
-      138,
-      143,
-      140,
-      44,
-      29,
-      30,
-      31,
-      32,
-      37,
-      38,
-      39,
-      40,
-      52,
-      89,
-      90,
-      91,
-      92,
-      101,
-      102,
-      103,
-      104,
-      85,
-      86,
-      87,
-      88,
-      81,
-      82,
-      83,
-      84,
-      53,
-      54,
-      55,
-      56,
-      65,
-      66,
-      67,
-      68,
-      97,
-      98,
-      99,
-      100,
-      80,
-      96,
-      76
-    ]
+    "permissions": []
   }
 },
 {
@@ -81,10 +28,7 @@
   "pk": 4,
   "fields": {
     "name": "Colaborador",
-    "permissions": [
-      160,
-      48
-    ]
+    "permissions": []
   }
 },
 {
@@ -128,189 +72,6 @@
   "pk": 5,
   "fields": {
     "vinculo": "Estagi\u00e1rio"
-  }
-},
-{
-  "model": "core.divisao",
-  "pk": 1,
-  "fields": {
-    "divisao": "SESSS",
-    "email": "marcelogc@gmail.com",
-    "chefe": 1,
-    "chefe_ativo": true,
-    "chefe_substituto": 1,
-    "chefe_substituto_ativo": false
-  }
-},
-{
-  "model": "core.divisao",
-  "pk": 2,
-  "fields": {
-    "divisao": "DIDMD",
-    "email": "secretaria.dmd@inpe.br",
-    "chefe": 1,
-    "chefe_ativo": true,
-    "chefe_substituto": 1,
-    "chefe_substituto_ativo": false
-  }
-},
-{
-  "model": "core.divisao",
-  "pk": 3,
-  "fields": {
-    "divisao": "DIDOP",
-    "email": "secretaria.dop@inpe.br",
-    "chefe": 1,
-    "chefe_ativo": true,
-    "chefe_substituto": 1,
-    "chefe_substituto_ativo": false
-  }
-},
-{
-  "model": "core.divisao",
-  "pk": 4,
-  "fields": {
-    "divisao": "DIDSA",
-    "email": "secretaria.dsa@inpe.br",
-    "chefe": 1,
-    "chefe_ativo": true,
-    "chefe_substituto": 1,
-    "chefe_substituto_ativo": false
-  }
-},
-{
-  "model": "core.divisao",
-  "pk": 5,
-  "fields": {
-    "divisao": "SESAA",
-    "email": "secretaria.saa@inpe.br",
-    "chefe": 1,
-    "chefe_ativo": true,
-    "chefe_substituto": 1,
-    "chefe_substituto_ativo": false
-  }
-},
-{
-  "model": "core.divisao",
-  "pk": 6,
-  "fields": {
-    "divisao": "PGMET",
-    "email": "secretaria.pgmet@inpe.br",
-    "chefe": 1,
-    "chefe_ativo": true,
-    "chefe_substituto": 1,
-    "chefe_substituto_ativo": false
-  }
-},
-{
-  "model": "core.divisao",
-  "pk": 7,
-  "fields": {
-    "divisao": "CG",
-    "email": "marcelogc@gmail.com",
-    "chefe": 1,
-    "chefe_ativo": true,
-    "chefe_substituto": 1,
-    "chefe_substituto_ativo": false
-  }
-},
-{
-  "model": "core.grupoacesso",
-  "pk": 1,
-  "fields": {
-    "grupo_acesso": "SYSADMIN | PESQUISA",
-    "hbac_freeipa": "hbac_srv_sysadmin_pesq",
-    "tipo": "PESQUISA",
-    "data": "2020-10-15T15:53:34.060",
-    "grupo_trabalho": 25
-  }
-},
-{
-  "model": "core.grupoacesso",
-  "pk": 2,
-  "fields": {
-    "grupo_acesso": "SYSADMIN | DESENVOLVIMENTO",
-    "hbac_freeipa": "hbac_srv_sysadmin_dev",
-    "tipo": "DESENVOLVIMENTO",
-    "data": "2020-10-15T15:53:34.697",
-    "grupo_trabalho": 25
-  }
-},
-{
-  "model": "core.grupoacesso",
-  "pk": 3,
-  "fields": {
-    "grupo_acesso": "SYSADMIN | OPERACIONAL",
-    "hbac_freeipa": "hbac_srv_sysadmin_oper",
-    "tipo": "OPERACIONAL",
-    "data": "2020-10-15T15:53:35.281",
-    "grupo_trabalho": 25
-  }
-},
-{
-  "model": "core.grupoacesso",
-  "pk": 4,
-  "fields": {
-    "grupo_acesso": "BAMC | PESQUISA",
-    "hbac_freeipa": "hbac_srv_bamc_pesq",
-    "tipo": "PESQUISA",
-    "data": "2020-10-15T17:40:18.719",
-    "grupo_trabalho": 57
-  }
-},
-{
-  "model": "core.grupoacesso",
-  "pk": 5,
-  "fields": {
-    "grupo_acesso": "CLIMA | DESENVOLVIMENTO",
-    "hbac_freeipa": "hbac_srv_clima_dev",
-    "tipo": "DESENVOLVIMENTO",
-    "data": "2020-10-17T21:09:29.287",
-    "grupo_trabalho": 8
-  }
-},
-{
-  "model": "core.grupoacesso",
-  "pk": 6,
-  "fields": {
-    "grupo_acesso": "CLIMA | OPERACIONAL",
-    "hbac_freeipa": "hbac_srv_clima_oper",
-    "tipo": "OPERACIONAL",
-    "data": "2020-10-17T21:09:29.962",
-    "grupo_trabalho": 8
-  }
-},
-{
-  "model": "core.grupoacesso",
-  "pk": 7,
-  "fields": {
-    "grupo_acesso": "CLIMA | PESQUISA",
-    "hbac_freeipa": "hbac_srv_clima_pesq",
-    "tipo": "PESQUISA",
-    "data": "2020-10-18T12:57:33.393",
-    "grupo_trabalho": 8
-  }
-},
-{
-  "model": "core.grupoacesso",
-  "pk": 8,
-  "fields": {
-    "grupo_acesso": "DAS | PESQUISA",
-    "hbac_freeipa": "hbac_srv_das_pesq",
-    "tipo": "PESQUISA",
-    "data": "2020-10-18T14:45:30.343",
-    "grupo_trabalho": 52
-  }
-},
-{
-  "model": "core.grupoacesso",
-  "pk": 9,
-  "fields": {
-    "grupo_acesso": "BAM | PESQUISA",
-    "hbac_freeipa": "hbac_srv_bam_pesq",
-    "tipo": "PESQUISA",
-    "data": "2020-10-18T14:57:02.135",
-    "grupo_trabalho": 50
   }
 }
 ]

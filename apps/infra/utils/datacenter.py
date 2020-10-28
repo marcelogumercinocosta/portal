@@ -76,7 +76,7 @@ class DatacenterSensores:
         self.criar_grid()
 
     def criar_grid(self):
-        grid_x, grid_y = np.mgrid[range(67), range(47)]
+        grid_x, grid_y = np.mgrid[range(self.predio.colunas + 1 ), range(self.predio.linhas + 1 )]
         pontos_grid = np.array([x.get_posicao_numerico() for x in self.sensores])
         temperaturas = np.array([x.temperatura for x in self.sensores])
         datacenter_sensor_grid = inter.griddata(pontos_grid, temperaturas, (grid_x, grid_y), method="linear", fill_value=0)

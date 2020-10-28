@@ -26,7 +26,7 @@ DATABASES = {
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "handlers": {"file": {"level": "ERROR", "class": "logging.FileHandler", "filename": BASE_DIR + "/logs/pord.log",},},
+    "handlers": {"file": {"level": "ERROR", "class": "logging.FileHandler", "filename": BASE_DIR + "/logs/prod.log",},},
     "loggers": {"django": {"handlers": ["file"], "level": "ERROR", "propagate": True,}, "django.db.backends": {"handlers": ["file"], "level": "ERROR",},},
 }
 

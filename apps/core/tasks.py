@@ -19,8 +19,8 @@ def send_email_template_task(self, subject, template, list_send_email, contexts_
     self.backend.task_keyprefix = b"portal-send_email_template_task-"
     context = create_context(contexts_email)
     template_email = get_template(template).render(context)
-    send_mail(subject, None, "portal.cptec@gmail.com", list_send_email, fail_silently=True, html_message=template_email)
-    return subject + " | " + " ".join(str(e) for e in list_send_email)
+    teste = send_mail(subject, None, "portal.cptec@gmail.com", list_send_email, html_message=template_email)
+    return subject + str(teste) + " | " + " ".join(str(e) for e in list_send_email)
 
 @shared_task(bind=True)
 def send_email_task(self, subject, text, list_send_email):

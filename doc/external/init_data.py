@@ -41,7 +41,23 @@ def main():
 
     from django.contrib.auth.models import User, Group, Permission
     from apps.colaborador.models import Colaborador, Vinculo
-    from apps.core.models import Divisao
+    from apps.core.models import Divisao, Predio
+
+    predio = Predio()
+    predio.predio ="CPTEC"
+    predio.predio_sistema ="CPT"
+    predio.linhas=46
+    predio.colunas=66
+    predio.sensores=16
+    predio.areas="(1, 36, 1, 19)/(36, 43, 1, 4)/(43, 46, 1, 30)" 
+    predio.save()
+
+
+    for divisao in ["SESSS", "DIDMD", "DIDOP", "DIDSA", "SESAA", "PGMET", "CG"]:
+        obj_divisao = Divisao()
+        obj_divisao.divisao = divisao
+        obj_divisao.email = "marcelogc@gmail.com"
+        obj_divisao.save()
 
     colaborador = Colaborador()
     colaborador.username = "admin.portal"

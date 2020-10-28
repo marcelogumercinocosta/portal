@@ -65,10 +65,8 @@ install-prod:
 
 # target: start-test - start for test 
 start-test:
-	docker-compose -f ./docker/docker-compose_test.yml -p test_3SPortal --project-directory $(shell pwd) up -d 
+	docker-compose -f ./docker/docker-compose_test.yml -p test_portal --project-directory $(shell pwd) up -d 
 	docker exec -it  test_django-celery pytest --cov=. --cov-report term
-	find ./ -name '*.pyc' -print0|xargs -0 rm
-	find ./ -name '*.pyo' -print0|xargs -0 rm
 	rm -f ./logs/*
 	rm -f .coverage
 	rm -fr ./pytest_cacheclear
@@ -78,12 +76,12 @@ start-test:
 # target: start-dev - start for development 
 start-dev:
 	export django_settings_module=portal.settings.development
-	docker-compose -f ./docker/docker-compose_development.yml -p dev_3SPortal --project-directory $(shell pwd) up -d
+	docker-compose -f ./docker/docker-compose_development.yml -p dev_portal --project-directory $(shell pwd) up -d
 
 # target: start-prod - start for oper 
 start-prod:
 	export django_settings_module=portal.settings.production
-	docker-compose -f ./docker/docker-compose_production.yml -p prod_3SPortal --project-directory $(shell pwd) up -d
+	docker-compose -f ./docker/docker-compose_production.yml -p prod_portal --project-directory $(shell pwd) up -d
 
 # target: test-dev - start test in dev
 test-dev:
@@ -101,9 +99,8 @@ loaddata:
 
 # target: dumpdata - dump data for database
 dumpdata:
-	../env/bin/python ./manage.py dumpdata auth.group colaborador.vinculo core.divisao core.grupoacesso core.divisao monitoramento.tipomonitoramento --indent 2 > ./doc/external/dump.json
-
-	../env/bin/python ./manage.py dumpdata core.grupotrabalho infra.equipamento infra.storage infra.storagearea infra.storageareagrupotrabalho infra.supercomputador infra.servidor infra.rede infra.servidorhostnameip core.predio --indent 2 > ./doc/external/dump_private.json
+	../env/bin/python ./manage.py dumpdata auth.group colaborador.vinculo monitoramento.tipomonitoramento --indent 2 > ./doc/external/dump.json
+	../env/bin/python ./manage.py dumpdata core.grupotrabalho infra.equipamento infra.storage infra.storagearea infra.storageareagrupotrabalho infra.supercomputador infra.servidor infra.rede --indent 2 > ./doc/external/dump_private.json 
 
 # target: init - insert admin user + permissions
 init:

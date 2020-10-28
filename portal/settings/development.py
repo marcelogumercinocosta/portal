@@ -50,6 +50,6 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-if os.environ['EMAIL_BACKEND']:
+if  int(env('EMAIL_BACKEND')) == 1:
     EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
     EMAIL_FILE_PATH = os.path.join(BASE_DIR, "logs")

@@ -139,7 +139,6 @@ GARB_CONFIG = {
             "sub_itens": [
                 {"label": "Supercomputador Jobs e Nodes", "route": "monitoramento:uso_supercomputador", "auth": "all"},
                 {"label": "Armazenamento Corporativo", "route": "monitoramento:storage_netapp", "auth": "all"},
-                {"label": "Quotas XE6", "route": "monitoramento:storage_xe6quota", "auth": "all"},
                 {"label": "Ambiente Virtual", "route": "monitoramento:vms_xen", "auth": "all"},
                 {"label": "Ferramentas", "route": "monitoramento:ferramentas", "auth": "all"},
                 {"label": "RNP", "route": "monitoramento:rnp_home", "auth": "all"},
@@ -152,8 +151,9 @@ GARB_CONFIG = {
 LOGIN_URL = "/admin/"
 
 # email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
-EMAIL_HOST = env('EMAIL_SUPORTE')
+EMAIL_HOST = env('EMAIL_HOST')
 EMAIL_HOST_USER = env('EMAIL_HOST_USER') 
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD') 
 EMAIL_PORT = 587
