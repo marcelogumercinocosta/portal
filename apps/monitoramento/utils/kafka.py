@@ -33,4 +33,4 @@ class Kafka:
         self.consumer.reset_offsets(offsets)
         for message in itertools.islice(self.consumer, LAST_N_MESSAGES):
             result = message.offset
-        self.last_lines = result
+

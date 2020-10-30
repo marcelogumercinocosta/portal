@@ -9,7 +9,6 @@ ifeq ($(so), Darwin)
 endif
 
 
-
 # target: help - Display callable targets.
 help:
 	@egrep "^# target:" [Mm]akefile
@@ -53,6 +52,7 @@ install-dev:
 	@echo "make init -> criar usuário admin"
 	@echo "#####################################################"
 
+
 # target: install-prod - Config test
 install-prod:
 	rsync -auv ./doc/environment/_prod.env prod.env
@@ -73,6 +73,7 @@ start-test:
 	rm -fr ./__pycache__/
 	docker rm -f test_django-celery test_redis
 
+
 # target: start-dev - start for development 
 start-dev:
 	export django_settings_module=portal.settings.development
@@ -87,22 +88,15 @@ start-prod:
 test-dev:
 	../env/bin/pytest --cov=. --cov-report html
 
-# target: mysql-migrate - migrate models for mysql nedd set database_password and database_name
-mysql-migrate:
-	../env/bin/python ./manage.py makemigrations core colaborador monitoramento infra 
-	../env/bin/python ./manage.py migrate
-
-# target: loaddata - insert data in database
-loaddata:
-	../env/bin/python ./manage.py  loaddata ./doc/external/dump.json
-	../env/bin/python ./manage.py  loaddata ./doc/external/dump_private.json
-
 # target: dumpdata - dump data for database
 dumpdata:
 	../env/bin/python ./manage.py dumpdata auth.group colaborador.vinculo monitoramento.tipomonitoramento --indent 2 > ./doc/external/dump.json
-	../env/bin/python ./manage.py dumpdata core.grupotrabalho infra.equipamento infra.storage infra.storagearea infra.storageareagrupotrabalho infra.supercomputador infra.servidor infra.rede --indent 2 > ./doc/external/dump_private.json 
+	../env/bin/python ./manage.py dumpdata core.grupotrabalho infra.rede infra.hostnameip infra.rack infra.equipamento infra.storage infra.storagearea infra.storageareagrupotrabalho infra.supercomputador infra.servidor infra.servidorhostnameip infra.ambientevirtual monitoramento.tipomonitoramento monitoramento.monitoramento monitoramento.prometheus --indent 2 > ./doc/external/dump_private.json 
 
 # target: init - insert admin user + permissions
 init:
 	@[ ${django_settings_module} ] || ( echo ">> django_settings_module is not set"; exit 1 )
-	./doc/external/init_data.py
+	docker exec -it $$(docker ps --format "{{.Names}}" | grep django-celery) /app/manage.py migrate
+	docker exec -it $$(docker ps --format "{{.Names}}" | grep django-celery) /app/manage.py loaddata ./doc/external/dump.json
+	docker exec -it $$(docker ps --format "{{.Names}}" | grep django-celery) python3 /app/doc/external/init_data.py
+	docker exec -it $$(docker ps --format "{{.Names}}" | grep django-celery) /app/manage.py loaddata ./doc/external/dump_private.json

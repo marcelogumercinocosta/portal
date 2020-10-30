@@ -59,14 +59,14 @@ class SupercomputadorHistView(TemplateView):
         context = super().get_context_data(**kwargs)
         supercomputador = get_object_or_404(Supercomputador, id=kwargs["pk"])
         try:
-            kafka_client_historico = Kafka(supercomputador.kafka_topico_historico, 290)
+            kafka_client_historico = Kafka(supercomputador.kafka_topico_historico, 580)
             kafka_client_historico.get_kafka_topic_last()
             nodes_bruto = kafka_client_historico.get_kafka_topic()
             context["grafico"] = self.get_grafico_historico(pd.DataFrame(nodes_bruto))
             context["numero"] = SupercomputadorHistorico(nodes_bruto[-1])
             context["supercomputador"] = supercomputador
             return context
-        except (RuntimeError, TypeError, NameError, IndexError, KafkaException, NoBrokersAvailableError) as e:
+        except (RuntimeError, TypeError, NameError, IndexError, KeyError, KafkaException, NoBrokersAvailableError) as e:
             context["grafico"] = None
             context["numero"] = None
             context["supercomputador"] = None

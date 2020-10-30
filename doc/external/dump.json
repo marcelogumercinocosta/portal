@@ -4,7 +4,9 @@
   "pk": 1,
   "fields": {
     "name": "Responsavel",
-    "permissions": []
+    "permissions": [
+      145
+    ]
   }
 },
 {
@@ -12,7 +14,12 @@
   "pk": 2,
   "fields": {
     "name": "Secretaria",
-    "permissions": []
+    "permissions": [
+      146,
+      144,
+      26,
+      28
+    ]
   }
 },
 {
@@ -20,7 +27,52 @@
   "pk": 3,
   "fields": {
     "name": "Suporte",
-    "permissions": []
+    "permissions": [
+      142,
+      147,
+      144,
+      48,
+      29,
+      30,
+      31,
+      32,
+      41,
+      42,
+      43,
+      44,
+      56,
+      93,
+      94,
+      95,
+      96,
+      105,
+      106,
+      107,
+      108,
+      89,
+      90,
+      91,
+      92,
+      85,
+      86,
+      87,
+      88,
+      81,
+      82,
+      83,
+      84,
+      65,
+      66,
+      67,
+      68,
+      101,
+      102,
+      103,
+      104,
+      80,
+      100,
+      76
+    ]
   }
 },
 {
@@ -28,7 +80,10 @@
   "pk": 4,
   "fields": {
     "name": "Colaborador",
-    "permissions": []
+    "permissions": [
+      156,
+      52
+    ]
   }
 },
 {
@@ -72,6 +127,20 @@
   "pk": 5,
   "fields": {
     "vinculo": "Estagi\u00e1rio"
+  }
+},
+{
+  "model": "monitoramento.tipomonitoramento",
+  "pk": 1,
+  "fields": {
+    "nome": "Rede"
+  }
+},
+{
+  "model": "monitoramento.tipomonitoramento",
+  "pk": 2,
+  "fields": {
+    "nome": "Datacenter"
   }
 }
 ]

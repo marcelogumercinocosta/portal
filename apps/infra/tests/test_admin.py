@@ -225,7 +225,7 @@ def test_servidor_admin(admin_site, superuser, grupo_trabalho) -> None:
 
     model_admin.change_view(request=request, object_id=str(servidor.pk))
     assert model_admin.inlines == (HostnameIPInLine, GrupoAcessoEquipamentoInLine, OcorrenciaInLine) 
-    assert model_admin.readonly_fields == ("nome", "status", "ldap") 
+    assert model_admin.readonly_fields == ("nome", "status", "ldap", "tipo", "tipo_uso", "predio")
 
     assert freeipa.host_find_show(fqdn=servidor.freeipa_name)['result']['description'] == ["Servidor de TESTE"]
     data_form.update({"descricao":"Servidor de TESTE alteração"})

@@ -111,6 +111,7 @@ class HostnameIPInLine(admin.TabularInline):
 class EquipamentoRackInLine(admin.TabularInline):
     model = Servidor
     fields = ("nome", "rack_tamanho", "rack_posicao")
+    ordering = ("-rack_posicao", "nome" )
     readonly_fields = (
         "nome",
         "rack_tamanho",
@@ -191,7 +192,7 @@ class RackAdmin(admin.ModelAdmin):
 class SupercomputadorAdmin(admin.ModelAdmin):
     search_fields = ["marca", "modelo"]
     list_display = ("marca", "modelo", "kafka_topico_realtime", "kafka_topico_historico", "status")
-    exclude = ("rack", "rack_tamanho", "rack_posicao", "consumo", "grupos_acesso", "patrimonio", "serie")
+    exclude = ("rack", "rack_tamanho", "rack_posicao", "consumo", "grupos_acesso", "patrimonio", "serie", "descricao", "tipo_uso", "tipo", "status",)
 
 
 @admin.register(Storage)
@@ -251,7 +252,7 @@ class ServidorAdmin(admin.ModelAdmin):
         return super().add_view(request, form_url=form_url, extra_context=extra_context)
 
     def change_view(self, request, object_id, form_url="", extra_context=None):
-        self.readonly_fields = ("nome", "status", "ldap")
+        self.readonly_fields = ("nome", "status", "ldap", "tipo", "tipo_uso", "predio")
         self.inlines = (HostnameIPInLine, GrupoAcessoEquipamentoInLine, OcorrenciaInLine)
         return super().change_view(request, object_id, form_url=form_url, extra_context=extra_context)
 

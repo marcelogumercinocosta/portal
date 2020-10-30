@@ -132,7 +132,7 @@ def test_uso_supercomputador_nodes_error_view():
     assert response.status_code == 200
 
 def test_uso_supercomputador_hist_error_view():
-    supercomputador = mixer.blend(Supercomputador, kafka_topico_realtime="xc50_nodes", kafka_topico_historico="_hist")
+    supercomputador = mixer.blend(Supercomputador, kafka_topico_realtime="_nodes", kafka_topico_historico="_hist")
     request = RequestFactory().get(reverse("monitoramento:uso_supercomputador_hist", kwargs={"pk": supercomputador.pk}))
     response = SupercomputadorHistView.as_view()(request, pk=supercomputador.pk)
     assert response.status_code == 200
