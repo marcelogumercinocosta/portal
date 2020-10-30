@@ -98,7 +98,7 @@ class DatacenterSensores:
 
     def matriz_datacenter(self):
         escala = self.definir_escala()
-        matriz_datacenter = [[{"temperatura": self.datacenter_sensor[x][y], "escala": escala[self.datacenter_sensor[x][y]]} for x in range(self.predio.linhas + 1)] for y in range(self.predio.colunas + 1 )]
+        matriz_datacenter = [[{"temperatura": self.datacenter_sensor[x][y], "escala": escala[self.datacenter_sensor[x][y]]} for x in range(self.predio.colunas + 1)] for y in range(self.predio.linhas + 1 )]
         return matriz_datacenter
 
 
