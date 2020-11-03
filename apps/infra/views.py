@@ -168,5 +168,5 @@ class CriarServidorView(LoginRequiredMixin, PermissionRequiredMixin, RedirectVie
                 servidor.ldap = True
                 servidor.save()
         else:
-            messages.add_message(self.request, messages.ERROR, "Confira o Cadastro, existe informação faltando ou não salva! ")
+            messages.add_message(self.request, messages.ERROR, "Confira o Cadastro, existe informação faltando ou não salva! É necessário um grupo de acesso! ")
         return reverse_lazy("admin:infra_servidor_change", kwargs={"object_id": servidor.id})

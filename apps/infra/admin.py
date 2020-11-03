@@ -9,7 +9,7 @@ from django.contrib.admin import TabularInline
 from django.core.exceptions import ValidationError
 from django.db.models import Q, Sum
 from django.forms.models import BaseInlineFormSet
-
+from django.shortcuts import get_object_or_404
 from apps.core.models import GrupoAcesso
 from apps.core.utils.freeipa import FreeIPA
 from apps.infra.forms import (AmbienteVirtualServidorInLineForm,
@@ -248,10 +248,16 @@ class ServidorAdmin(admin.ModelAdmin):
     def add_view(self, request, form_url="", extra_context=None):
         extra_context = dict( show_save=False, show_save_and_continue=True)
         self.readonly_fields = ("status","ldap")
+        self.fields = ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "ldap"]
         self.inlines = ()
         return super().add_view(request, form_url=form_url, extra_context=extra_context)
 
     def change_view(self, request, object_id, form_url="", extra_context=None):
+        servidor = get_object_or_404(Servidor, id=object_id)
+        if servidor.tipo == 'Servidor Virtual':
+            self.fields = ["nome", "tipo", "tipo_uso", "predio", "descricao", "status", "ldap"]
+        else:
+            self.fields = ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "ldap"]
         self.readonly_fields = ("nome", "status", "ldap", "tipo", "tipo_uso", "predio")
         self.inlines = (HostnameIPInLine, GrupoAcessoEquipamentoInLine, OcorrenciaInLine)
         return super().change_view(request, object_id, form_url=form_url, extra_context=extra_context)

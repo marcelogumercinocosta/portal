@@ -60,9 +60,10 @@ services:
       - "8000"
     volumes:
       - .:/app
+      - ./staticfiles:/app/staticfiles
     environment:
       django_settings_module: 'portal.settings.production'
-    command: bash -c "python manage.py collectstatic --clear  && python manage.py migrate && gunicorn portal.wsgi:application -b 0.0.0.0:8000 --workers 3"
+    command: bash -c "python manage.py collectstatic --noinput && python manage.py migrate && gunicorn portal.wsgi:application -b 0.0.0.0:8000 --workers 3"
   nginx:
     restart: always
     container_name: prod_nginx
@@ -72,5 +73,6 @@ services:
     volumes:
       - ./docker/nginx/conf.d:/etc/nginx/conf.d
       - ./media:/app/media
+      - ./staticfiles:/app/staticfiles
     depends_on:
       - gunicorn

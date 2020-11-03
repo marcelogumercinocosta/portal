@@ -199,7 +199,8 @@ def test_servidor_admin(admin_site, superuser, grupo_trabalho) -> None:
     mixer.blend(StorageGrupoAcessoMontagem, ip='192.168.0.1', parametro='-fstype=nfs4,rw', tipo='OPERACIONAL', montagem="/scripts/teste", namespace="/oper/scripts/teste", automount="auto.grupo", rede=rede, grupo_trabalho=grupo_trabalho)
     mixer.blend(StorageGrupoAcessoMontagem, ip='192.168.0.1', parametro='-fstype=nfs4,rw', tipo='OPERACIONAL', montagem="/log/teste", namespace="/oper/log/teste", automount="auto.grupo", rede=rede, grupo_trabalho=grupo_trabalho)
     mixer.blend(StorageGrupoAcessoMontagem, ip='192.168.0.5', parametro='-fstype=nfs4,rw', tipo='OPERACIONAL', montagem="/share/teste", namespace="/share/teste", automount="auto.grupo", rede=rede, grupo_trabalho=grupo_trabalho)
-    servidor = mixer.blend(Servidor, nome='server1', descricao="Servidor de TESTE", ldap=True, tipo_uso="OPERACIONAL", predio=predio)
+
+    servidor = mixer.blend(Servidor, nome='server1', descricao="Servidor de TESTE", ldap=True, tipo_uso="OPERACIONAL", predio=predio, tipo="Servidor Físico")
     data_form = servidor.__dict__
 
     ServidorHostnameIP.objects.create(servidor=servidor, hostnameip=hostnameip)
@@ -222,10 +223,17 @@ def test_servidor_admin(admin_site, superuser, grupo_trabalho) -> None:
     model_admin.add_view(request=request)
     assert model_admin.inlines == ()
     assert model_admin.readonly_fields == ("status","ldap") 
+    assert model_admin.fields == ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "ldap"]
 
     model_admin.change_view(request=request, object_id=str(servidor.pk))
     assert model_admin.inlines == (HostnameIPInLine, GrupoAcessoEquipamentoInLine, OcorrenciaInLine) 
     assert model_admin.readonly_fields == ("nome", "status", "ldap", "tipo", "tipo_uso", "predio")
+    assert model_admin.fields == ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "ldap"]
+    servidor.tipo = "Servidor Virtual"
+    servidor.save()
+    model_admin.change_view(request=request, object_id=str(servidor.pk))
+    assert model_admin.fields == ["nome", "tipo", "tipo_uso", "predio", "descricao", "status", "ldap"]
+
 
     assert freeipa.host_find_show(fqdn=servidor.freeipa_name)['result']['description'] == ["Servidor de TESTE"]
     data_form.update({"descricao":"Servidor de TESTE alteração"})
