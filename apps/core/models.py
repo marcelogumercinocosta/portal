@@ -104,7 +104,7 @@ class GrupoAcesso(models.Model):
     hbac_freeipa = models.CharField("HBAC no FreeIPA", max_length=255)
     tipo = models.CharField("tipo", max_length=255)
     data = models.DateTimeField(default=timezone.now)
-    grupo_trabalho = models.ForeignKey(GrupoTrabalho, on_delete=models.CASCADE)
+    grupo_trabalho = models.ForeignKey(GrupoTrabalho, on_delete=models.PROTECT)
     tipos = {"OPERACIONAL": "oper", "DESENVOLVIMENTO": "dev", "PESQUISA": "pesq", "DOCUMENTO": "doc"}
     objects = GrupoAcessoManager()
 

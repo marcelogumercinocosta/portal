@@ -217,7 +217,7 @@ class StorageGrupoAcessoMontagem(models.Model):
     automount = models.CharField(max_length=255, blank=True, null=True)
     parametro = models.CharField(max_length=255, blank=True, null=True)
     storage = models.ForeignKey(Storage, on_delete=models.CASCADE, blank=True, null=True)
-    grupo_trabalho = models.ForeignKey(GrupoTrabalho, on_delete=models.PROTECT, blank=True, null=True)
+    grupo_trabalho = models.ForeignKey(GrupoTrabalho, on_delete=models.CASCADE, blank=True, null=True)
 
     @property
     def mount_information(self):
