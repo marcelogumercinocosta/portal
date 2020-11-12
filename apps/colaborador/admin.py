@@ -30,19 +30,21 @@ class ColaboradorAdmin(admin.ModelAdmin):
 
     def change_view(self, request, object_id, form_url="", extra_context=None):
         colaborador = Colaborador.objects.get(pk=object_id)
-        if not request.user.is_superuser and request.user.has_perm("colaborador.secretaria_colaborador"):
-            self.fieldsets = [
-                ("Informações Pessoais", {"fields": ["first_name", "last_name", "email", "data_nascimento", "nacionalidade", "sexo", "estado_civil", "telefone", "area_formacao", "cpf", "documento_tipo", "documento"]}),
-                ("Informações Residenciais", {"fields": ["cep", "endereco", "numero", "bairro", "cidade", "estado"]}),
-                ("Contato de Emergência", {"fields": ["contato_de_emergencia_nome", "contato_de_emergencia_parentesco", "contato_de_emergencia_telefone"]}),
-                ("Informações Profissionais", {"fields": ["vinculo", "predio", "divisao", "ramal", "responsavel", "registro_inpe", "empresa", "data_inicio", "data_fim"]}),
-            ]
+        if not request.user.is_superuser:
             if (not colaborador.is_active):
                 self.readonly_fields = [ "username", "uid", "last_login", "date_joined", "vinculo", "predio", "divisao", "ramal", "responsavel", "registro_inpe", "empresa", "data_inicio", "data_fim", "first_name", "last_name", "email", "data_nascimento", "nacionalidade", "sexo", "estado_civil", "telefone", "area_formacao", "cpf", "documento_tipo", "documento", "cep", "endereco", "numero", "bairro", "cidade", "estado", "contato_de_emergencia_nome", "contato_de_emergencia_parentesco", "contato_de_emergencia_telefone" ]
             else:
-                self.readonly_fields = ["username", "uid", "email" , "is_staff", "is_active", "last_login", "date_joined", "data_fim"]
+                if request.user.has_perm("colaborador.secretaria_colaborador"):
+                    self.fieldsets = [
+                        ("Informações Pessoais", {"fields": ["first_name", "last_name", "email", "data_nascimento", "nacionalidade", "sexo", "estado_civil", "telefone", "area_formacao", "cpf", "documento_tipo", "documento"]}),
+                        ("Informações Residenciais", {"fields": ["cep", "endereco", "numero", "bairro", "cidade", "estado"]}),
+                        ("Contato de Emergência", {"fields": ["contato_de_emergencia_nome", "contato_de_emergencia_parentesco", "contato_de_emergencia_telefone"]}),
+                        ("Informações Profissionais", {"fields": ["vinculo", "predio", "divisao", "ramal", "responsavel", "registro_inpe", "empresa", "data_inicio", "data_fim"]}),
+                    ]
+                else:
+                    self.readonly_fields = ["username", "uid", "email" , "is_staff", "is_active", "last_login", "date_joined", "data_fim"]
             self.inlines = [ColaboradorGrupoAcessoInLineRead]
-        if request.user.is_superuser:
+        else:
             self.fieldsets = [
                 ("Informações Pessoais", {"fields": ["first_name", "last_name", "email", "data_nascimento", "nacionalidade", "sexo", "estado_civil", "telefone", "area_formacao", "cpf", "documento_tipo", "documento"]}),
                 ("Informações Residenciais", {"fields": ["cep", "endereco", "numero", "bairro", "cidade", "estado"]}),
