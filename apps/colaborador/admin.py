@@ -41,8 +41,14 @@ class ColaboradorAdmin(admin.ModelAdmin):
                         ("Contato de Emergência", {"fields": ["contato_de_emergencia_nome", "contato_de_emergencia_parentesco", "contato_de_emergencia_telefone"]}),
                         ("Informações Profissionais", {"fields": ["vinculo", "predio", "divisao", "ramal", "responsavel", "registro_inpe", "empresa", "data_inicio", "data_fim"]}),
                     ]
-                else:
                     self.readonly_fields = ["username", "uid", "email" , "is_staff", "is_active", "last_login", "date_joined", "data_fim"]
+                else:
+                    self.fieldsets = [
+                        ("Informações Pessoais", {"fields": ["first_name", "last_name",  "data_nascimento", "email", ]}),
+                        ("Informações Portal", {"fields": ["username", "uid", "is_staff", "is_active", "last_login", "date_joined"]}),
+                        ("Informações Profissionais", {"fields": ["vinculo", "predio", "divisao", "ramal", "responsavel", "registro_inpe", "empresa", "data_inicio", "data_fim"]}),
+                    ]
+                    self.readonly_fields = [ "first_name", "last_name",  "data_nascimento", "username", "uid", "is_staff", "is_active", "last_login", "date_joined", "vinculo", "predio", "divisao", "responsavel", "registro_inpe", "empresa", "data_inicio", "data_fim"]
             self.inlines = [ColaboradorGrupoAcessoInLineRead]
         else:
             self.fieldsets = [
