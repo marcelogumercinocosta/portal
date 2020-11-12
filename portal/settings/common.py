@@ -102,7 +102,7 @@ GARB_CONFIG = {
     "NAME_PROFILE": "CONTA",
     "ADMIN_ACTIONS_ALL": False,
     "ADMIN_WIDGET_CAN": False,
-    "THEME": "alive",
+    "THEME": "hybrid",
     "LIST_PER_PAGE": 15,
     "MENU": [
         {"label": "Novo Colaborador", "icon": "fa-user-plus", "route": "colaborador_open:inicio", "auth": "no"},
