@@ -102,7 +102,8 @@ def main():
                                     'view_ocorrencia','add_hostnameip','change_hostnameip','delete_hostnameip','view_hostnameip','add_equipamentogrupoacesso','change_equipamentogrupoacesso',
                                     'delete_equipamentogrupoacesso','view_equipamentogrupoacesso','view_storagegrupoacessomontagem','add_servidorhostnameip','change_servidorhostnameip',
                                     'delete_servidorhostnameip','view_servidorhostnameip','add_equipamentoparte','change_equipamentoparte','delete_equipamentoparte','view_equipamentoparte',
-                                    'change_colaborador','view_colaborador','suporte_colaborador',],
+                                    'change_colaborador','view_colaborador','suporte_colaborador','view_storagearea','add_storagearea','change_storagearea','delete_storagearea','add_storageareagrupotrabalho',
+                                    'change_storageareagrupotrabalho','delete_storageareagrupotrabalho','view_storageareagrupotrabalho'],
                         'Colaborador':['view_colaboradorgrupoacesso', 'view_conta'],
                         'Responsavel':['responsavel_colaborador'],}
     for key, values  in permission_default.items():

@@ -27,15 +27,8 @@ class ServidorForm(forms.ModelForm):
         ("Servidor Físico", "Servidor Físico"),
         ("Servidor Virtual", "Servidor Virtual"),
     )
-    TIPOS_USO = (
-        ("", ""),
-        ("OPERACIONAL", "OPERACIONAL"),
-        ("DESENVOLVIMENTO", "DESENVOLVIMENTO"),
-        ("PESQUISA", "PESQUISA"),
-        ("DOCUMENTO", "DOCUMENTO"),
-    )
+    
     tipo = forms.ChoiceField(choices=TIPOS_SERVIDOR, )
-    tipo_uso = forms.ChoiceField(choices=TIPOS_USO, )
     rack = forms.ModelChoiceField(queryset=Rack.objects.all(), label="Rack", required=False,)
     nome = HostnameChoiceField(queryset=HostnameIP.objects.filter(reservado=False), label="Hostname", required=True, widget=forms.Select(attrs={"data-live-search": "True"}))
     vinculado = forms.ModelChoiceField(queryset=Equipamento.objects.filter(Q(tipo='storage') | Q(tipo='Supercomputador')), required=False, widget=forms.Select(attrs={"data-live-search": "True"}))
@@ -91,7 +84,7 @@ class HostnameIPInLineForm(forms.ModelForm):
 class EquipamentoParteForm(forms.ModelForm):
     rack = forms.ModelChoiceField(queryset=Rack.objects.all(), label="Rack", required=True)
     vinculado = forms.ModelChoiceField(queryset=Equipamento.objects.filter(Q(tipo='storage') | Q(tipo='Supercomputador')), required=False,)
-
+    
     class Meta:
         model = EquipamentoParte
         fields = ["marca", "modelo","tipo_uso", "serie", "patrimonio", "predio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "descricao"]

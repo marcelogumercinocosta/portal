@@ -87,6 +87,14 @@ class Rack(models.Model):
 
 
 class Equipamento(models.Model):
+    TIPOS_USO = (
+        ("", ""),
+        ("OPERACIONAL", "OPERACIONAL"),
+        ("DESENVOLVIMENTO", "DESENVOLVIMENTO"),
+        ("PESQUISA", "PESQUISA"),
+        ("DOCUMENTO", "DOCUMENTO"),
+    )
+
     marca = models.CharField("Marca", max_length=255, null=True)
     modelo = models.CharField("Modelo", max_length=255, null=True)
     serie = models.CharField("Serial", max_length=255, null=True)
@@ -101,7 +109,7 @@ class Equipamento(models.Model):
     predio = models.ForeignKey(Predio, verbose_name="Prédio", null=True, on_delete=models.PROTECT)
     grupos_acesso = models.ManyToManyField(GrupoAcesso, verbose_name="Grupos de Acesso", through="EquipamentoGrupoAcesso")
     tipo = models.CharField(verbose_name="Tipo", max_length=255)
-    tipo_uso = models.CharField(verbose_name="Tipo de Uso", max_length=255)
+    tipo_uso = models.CharField(verbose_name="Tipo de Uso", choices=TIPOS_USO, max_length=255)
     objects = EquipamentoManager()
 
     def nome(self):
@@ -121,7 +129,7 @@ class Equipamento(models.Model):
             else:
                 return f"[ {self.servidor.nome.upper()} - {self.tipo_uso} ] {self.descricao}"
         else:
-            return f"{self.tipo} - {self.marca} {self.modelo}"
+            return f"[ {self.tipo.upper()} ] {self.marca} {self.modelo}"
 
     def __str__(self):
         return self.nome_completo()
@@ -156,16 +164,13 @@ class Supercomputador(Equipamento):
         self.racks = []
         self.update = None
 
-
-    
     def save(self, *args, **kwargs):
         if not self.pk:
             self.tipo = "Supercomputador"
         super(Supercomputador, self).save(*args, **kwargs)
         
-
     def __str__(self):
-        return f"{self.tipo} - {self.marca} {self.modelo}"
+        return f"{self.marca} {self.modelo}"
 
 
 class Storage(Equipamento):
@@ -193,7 +198,7 @@ class Storage(Equipamento):
         super(Storage, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.tipo} - {self.marca} {self.modelo}"
+        return f"{self.marca} {self.modelo}"
 
 
 class Rede(models.Model):
@@ -355,7 +360,7 @@ class EquipamentoParte(Equipamento):
 
     def save(self, *args, **kwargs):
         if not self.pk:
-            self.tipo = "Equipamento Físico"
+            self.tipo = "Parte de Equipamento"
         super(EquipamentoParte, self).save(*args, **kwargs)
 
     def __str__(self):

@@ -290,7 +290,7 @@ class ServidorAdmin(admin.ModelAdmin):
 @admin.register(EquipamentoParte)
 class EquipamentoParteAdmin(admin.ModelAdmin):
     search_fields = ["patrimonio", "marca", "modelo"]
-    list_display = ("patrimonio", "marca", "modelo", "descricao", "status")
+    list_display = ("patrimonio", "marca", "modelo", "vinculado", "status")
     readonly_fields = ("status",)
     form = EquipamentoParteForm
     inlines = (OcorrenciaInLine,)

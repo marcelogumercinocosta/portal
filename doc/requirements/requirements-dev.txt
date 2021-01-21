@@ -5,3 +5,4 @@ pep8
 django-debug-toolbar
 django-seed
 pydot
+pylint

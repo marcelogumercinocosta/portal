@@ -1,9 +1,7 @@
 from functools import update_wrapper
 
 from django.contrib import admin
-from django.shortcuts import get_object_or_404
 
-from apps.colaborador.forms import ColaboradorBaseForm
 from apps.colaborador.models import (Colaborador, Conta, Vinculo)
 from apps.core.admin import ColaboradorGrupoAcessoInLineRead, GroupInLine
 from apps.core.utils.freeipa import FreeIPA
