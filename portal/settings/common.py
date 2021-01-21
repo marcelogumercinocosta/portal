@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "apps.infra",
     "apps.monitoramento",
     "apps.colaborador",
+    "apps.desk"
 ]
 
 MIDDLEWARE = [
@@ -116,9 +117,11 @@ GARB_CONFIG = {
                 {"label": "Suporte", "permission": "colaborador.suporte_colaborador", "route": "colaborador:suporte",},
                 {"label": "Responsável", "permission": "colaborador.responsavel_colaborador", "route": "colaborador:responsavel",},
                 {"model": "colaborador.vinculo"},
+                {"model": "core.divisao"},
             ],
         },
-        {"label": "Administrador", "icon": "fa-user-cog", "sub_itens": [{"model": "core.grupotrabalho"}, {"model": "core.grupoacesso"}, {"model": "core.grupoportal"}, {"model": "core.divisao"},]},
+        {"label": "Administrador", "icon": "fa-user-cog", "sub_itens": [{"model": "core.grupotrabalho"}, {"model": "core.grupoacesso"}, {"model": "core.grupoportal"}]},
+        {"label": "Desk", "icon": "fa-ambulance", "sub_itens": [{"model": "desk.ticket"},]},
         {
             "label": "Infraestrutura",
             "icon": "fa-building",
@@ -138,7 +141,7 @@ GARB_CONFIG = {
             "icon": "fa-chart-line",
             "sub_itens": [
                 {"label": "Supercomputador Jobs e Nodes", "route": "monitoramento:uso_supercomputador", "auth": "all"},
-                {"label": "Armazenamento Corporativo", "route": "monitoramento:storage_netapp", "auth": "all"},
+                {"label": "Armazenamento", "route": "monitoramento:storage_netapp", "auth": "all"},
                 {"label": "Ambiente Virtual", "route": "monitoramento:vms_xen", "auth": "all"},
                 {"label": "Ferramentas", "route": "monitoramento:ferramentas", "auth": "all"},
                 {"label": "RNP", "route": "monitoramento:rnp_home", "auth": "all"},
@@ -148,7 +151,9 @@ GARB_CONFIG = {
     ],
 }
 
-LOGIN_URL = "/admin/"
+LOGIN_URL = '/conta/ogin/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 # email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

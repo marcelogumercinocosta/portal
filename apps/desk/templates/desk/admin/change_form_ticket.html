@@ -1,0 +1,54 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static  %}
+
+{% block extrajs %}
+    <script>
+        function combo_origem() {
+            if ($('#id_origem').length) {
+                $(".field-equipamento").hide();
+                $(".field-colaborador").hide();
+                if ($('#id_origem').val() === '') { return; }
+                if ($('#id_origem').val() == "1") {  //se for servidor
+                    $(".field-equipamento").show();
+                } else {
+                    $(".field-equipamento").show();
+                    $(".field-colaborador").show();
+                    $('#id_colaborador').rules('add', { required: true });
+                }
+            }
+        }
+        combo_origem()
+        $("select#id_origem").change(function () {
+            combo_origem()
+        });
+
+        function combo_fila() {
+            if ($('#id_fila').length) {
+                $(".field-problema").hide();
+                if ($('#id_fila').val() === '') {
+                    return;
+                } else { 
+                    $.getJSON("{% url 'desk:problemas_options' pk=0 %}".replace('0', $('#id_fila').val()), function(data) {
+                        $.each(data , function (key, value) {
+                            $('#id_problema').append(new Option( value.fields.problema, value.pk));
+                        });
+                    });
+                    $(".field-problema").show();
+                }
+                $("#id_problema").selectpicker("refresh");
+            }  
+        }
+
+        combo_fila()
+        $("select#id_fila").change(function () {
+            combo_fila()
+        });
+
+    </script>
+    <script src="{% static 'infra/js/form.js' %}"></script>
+{% endblock %}
+
+{% block submit_buttons_bottom %}
+        <button type="submit" class="btn btn-info" name="_save">Abrir Ticket</button>
+{% endblock %}
+
