@@ -76,7 +76,7 @@ class Vm:
         self.uid = object_data["uuid"]
         self.name_description = object_data["name_description"]
         self.VCPUs_number = metrics["VCPUs_number"]
-        self.memory_total = float(metrics["memory_actual"]) / 1024 / 1024
+        self.memory_total = float(metrics["memory_actual"])
         self.last_updated = None
         self.networks = ""
         self.software_version = None
@@ -109,15 +109,12 @@ class VDI:
     def __init__(self, vdi, sr):
         self.nome = vdi["name_label"]
         self.uuid = vdi["uuid"]
-        self.virtual_size = float(vdi["virtual_size"]) / 1024 / 1024 / 1024
+        self.virtual_size = float(vdi["virtual_size"]) 
         self.is_a_snapshot = vdi["is_a_snapshot"]
         self.type = vdi["type"]
         self.sr_uuid = sr["uuid"]
         self.sr_nome = sr["name_label"]
         self.sr_name_description = sr["name_description"]
-
-    def get_virtual_size(self):
-        return format(float(self.virtual_size), ".2f")
 
 
 class XenInfo:

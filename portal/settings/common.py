@@ -120,7 +120,7 @@ GARB_CONFIG = {
             ],
         },
         {"label": "Administrador", "icon": "fa-user-cog", "sub_itens": [{"model": "core.grupotrabalho"}, {"model": "core.grupoacesso"}, {"model": "core.grupoportal"}]},
-        {"label": "Desk", "icon": "fa-ambulance", "sub_itens": [{"model": "desk.ticket"},]},
+        
         {
             "label": "Infraestrutura",
             "icon": "fa-building",

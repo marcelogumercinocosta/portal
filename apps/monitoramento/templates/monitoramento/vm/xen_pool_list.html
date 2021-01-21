@@ -1,4 +1,5 @@
 {% load humanize %}
+{% load templatetags %}
 <div class="box-garb">
     <div class="row p-0 m-0">
         <div class="col-2 p-1">
@@ -87,7 +88,7 @@
                             </div>
                             <div class="col-2 p-1">
                                 IP: <b>{{ vm.networks }}</b> <br>
-                                CPU: <b> {{ vm.VCPUs_number }} core(s)</b> / Mem&oacute;ria (GB): <b>{{ vm.get_memory_total}}
+                                CPU: <b> {{ vm.VCPUs_number }} core(s)</b> / Mem&oacute;ria: <b>{{ vm.memory_total|get_size_human}}
                                 </b><br>
                             </div>
                             <div class="col-3 p-1">
@@ -100,7 +101,7 @@
                                 Disco: {{ vdi.nome}}
                             </div>
                             <div class="col-2 pb-1">
-                                Tamanho (GB): <b> {{ vdi.get_virtual_size }} </b>
+                                Tamanho: <b> {{ vdi.virtual_size|get_size_human }} </b>
                             </div>
                             <div class="col-2 pb-1">
                                 Tipo: {{ vdi.type }}
