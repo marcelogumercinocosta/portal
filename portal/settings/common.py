@@ -32,7 +32,6 @@ INSTALLED_APPS = [
     "apps.infra",
     "apps.monitoramento",
     "apps.colaborador",
-    "apps.desk"
 ]
 
 MIDDLEWARE = [
