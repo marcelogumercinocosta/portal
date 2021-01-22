@@ -136,9 +136,6 @@ class ColaboradorBaseForm(forms.ModelForm):
     estado = forms.CharField(widget=forms.TextInput(attrs={"readonly": "readonly"}))
     email = forms.EmailField()
     estado_civil = forms.ChoiceField(choices=estado_civil)
-    contato_de_emergencia_nome = forms.CharField(max_length=255, label="Contato nome")
-    contato_de_emergencia_parentesco = forms.CharField(max_length=255, label="Contato parentesco")
-    contato_de_emergencia_telefone = forms.CharField(max_length=255, label="Contato telefone")
 
 
     class Meta:
@@ -162,9 +159,6 @@ class ColaboradorBaseForm(forms.ModelForm):
             "bairro",
             "cidade",
             "estado",
-            "contato_de_emergencia_nome",
-            "contato_de_emergencia_parentesco",
-            "contato_de_emergencia_telefone",
             "vinculo",
             "predio",
             "divisao",
@@ -189,7 +183,6 @@ class ColaboradorForm(ColaboradorBaseForm, GarbModelForm):
         fieldsets = [
             ("Informações Pessoais", {"fields": ("first_name", "last_name", "email", "data_nascimento", "nacionalidade", "sexo", "estado_civil", "area_formacao", "telefone", "cpf", "documento_tipo", "documento",)}),
             ("Informações Residenciais", {"fields": ("cep", "endereco", "numero", "bairro", "cidade", "estado",)}),
-            ("Contato de Emergência", {"fields": ("contato_de_emergencia_nome", "contato_de_emergencia_parentesco", "contato_de_emergencia_telefone",)}),
             ("Informações Profissionais", {"fields": ("vinculo", "predio", "divisao", "ramal", "responsavel", "data_inicio", "data_fim", "registro_inpe", "empresa",)}),
             ("seus Direitos e Deveres", {"fields": ("check_me_out1", "check_me_out2", "check_me_out3")}),
         ]
