@@ -70,7 +70,7 @@
             <div class="col-1m pt-2 pb-2 pl-0 pr-3 text-right">{{ volume.disco|get_size_human}}</div>
             <div class="col-1m pt-2 pb-2 pl-0 pr-1 text-right">{{ volume.disco_used|get_size_human}}</div>
             <div class="col-m pt-2 pb-2 pl-0 pr-2 text-right {% if volume.porcentagem_disco_used >= 95 %} text-danger {% endif %}">{{ volume.porcentagem_disco_used}}%</div>
-            <div class="col-1m pt-2 pb-2 pl-0 pr-1 text-right">{{ volume.disco_used|get_size_human}}</div>
+            <div class="col-1m pt-2 pb-2 pl-0 pr-1 text-right">{{ volume.snap|get_size_human}}</div>
             <div class="col-m pt-2 pb-2 pl-0 pr-2 text-right {% if volume.porcentagem_snap >= 95 %} text-danger {% endif %}">{{ volume.porcentagem_snap}}%</div>
             <div class="col-1m pt-2 pb-2 pl-0 pr-1 text-right">{{ volume.total_disco|get_size_human}}</div>
             <div class="col-1m pt-2 pb-2 pl-0 pr-0 text-center">{{ volume.svm_name}}</div>
@@ -84,7 +84,7 @@
         <div class="row p-0 m-0 lin-r lin-l  white plus-info" style="display:none">
             <div class="col-4 pt-2 pb-2 pl-3 pr-0 text-left">Export_Policy: {{ volume.export_policy }}</div>
             <div class="col-3 pt-2 pb-2 pl-0 pr-0 text-left">Aggregate: {{ volume.aggregate }}</div>
-            <div class="col-3 pt-2 pb-2 pl-0 pr-0 text-left {% if volume.snapshot_size_used >= 95 %} text-danger {% endif %}">Snapshot Size Used: {{ volume.snapshot_size_used }}%</div>
+            <div class="col-3 pt-2 pb-2 pl-0 pr-0 text-left {% if volume.snapshot_size_used >= 95 %} text-danger {% endif %}">Snapshot Used: {{ volume.snapshot_size_used }}%</div>
             <div class="col-2 pt-2 pb-2 pl-0 pr-0 text-left">Node: {{ volume.node }}</div>
         </div>
         {% endfor %}

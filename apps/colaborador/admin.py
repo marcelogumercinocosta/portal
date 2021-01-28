@@ -54,7 +54,7 @@ class ColaboradorAdmin(admin.ModelAdmin):
                 ("Informações Profissionais", {"fields": ["vinculo", "predio", "divisao", "ramal", "responsavel", "registro_inpe", "empresa", "data_inicio", "data_fim"]}),
                 ("Informações Portal", {"fields": ["username", "uid", "is_superuser", "is_staff", "is_active", "last_login", "date_joined"]}),
             ]
-            inlines = [GroupInLine, ColaboradorGrupoAcessoInLineRead]
+            self.inlines = [GroupInLine, ColaboradorGrupoAcessoInLineRead]
             self.readonly_fields = ["username", "uid", "is_staff", "is_active", "last_login", "date_joined"]
         return super(ColaboradorAdmin, self).change_view(request, object_id, form_url, extra_context)
 
