@@ -16,7 +16,7 @@ from apps.colaborador.forms import ColaboradorForm, SuporteForm
 from apps.colaborador.models import Colaborador, Vinculo
 from apps.colaborador.views import (ColaboradorStatusView, InicioView, ColaboradorHistoricoView, 
                                     NovoView, PasswordResetConfirmView,
-                                    SecretariaAprovarView, SecretariaNegarView,
+                                    SecretariaRevisarView, SecretariaNegarView,
                                     SecretariaView, SolicitacaoView,
                                     SuporteCriarContaView, SuporteView,
                                     TermoCompromissoView, SolicitacaoEnviarView,
@@ -246,10 +246,10 @@ def test_post_secretaria_negar_form_ok(secretaria, colaborador):
 
 
 def test_get_secretaria_aprovado(secretaria, colaborador):
-    request = RequestFactory().post(reverse("colaborador:secretaria_aprovar", kwargs={"pk": colaborador.pk}))
+    request = RequestFactory().post(reverse("colaborador:secretaria_revisar", kwargs={"pk": colaborador.pk}))
     request = message_middleware(request)
     request.user = User(id=secretaria.id)
-    response = SecretariaAprovarView.as_view()(request, pk=colaborador.pk)
+    response = SecretariaRevisarView.as_view()(request, pk=colaborador.pk)
     assert response.status_code == 302
 
 

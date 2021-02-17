@@ -6,3 +6,4 @@ django-debug-toolbar
 django-seed
 pydot
 pylint
+black

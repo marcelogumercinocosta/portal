@@ -8,15 +8,7 @@ import xmlrpc.client
 from apps.monitoramento.utils import VDI, Vm, Host, Pool, XenInfo
 from apps.infra.models import AmbienteVirtual, Servidor
 from django.conf import settings
-import errno
 from XenAPI import Failure, Session
-
-
-def test_vdi() -> None:
-    vdi_input = {"name_label":"name", "uuid":"12312312dsfdfs", "virtual_size":( 32 * 1024 * 1024 *1024), "is_a_snapshot":"no", "type":"user"}
-    sr_input = {"uuid":"123123123", "name_label":"LUN_VMS_X65_DMZ", "name_description":"LUN" }
-    vdi = VDI(vdi_input,sr_input)
-    assert vdi.get_virtual_size() == "32.00" 
 
 
 def test_vm() -> None:

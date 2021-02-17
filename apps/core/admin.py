@@ -92,20 +92,16 @@ class GrupoAcessoColaboradorInLineRead(admin.TabularInline):
 @admin.register(Divisao)
 class DivisaoAdmin(admin.ModelAdmin):
     search_fields = ["divisao"]
-    list_display = ["divisao", "email", "chefe_nome", "chefe_ativo", "chefe_substituto_nome", "chefe_substituto_ativo"]
+    list_display = ["divisao", "email", "coordenacao", "chefe", "chefe_ativo", "chefe_substituto", "chefe_substituto_ativo"]
+    fields = ["divisao", "divisao_completo", "email", "coordenacao", "chefe", "chefe_ativo", 'chefe_substituto', 'chefe_substituto_ativo']
     readonly_fields = []
     form = DivisaoForm
 
-    def chefe_nome(self, obj):
-        return f"{obj.chefe.first_name} {obj.chefe.last_name} | {obj.chefe.email}"
-    chefe_nome.short_description = "Chefe"
-
-    def chefe_substituto_nome(self, obj):
-        return f"{obj.chefe_substituto.first_name} {obj.chefe_substituto.last_name} | {obj.chefe_substituto.email}"
-    chefe_substituto_nome.short_description = "Chefe Substituto"
-
     def change_view(self, request, object_id, form_url="", extra_context=None):
-        self.readonly_fields = ["divisao"]
+        if not request.user.is_superuser:
+            self.editable = ["divisao", 'divisao_completo']
+        else:
+            self.readonly_fields = []
         return super(DivisaoAdmin, self).change_view(request, object_id, form_url, extra_context)
 
 
@@ -191,3 +187,5 @@ class GrupoPortalAdmin(admin.ModelAdmin):
     search_fields = ("name",)
     ordering = ("name",)
     filter_horizontal = ("permissions",)
+
+admin.site.unregister(Group)

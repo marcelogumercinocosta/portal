@@ -1,19 +1,12 @@
 import re
-from datetime import datetime
 from unicodedata import normalize
-
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.http import Http404
-from django.shortcuts import get_object_or_404
-from django.utils import timezone
-from django.utils.functional import cached_property
-
-from apps.core.models import Divisao, Group, Predio
+from apps.core.models import Group
 
 
 class Vinculo(models.Model):
-    vinculo = models.CharField("vinculo", max_length=255)
+    vinculo = models.CharField("vínculo", max_length=255)
 
     class Meta:
         ordering = ["vinculo"]
@@ -24,7 +17,7 @@ class Vinculo(models.Model):
         return self.vinculo
 
 
-class Colaborador(User):
+class Colaborador(AbstractUser):
     telefone = models.CharField("telefone", max_length=255)
     data_nascimento = models.DateField(max_length=255, verbose_name="Data de Nascimento")
     documento = models.CharField(max_length=255, verbose_name="Documento")
@@ -36,7 +29,7 @@ class Colaborador(User):
     endereco = models.CharField(max_length=255, verbose_name="Endereço")
     numero = models.CharField(max_length=255, verbose_name="Número")
     estado = models.CharField(max_length=255)
-    predio = models.ForeignKey(Predio, verbose_name="Prédio", null=True, on_delete=models.PROTECT)
+    predio = models.ForeignKey("core.Predio", verbose_name="Prédio", null=True, on_delete=models.PROTECT)
     data_inicio = models.DateField("Data de Início")
     data_fim = models.DateField("Data de Fim", null=True, blank=True)
     ramal = models.CharField("Ramal", max_length=255, null=True)
@@ -48,10 +41,11 @@ class Colaborador(User):
     estado_civil = models.CharField(max_length=255, blank=True, null=True)
     externo = models.BooleanField("Usuário Externo", default=False)
     uid = models.IntegerField("UID", default=0)
-    vinculo = models.ForeignKey(Vinculo, verbose_name="vínculo", on_delete=models.PROTECT)
-    divisao = models.ForeignKey(Divisao, verbose_name="Divisão", on_delete=models.PROTECT)
+    is_active = models.BooleanField('ativo', default=False)
+    vinculo = models.ForeignKey("colaborador.Vinculo", verbose_name="vínculo", on_delete=models.PROTECT)
+    divisao = models.ForeignKey("core.Divisao", verbose_name="Divisão", on_delete=models.PROTECT)
     responsavel = models.ForeignKey("self", null=True, blank=True, verbose_name="Responsavel", related_name="responsavel_user", on_delete=models.PROTECT)
-
+    
     class Meta:
         ordering = ["username"]
         verbose_name = "Colaborador"
@@ -74,10 +68,10 @@ class Colaborador(User):
         return username
 
     def __set_user_name(self):
-        name = f"{self.first_name} {self.last_name}"
         # Verifica Email do INPE
         if "@inpe.br" in self.email:
             return self.email.replace("@inpe.br", "").lower()
+        name = f"{self.first_name} {self.last_name}"
         return self.__create_user_name(name).lower()
 
     def get_documento_principal(self):
@@ -87,7 +81,6 @@ class Colaborador(User):
 
     def clean(self):
         from django.core.exceptions import ValidationError
-
         if not self.username:
             self.username = self.__set_user_name()
         if Colaborador.objects.filter(username=self.username).exclude(id=self.pk).exists():
@@ -96,21 +89,16 @@ class Colaborador(User):
             raise ValidationError({"email": ("Email já existe")})
         super().clean()
 
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            self.is_active = False
-        super(Colaborador, self).save(*args, **kwargs)
-
-    def chefia(self):
+    def chefia_aprovar(self):
         self.is_active = True
         self.save()
 
-    def suporte(self):
+    def suporte_criar(self):
         self.is_staff = True
         self.groups.add(Group.objects.get(name="Colaborador"))
         self.save()
 
-    @cached_property
+    @property
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
 
@@ -123,4 +111,3 @@ class Conta(Colaborador):
         proxy = True
         verbose_name = "Conta"
         verbose_name_plural = "Contas"
-

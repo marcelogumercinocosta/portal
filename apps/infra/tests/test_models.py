@@ -57,19 +57,19 @@ def test_ambiente_virtual() -> None:
 
 def test_equipamento_parte() -> None:
     equipamento_parte = mixer.blend(EquipamentoParte, marca='HP', modelo='GEN 10', patrimonio="10" )
-    assert equipamento_parte.tipo == "Equipamento Físico" 
-    assert str(equipamento_parte) == "Equipamento Físico - HP GEN 10" 
+    assert equipamento_parte.tipo == "Parte de Equipamento" 
+    assert str(equipamento_parte) == "Parte de Equipamento - HP GEN 10" 
 
 
 def test_storage_storagearea() -> None:
     storage = mixer.blend(Storage, marca='Netapp', modelo='8040')
-    assert str(storage) == "Storage - Netapp 8040"
+    assert str(storage) == "Netapp 8040"
     assert storage.tipo == "Storage" 
     assert storage.capacidade() == 0
     storage.save()
     storage_area = mixer.blend(StorageArea, storage=storage, area="/disco", capacidade=100)
     storage_area.save()
-    assert str(storage_area) == "Storage - Netapp 8040 - /disco"
+    assert str(storage_area) == "Netapp 8040 - /disco"
     assert storage.capacidade() == 100
     divisao = mixer.blend(Divisao, divisao='TESTE')
     grupo = mixer.blend(GrupoTrabalho, grupo="Grupo dados", grupo_sistema="dados", divisao=divisao)
@@ -86,7 +86,7 @@ def test_storage_storagearea() -> None:
     assert storage_area_grupo_trabalho.area_total_usado_porcentagem() == 10
     assert storage_area_grupo_trabalho.area_total_liberado_corrigido_porcentagem() == 40
     assert storage_area_grupo_trabalho.area_total_liberado_porcentagem() == 50
-    assert str(storage_area_grupo_trabalho) == "TESTE | GRUPO DADOS - Storage - Netapp 8040 - /disco"
+    assert str(storage_area_grupo_trabalho) == "TESTE | GRUPO DADOS - Netapp 8040 - /disco"
 
 
 def test_supercomputador() -> None:
@@ -94,7 +94,7 @@ def test_supercomputador() -> None:
     assert supercomputador.tipo == "Supercomputador"
     assert supercomputador.racks == [] 
     assert supercomputador.update == None
-    assert str(supercomputador) == "Supercomputador - Cray CX50"
+    assert str(supercomputador) == "Cray CX50"
     rack = mixer.blend(Rack)
     supercomputador.add_rack(rack)
     assert len(supercomputador.racks) == 1
@@ -144,10 +144,10 @@ def test_servidor_equipamento() -> None:
     assert equipamento.nome() == 'server1'
 
     equipamento_parte = mixer.blend(EquipamentoParte, marca='HP', modelo='GEN 10', patrimonio="10" )
-    assert equipamento_parte.tipo == "Equipamento Físico" 
+    assert equipamento_parte.tipo == "Parte de Equipamento" 
     equipamento = Equipamento.objects.get(pk=equipamento_parte.id)
     assert equipamento.nome() ==  'HP GEN 10'
-    assert str(equipamento) == 'Equipamento Físico - HP GEN 10'
+    assert str(equipamento) == '[ PARTE DE EQUIPAMENTO ] HP GEN 10'
 
 
 def test_rede() -> None:

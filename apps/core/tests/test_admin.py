@@ -73,6 +73,24 @@ def superuser() -> Colaborador:
 
 @pytest.fixture
 @pytest.mark.django_db
+def secretaria() -> Colaborador:
+    group = mixer.blend(Group, name="Secretaria")
+    group.permissions.add(Permission.objects.get(codename="change_divisao"))
+    group.save()
+
+    secretaria = mixer.blend(Colaborador, email="teste.secretaria@inpe.br")
+    secretaria.is_staff = True
+    secretaria.is_active = True
+    secretaria.username = None
+    secretaria.clean()
+    secretaria.save()
+    secretaria.groups.add(group)
+    secretaria.save()
+    return secretaria
+
+
+@pytest.fixture
+@pytest.mark.django_db
 def grupo_trabalho() -> GrupoTrabalho:
     grupo_trabalho = mixer.blend(GrupoTrabalho, grupo="Grupo teste", grupo_sistema="teste", data_criado=None)
     grupo_trabalho.save()
@@ -134,7 +152,7 @@ def test_colaborador_grupoacesso_inlineread(admin_site, superuser, grupo_trabalh
     assert model_admin.email(colaborador_grupo_acesso) == colaborador.email
 
 
-def test_grupoacesso_admin(admin_site, superuser, grupo_trabalho) -> None:
+def test_grupoacesso_admin(admin_site, superuser) -> None:
     request = RequestFactory().get(reverse('admin:core_grupoacesso_changelist'))
     request.user = superuser
     model_admin = GrupoAcessoAdmin(GrupoAcesso, admin_site)
@@ -203,8 +221,17 @@ def test_divisao_admin(admin_site, superuser) -> None:
     request.user = superuser
     model_admin = DivisaoAdmin(Divisao, admin_site)
     model_admin.change_view(request=request, object_id=str(divisao.id))
-    assert model_admin.readonly_fields == ["divisao"]
-    assert model_admin.chefe_nome(divisao) == f"{chefe.first_name} {chefe.last_name} | {chefe.email}" 
-    assert model_admin.chefe_substituto_nome(divisao) == f"{chefe_substituto.first_name} {chefe_substituto.last_name} | {chefe_substituto.email}" 
-    
-    
+    assert model_admin.readonly_fields == []
+    assert model_admin.chefe_nome(divisao) == f"{chefe.first_name} {chefe.last_name}" 
+    assert model_admin.chefe_substituto_nome(divisao) == f"{chefe_substituto.first_name} {chefe_substituto.last_name}" 
+
+
+def test_divisao_admin_secretaria(admin_site, secretaria) -> None:
+    chefe = mixer.blend(Colaborador, first_name="chefe", last_name='principal', email='email@dochefe.com')
+    chefe_substituto = mixer.blend(Colaborador, first_name="chefe", last_name='substituto', email='email@dochefe.com')
+    divisao = mixer.blend(Divisao, chefe=chefe, chefe_substituto=chefe_substituto)
+    request = RequestFactory().get(reverse('admin:core_divisao_change', args=(divisao.id,)))
+    request.user = secretaria
+    model_admin = DivisaoAdmin(Divisao, admin_site)
+    model_admin.change_view(request=request, object_id=str(divisao.id))
+    assert model_admin.readonly_fields == ["divisao", 'divisao_completo']

@@ -1,35 +1,26 @@
-from datetime import datetime
-from email.message import EmailMessage
 from io import BytesIO
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.models import LogEntry
-from django.contrib.auth.forms import PasswordResetForm, urlsafe_base64_encode
-from django.contrib.auth.mixins import (LoginRequiredMixin,
-                                        PermissionRequiredMixin)
-from django.contrib.auth.models import Group
+from django.contrib.auth.forms import urlsafe_base64_encode
+from django.contrib.auth.mixins import (LoginRequiredMixin, PermissionRequiredMixin)
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.staticfiles import finders
-from django.core.mail import EmailMessage
-from django.db.models import Count, Q, Sum
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
 from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes
 from django.views.generic.base import RedirectView, TemplateView, View
-from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, FormView, UpdateView
 from garb.views import ViewContextMixin
 from xhtml2pdf import pisa
 
-from apps.colaborador.forms import (ColaboradorForm, ResponsavelNegarForm,
-                                    SecretariaNegarForm, SuporteForm)
+from apps.colaborador.forms import (ColaboradorForm, ResponsavelNegarForm, SecretariaNegarForm, SuporteForm)
 from apps.colaborador.models import Colaborador
 from apps.colaborador.utils import HistoryColaborador, gerar_password, get_user
-from apps.core.models import (ColaboradorGrupoAcesso, Divisao, GrupoAcesso,
-                              GrupoTrabalho, ResponsavelGrupoTrabalho)
+from apps.core.models import (ColaboradorGrupoAcesso, Divisao, GrupoAcesso,  GrupoTrabalho)
 from apps.core.tasks import send_email_template_task
 from apps.core.utils.freeipa import FreeIPA
 
@@ -89,7 +80,7 @@ class SecretariaNegarView(LoginRequiredMixin, PermissionRequiredMixin, FormView)
         return super().form_valid(form)
 
 
-class SecretariaAprovarView(LoginRequiredMixin, PermissionRequiredMixin, RedirectView):
+class SecretariaRevisarView(LoginRequiredMixin, PermissionRequiredMixin, RedirectView):
     permission_required = "colaborador.secretaria_colaborador"
     token_generator = default_token_generator
 
@@ -99,7 +90,7 @@ class SecretariaAprovarView(LoginRequiredMixin, PermissionRequiredMixin, Redirec
         pk = urlsafe_base64_encode(force_bytes(colaborador.pk))
         token = self.token_generator.make_token(colaborador)
         context_email = [["protocol", self.request.scheme], ["domain",self.request.get_host()], ["name", colaborador.full_name], ["uidb64", pk], ["token",token]]
-        send_emails = colaborador.divisao.emails()
+        send_emails = colaborador.divisao.emails_to()
         send_email_template_task.delay((f"Aprovação para criação de conta"), "colaborador/email/secretaria_revisado.html", send_emails, context_email)
         messages.add_message(self.request, messages.SUCCESS, "Foi enviado email para o(s) Chefe(s) ativo(s) da Divisão, solicitando aprovação do colaborador")
         return reverse_lazy("colaborador:secretaria")
@@ -118,7 +109,7 @@ class ChefiaAprovarView(ViewContextMixin, LoginRequiredMixin, PermissionRequired
         if not self.token_generator.check_token(colaborador, token) or colaborador.is_active:
             context["validlink"] = False
         else:
-            colaborador.chefia()
+            colaborador.chefia_aprovar()
             context["validlink"] = True
             context["colaborador"] = colaborador
             HistoryColaborador(self.request).chefia(colaborador)
@@ -157,7 +148,7 @@ class SuporteCriarContaView(LoginRequiredMixin, PermissionRequiredMixin, UpdateV
         colaborador = form.save(commit=False)
         if FreeIPA(self.request).set_colaborador(colaborador, tmp_password):
             colaborador = form.save_sendmail(tmp_password)
-            colaborador.suporte()
+            colaborador.suporte_criar()
         HistoryColaborador(self.request).suporte(colaborador)
         return super(SuporteCriarContaView, self).form_valid(form)
 

@@ -9,9 +9,7 @@ from sklearn.linear_model import LinearRegression
 
 from apps.core.models import Divisao, GrupoTrabalho
 from apps.monitoramento.utils import Echarts, AxisData, AxisBase, Tooltip, Line, Grid
-from apps.monitoramento.models import (Area, QuotaUtilizada, Storage,
-                                       StorageAreaGrupoTrabalho,
-                                       StorageHistorico)
+from apps.monitoramento.models import (Area, QuotaUtilizada, StorageHistorico)
 from garb.views import ViewContextMixin
 
 

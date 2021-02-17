@@ -1,4 +1,5 @@
 import numpy as np
+from typing import List
 from django.contrib import messages
 from apps.core.utils.freeipa import FreeIPA
 from apps.infra.models import (Equipamento, Rede, Servidor, StorageGrupoAcessoMontagem)
@@ -13,12 +14,13 @@ class Automount:
         self.rede = Rede.objects.filter(ip__in=ips).order_by("-prioridade_montagem")[0]
 
 
-    def adicionar_grupos(self, grupos_acesso:[]):
+    def adicionar_grupos(self, grupos_acesso:List[str]):
         for grupo_acesso in grupos_acesso:
             self.client_feeipa.hbacrule_add_members_host(grupo_acesso.hbac_freeipa, self.servidor.freeipa_name)
             self.client_feeipa.sudorule_add_members_host(grupo_acesso.grupo_trabalho.get_sudo(), host=self.servidor.freeipa_name)
             if self.client_feeipa.automountmap_add_indirect(self.servidor.freeipa_name_mount, grupo_acesso.automountmap, '/-'):
                 storage_grupoacesso_montagens = StorageGrupoAcessoMontagem.objects.filter(tipo=grupo_acesso.tipo, automount='auto.grupo', grupo_trabalho__id=grupo_acesso.grupo_trabalho.id, rede__id=self.rede.id)
+                print(grupo_acesso.tipo,'auto.grupo',grupo_acesso.grupo_trabalho.id,self.rede.id)
                 if storage_grupoacesso_montagens.exists():
                     for key in storage_grupoacesso_montagens: 
                         self.client_feeipa.automountkey_add(self.servidor.freeipa_name_mount, grupo_acesso.automountmap, key.montagem, key.mount_information)

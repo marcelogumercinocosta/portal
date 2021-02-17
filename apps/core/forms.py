@@ -33,15 +33,16 @@ class ResponsavelGrupoTrabalhoInLineForm(forms.ModelForm):
 
 
 class DivisaoForm(forms.ModelForm):
-    chefe = UserChoiceField(queryset=Colaborador.objects.filter(Q(is_staff=True) ).distinct(), required=True)
+    chefe = UserChoiceField(queryset=Colaborador.objects.filter(is_staff=True, groups__name="Chefia da Divisão").distinct(), required=True)
     chefe_substituto = UserChoiceField(queryset=Colaborador.objects.filter(is_staff=True, groups__name="Chefia da Divisão").distinct(), required=True)
-    chefe_ativo = forms.BooleanField(required=False)
-    chefe_substituto_ativo = forms.BooleanField(required=False)
-    email = forms.EmailField(required=True)
+
+    chefe_ativo = forms.BooleanField(required=False, label="Chefe Ativo")
+    chefe_substituto_ativo = forms.BooleanField(required=False, label="Chefe Substituto Ativo")
+    email = forms.EmailField(required=True, label="Email Secretaria")
 
     class Meta:
         model = Divisao
-        fields = "__all__"
+        fields = ['divisao', 'divisao_completo', 'email', 'coordenacao', 'chefe', 'chefe_ativo','chefe_substituto', 'chefe_substituto_ativo']
 
     def clean_chefe_ativo(self):
         chefe_ativo = self.cleaned_data.get("chefe_ativo")

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from django.db import models
 
 
@@ -25,7 +23,7 @@ class Monitoramento(models.Model):
     url = models.URLField("url")
     prioridade = models.IntegerField("prioridade")
     target = models.CharField("target", max_length=10, choices=TARGETS)
-    tipo = models.ForeignKey(TipoMonitoramento, on_delete=models.CASCADE)
+    tipo = models.ForeignKey('monitoramento.TipoMonitoramento', on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = "Monitoramento"

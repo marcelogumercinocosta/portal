@@ -42,6 +42,7 @@ install-dev:
 	../env/bin/pip install -r ./doc/requirements/requirements-dev.txt
 	../env/bin/pip install -r ./doc/requirements/requirements-test.txt
 	rsync -auv ./doc/environment/_dev.env dev.env
+	
 	@echo -e "\n\n#####################################################"
 	@echo "Adicione configurações em dev.env"
 	@echo "Adicione o arquivo .freeipa_chave.crt para acesso ao FreeIPA"
@@ -95,8 +96,9 @@ dumpdata:
 
 # target: init - insert admin user + permissions
 init:
+	if ! test -d ./apps/core/migrations/; then ./manage.py makemigrations core colaborador infra monitoramento; fi
 	@[ ${django_settings_module} ] || ( echo ">> django_settings_module is not set"; exit 1 )
 	docker exec -it $$(docker ps --format "{{.Names}}" | grep django-celery) /app/manage.py migrate
-	docker exec -it $$(docker ps --format "{{.Names}}" | grep django-celery) /app/manage.py loaddata ./doc/external/dump.json
 	docker exec -it $$(docker ps --format "{{.Names}}" | grep django-celery) python3 /app/doc/external/init_data.py
-	docker exec -it $$(docker ps --format "{{.Names}}" | grep django-celery) /app/manage.py loaddata ./doc/external/dump_private.json
+	if test -e ./doc/external/dump_private.json; then docker exec -it $$(docker ps --format "{{.Names}}" | grep django-celery) /app/manage.py loaddata ./doc/external/dump_private.json; fi
+
