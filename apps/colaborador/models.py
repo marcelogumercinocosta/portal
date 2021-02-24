@@ -2,7 +2,7 @@ import re
 from unicodedata import normalize
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from apps.core.models import Group
+from apps.core.models import GrupoPortal
 
 
 class Vinculo(models.Model):
@@ -43,7 +43,7 @@ class Colaborador(AbstractUser):
     uid = models.IntegerField("UID", default=0)
     is_active = models.BooleanField('ativo', default=False)
     vinculo = models.ForeignKey("colaborador.Vinculo", verbose_name="vínculo", on_delete=models.PROTECT)
-    divisao = models.ForeignKey("core.Divisao", verbose_name="Divisão", on_delete=models.PROTECT)
+    divisao = models.ForeignKey('core.Divisao', verbose_name="Divisão", on_delete=models.PROTECT)
     responsavel = models.ForeignKey("self", null=True, blank=True, verbose_name="Responsavel", related_name="responsavel_user", on_delete=models.PROTECT)
     
     class Meta:
@@ -68,10 +68,10 @@ class Colaborador(AbstractUser):
         return username
 
     def __set_user_name(self):
+        name = f"{self.first_name} {self.last_name}"
         # Verifica Email do INPE
         if "@inpe.br" in self.email:
             return self.email.replace("@inpe.br", "").lower()
-        name = f"{self.first_name} {self.last_name}"
         return self.__create_user_name(name).lower()
 
     def get_documento_principal(self):
@@ -95,7 +95,7 @@ class Colaborador(AbstractUser):
 
     def suporte_criar(self):
         self.is_staff = True
-        self.groups.add(Group.objects.get(name="Colaborador"))
+        self.groups.add(GrupoPortal.objects.get(name="Colaborador"))
         self.save()
 
     @property

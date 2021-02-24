@@ -104,11 +104,10 @@
                     </div>
                 {% endfor %}
             </div>
-			<div class="box-column box-garb">
-					<div class="module-header">
-						<div class="legend">Colaboradores</div>
-					</div>
-					<div id="status"></div>
+			<div class="box-column ">
+                <div class="save-box">
+					<a href="{% url 'colaborador:conta' %}" class="btn btn-light">{% trans 'Back' %}</a>
+                </div>
 			</div>
 		</div>
 	</div>
@@ -155,6 +154,5 @@
                 return;
             }
         });
-        $("#status").load("{% url 'colaborador:status' %}");
     </script>
 {% endblock %} 

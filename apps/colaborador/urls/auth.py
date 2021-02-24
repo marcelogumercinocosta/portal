@@ -1,6 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.urls import path, reverse_lazy
-from django.views.generic import RedirectView
+from django.urls import path
 
 from apps.colaborador.views import (
     ResponsavelAprovarView,
@@ -17,6 +16,7 @@ from apps.colaborador.views import (
     ColaboradorStatusView,
     ChefiaAprovarView,
     ColaboradorHistoricoView,
+    ColaboradorContaView,
 )
 
 app_name = "colaborador"
@@ -36,6 +36,6 @@ urlpatterns = [
     path("grupoacesso/solicitacao", login_required(SolicitacaoView.as_view()), name="conta_grupoacesso_solicitacao"),
     path("grupoacesso/<int:pk>/solicitacao", login_required(SolicitacaoEnviarView.as_view()), name="conta_grupoacesso_solicitacao_enviar"),
     path("status", login_required(ColaboradorStatusView.as_view()), name="status"),
-    path("",RedirectView.as_view(url=reverse_lazy("admin:colaborador_conta_changelist")), name="conta"),
     path("history", login_required(ColaboradorHistoricoView.as_view()), name="conta_historico"),
+    path("sua", login_required(ColaboradorContaView.as_view()), name="conta"),
 ]

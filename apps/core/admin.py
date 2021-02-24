@@ -92,16 +92,16 @@ class GrupoAcessoColaboradorInLineRead(admin.TabularInline):
 @admin.register(Divisao)
 class DivisaoAdmin(admin.ModelAdmin):
     search_fields = ["divisao"]
-    list_display = ["divisao", "email", "coordenacao", "chefe", "chefe_ativo", "chefe_substituto", "chefe_substituto_ativo"]
+    list_display = ["divisao", "email", "chefe", "chefe_ativo", "chefe_substituto", "chefe_substituto_ativo"]
     fields = ["divisao", "divisao_completo", "email", "coordenacao", "chefe", "chefe_ativo", 'chefe_substituto', 'chefe_substituto_ativo']
     readonly_fields = []
     form = DivisaoForm
 
     def change_view(self, request, object_id, form_url="", extra_context=None):
-        if not request.user.is_superuser:
-            self.editable = ["divisao", 'divisao_completo']
-        else:
+        if request.user.is_superuser:
             self.readonly_fields = []
+        else:
+            self.readonly_fields = ["divisao", 'divisao_completo','coordenacao']
         return super(DivisaoAdmin, self).change_view(request, object_id, form_url, extra_context)
 
 

@@ -32,73 +32,9 @@ from apps.infra.models import (AmbienteVirtual, Equipamento,
                                StorageAreaGrupoTrabalho,
                                StorageGrupoAcessoMontagem, Supercomputador)
 from apps.infra.utils.freeipa_location import Automount
+from apps.core.tests.base import *
 
 pytestmark = pytest.mark.django_db
-
-
-def message_middleware(req):
-    """Annotate a request object with a session"""
-    middleware = SessionMiddleware()
-    middleware.process_request(req)
-    req.session.save()
-    """Annotate a request object with a messages"""
-    middleware = MessageMiddleware()
-    middleware.process_request(req)
-    req.session.save()
-    return req
-
-
-@pytest.fixture
-@pytest.mark.django_db
-def grupo_trabalho() -> GrupoTrabalho:
-    grupo_trabalho = mixer.blend(GrupoTrabalho, grupo="Grupo teste", grupo_sistema="teste", data_criado=None, id=4)
-    grupo_trabalho.gid = 9000
-    grupo_trabalho.desenvolvimento = True
-    grupo_trabalho.operacional = True
-    grupo_trabalho.save_confirm()
-
-    responsavel = mixer.blend(Colaborador, first_name="Responsavel", last_name="Fulano de tal", externo=False, email="teste.reponsavel@inpe.br")
-    responsavel.username = None
-    responsavel.clean()
-    responsavel.groups.add(Group.objects.get(name="Responsavel"))
-    responsavel.save()
-
-    responsavel_grupo_trabalho = mixer.blend(ResponsavelGrupoTrabalho, grupo=grupo_trabalho, responsavel=responsavel)
-    responsavel_grupo_trabalho.save()
-
-    return grupo_trabalho
-
-
-@pytest.fixture
-@pytest.mark.django_db
-def responsavel() -> Colaborador:
-    
-    return responsavel
-
-
-@pytest.fixture 
-def admin_site():
-    return AdminSite()
-
-@pytest.fixture
-@pytest.mark.django_db
-def superuser() -> Colaborador:
-    group = mixer.blend(Group, name="Responsavel")
-    responsavel_colaborador = Permission.objects.get(codename="responsavel_colaborador")
-    group.permissions.add(responsavel_colaborador)
-    group.save()
-
-    superuser = mixer.blend(Colaborador, email="teste.super_user@inpe.br")
-    superuser.is_staff = True
-    superuser.is_active = True
-    superuser.is_superuser = True
-    superuser.username = None
-    superuser.clean()
-    superuser.save()
-    superuser.groups.add(group)
-    superuser.save()
-    return superuser
-
 
 def test_grupoacesso_grupotrabalho_inline(admin_site, superuser) -> None:
     grupo_acesso = mixer.blend(GrupoAcesso)
@@ -192,6 +128,11 @@ def test_servidor_admin_create(admin_site, superuser) -> None:
 
 
 def test_servidor_admin(admin_site, superuser, grupo_trabalho) -> None:
+    grupo_trabalho.gid = 9000
+    grupo_trabalho.desenvolvimento = True
+    grupo_trabalho.operacional = True
+    grupo_trabalho.save_confirm()
+
     predio =  mixer.blend(Predio)
     rede = mixer.blend(Rede, rede="rede", ip='192.168.0', prioridade=1)
     hostnameip = mixer.blend(HostnameIP, hostname='server1', ip='192.168.0.2', tipo=rede, reservado=True)
@@ -258,7 +199,7 @@ def test_servidor_admin(admin_site, superuser, grupo_trabalho) -> None:
     assert freeipa.automountmap_find_count(automountlocationcn=servidor.freeipa_name_mount, automountmapname=grupo_acesso_oper[0].automountmap) == 1
     assert freeipa.automountkey_find_count(automountlocationcn=servidor.freeipa_name_mount, automountmapautomountmapname=grupo_acesso_oper[0].automountmap) == 4
     assert freeipa.hbacrule_show(cn=grupo_acesso_oper[0].hbac_freeipa)['result']['memberhost_host'] == ['server1.cptec.inpe.br']
-    assert model_admin.grupo(servidor) == "TESTE"
+    assert model_admin.grupo(servidor) == "TESTE_GRUPO"
 
     grupoacesso_equipamento = EquipamentoGrupoAcesso.objects.all()
     assert len(grupoacesso_equipamento) ==  1
@@ -333,6 +274,11 @@ def test_servidor_admin(admin_site, superuser, grupo_trabalho) -> None:
     assert Servidor.objects.filter(pk=servidor.pk).exists() == False
 
 def test_servidor_admin_automount_error(admin_site, superuser, grupo_trabalho) -> None:
+    grupo_trabalho.gid = 9000
+    grupo_trabalho.desenvolvimento = True
+    grupo_trabalho.operacional = True
+    grupo_trabalho.save_confirm()
+
     rede = mixer.blend(Rede, rede="rede", ip='192.168.0', prioridade=1)
     hostnameip = mixer.blend(HostnameIP, hostname='server1', ip='192.168.0.2', tipo=rede, reservado=True)
     servidor = mixer.blend(Servidor, nome='server1', descricao="Servidor de TESTE", ldap=True, tipo_uso="OPERACIONAL")

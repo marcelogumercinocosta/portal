@@ -152,7 +152,7 @@ GARB_CONFIG = {
     ],
 }
 
-LOGIN_URL = '/conta/ogin/'
+LOGIN_URL = '/conta/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 

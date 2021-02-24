@@ -1,0 +1,169 @@
+{% extends "admin/base.html" %}
+{% load static i18n %}
+
+{% block content %}
+<div id="content-main">
+	<div class="change-columns">
+		<div class="main-column">
+			<div class="box-garb">
+					<div class="panel panel-default">
+						<div class="panel-heading" >
+							<div class="module-header">
+									<div class=" legend"  ><b>{{ colaborador.full_name|upper  }}</b></div>
+							</div>
+						</div>
+						<div class="panel-collapse">
+							<div class="panel-body">
+								<div class="row">
+									<legend class="txt_cor_primaria legend" >Informa&ccedil;&otilde;es Pessoais</legend>
+									<div class="col-sm-5 offset-1">
+										<div>
+											<p><b>Nome: </b>{{ colaborador.full_name }}</p>
+										</div>
+										<div>
+											<p><b>Data Nascimento: </b> {{ colaborador.data_nascimento }}</p>
+										</div>
+										<div>
+											<p><b>Nacionalidade: </b>{{ colaborador.nacionalidade }}</p>
+										</div>
+										<div>
+											<p><b>Telefone: </b> {{ colaborador.telefone }}</p>
+										</div>
+										{% if colaborador.cpf %}
+											<div>
+												<p><b>CPF: </b> {{ colaborador.cpf }}</p>
+											</div>
+										{% endif %}
+									</div>
+									<div class="col-sm-5">
+										<div>
+											<p><b>Email: </b>{{ colaborador.email }}</p>
+										</div>
+										<div>
+											<p><b>Sexo: </b>{{ colaborador.sexo }}</p>
+										</div>
+										<div>
+											<p><b>Estado Civil: </b> {{ colaborador.estado_civil|default_if_none:"--" }}</p>
+										</div>
+										<div>
+											<p><b>&Aacute;rea de Forma&ccedil;&atilde;o: </b> {{ colaborador.area_formacao|default_if_none:"--" }}</p>
+										</div>
+										{% if colaborador.documento_tipo %}
+											<div>
+												<p><b>{{ colaborador.documento_tipo }}: </b> {{ colaborador.documento}}</p>
+											</div>
+										{% endif %}
+									</div>
+								</div>
+								<div class="row pr-2 pl-2">
+									<legend class="txt_cor_primaria legend" >Informa&ccedil;&otilde;es Residenciais</legend>
+									<div class="col-sm-3 offset-1">
+										<div>
+											<p><b>CEP: </b>{{ colaborador.cep }}</p>
+										</div>
+										<div>
+											<p><b>Bairro: </b>{{ colaborador.bairro }}</p>
+										</div>
+									</div>
+									<div class="col-sm-5">
+										<div>
+											<p><b>Cidade: </b> {{ colaborador.cidade }}</p>
+										</div>
+										<div>
+											<p><b>Endere&ccedil;o: </b> {{ colaborador.endereco }}</p>
+										</div>
+									</div>
+									<div class="col-sm-3">
+										<div>
+											<p><b>Estado: </b> {{ colaborador.estado }}</p>
+										</div>
+										<div>
+											<p><b>N&uacute;mero: </b>{{ colaborador.numero }}</p>
+										</div>
+									</div>
+								</div>
+								<div class="row pr-2 pl-2">
+									<legend  class="txt_cor_primaria legend" >Informa&ccedil;&otilde;es Profissionais</legend>
+									<div class="col-sm-5 offset-1">
+										<div>
+											<p><b>V&iacute;nculo: </b>{{ colaborador.vinculo }}</p>
+										</div>
+										<div>
+											<p><b>Ramal: </b>{{ colaborador.ramal }}</p>
+										</div>
+										<div>
+											<p><b>Data de In&iacute;cio: </b>{{ colaborador.data_inicio }}</p>
+										</div>
+										{% if colaborador.vinculo.vinculo != 'Administrador' %}
+											{% if colaborador.vinculo.vinculo == 'Servidor' %}
+												<div>
+													<p><b>Matr&iacute;cula SIAPE: </b>{{ colaborador.registro_inpe }}</p>
+												</div>
+											{% else %}
+												<div>
+												<p><b>Data de Fim: </b>{{ colaborador.data_fim }}</p>
+												</div>
+											{% endif %}
+										{% endif %}
+									</div>
+									<div class="col-sm-5">
+										<div>
+											<p><b>Pr&eacute;dio: </b>{{ colaborador.predio }}</p>
+										</div>
+										<div>
+											<p><b>Divis&atilde;o: </b> {{ colaborador.divisao }} - {{ colaborador.divisao.divisao_completo }}</p>
+										</div>
+										{% if colaborador.responsavel %}
+											<div>
+												<p><b>Respons&aacute;vel: </b>{{ colaborador.responsavel }}</p>
+											</div>
+										{% endif %}
+										{% if colaborador.vinculo.vinculo == 'Terceiro' %}
+										<div>
+											<p><b>Empresa Terceirizada: </b>{{ colaborador.empresa }}</p>
+										</div>
+										{% endif %}
+										<div>
+											<p><b>Colaborador Externo: </b>
+												{% if colaborador.externo %}
+													<img src="{% static "admin/img/icon-yes.svg" %}">
+												{% else %}
+													<img src="{% static "admin/img/icon-no.svg" %}">
+												{% endif %}
+											</p>
+										</div>
+									</div>
+								</div>
+								<div class="row pr-2 pl-2">
+									<legend class="txt_cor_primaria legend" >Informa&ccedil;&otilde;es no Portal</legend>
+									<div class="col-sm-5 offset-1">
+										<div>
+											<p><b>Username: </b>{{ colaborador.username }}</p>
+										</div>
+										<div>
+											<p><b>&Uacute;ltimo login: </b>{{ colaborador.last_login }}</p>
+										</div>
+									</div>
+									<div class="col-sm-5">
+										<div>
+											<p><b>Uid: </b>{{ colaborador.uid }}</p>
+										</div>
+										<div>
+											<p><b>Data de registro: </b>{{ colaborador.date_joined }}</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+				</div>
+			</div>
+		</div>
+		<div class="box-column">
+			<div class="save-box">
+				<a href="{% url 'colaborador:conta_grupoacesso_solicitacao' %}" class=" btn btn-info">Solicitar Acesso para <br> Grupo de Trabalho</a>
+				<a href="{% url 'colaborador:conta_historico'%}" class="btn btn-secondary">{% trans "History" %}</a>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

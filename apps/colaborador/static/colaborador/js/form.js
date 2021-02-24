@@ -5,41 +5,53 @@ function combo_vinculo() {
         $(".field-data_fim").hide();
         $(".field-empresa").hide();
         $(".field-registro_inpe").hide();
+        $(".field-responsavel").hide();
         if ($('#id_vinculo').val() === '') { return; }
         if ($('#id_vinculo').val() == "3") {  //se for servidor
             $(".field-registro_inpe").show();
             $('#id_registro_inpe').rules('add', { required: true });
+            $('#id_responsavel').rules( "remove" );
         } else if ($('#id_vinculo').val() == "4") { //se for terceiro
             $(".field-data_fim").show();
             $(".field-empresa").show();
             $('#id_data_fim').rules('add', { required: true });
             $('#id_empresa').rules('add', { required: true });
+            $('#id_responsavel').rules('add', { required: true });
+            $(".field-responsavel").show();
         } else {
             $(".field-data_fim").show();
+            $(".field-responsavel").show();
             $('#id_data_fim').rules('add', { required: true });
+            $('#id_responsavel').rules('add', { required: true });
         }
     }
 }
 
-$('#_form').submit(function () {
-    if ($(this).valid()) {
-        $('#loading').show();
-        $('#div_form').hide();
-        return true;
-    }
-});
-
-
 $(document).ready(function () {
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+
     // Validacao do email
     $.validator.addMethod("email_inpe", function (value, element) {
-        const queryString = window.location.search;
-        const urlParams = new URLSearchParams(queryString);
         if (urlParams.get('motivo') != "atualizar")
             return true;
         else
             return this.optional(element) || /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@(inpe.br)$/.test(value);
     }, 'Forneça um email do inpe válido.');
+
+        
+        
+
+    if (urlParams.get('motivo') == "externo") {
+        $('#id_externo').prop('checked',true);
+        $('#id_externo').attr('disabled', 'disabled');
+        $('#id_vinculo').find('[value=3]').remove();
+        $('#id_vinculo').find('[value=5]').remove();
+        $('#id_vinculo').selectpicker('refresh');
+    } else { 
+        $(".field-externo").hide();
+    }
 
     //Validacao do formulario
     $("#_form").validate({
@@ -47,6 +59,7 @@ $(document).ready(function () {
             first_name: { required: true, minlength: 3 },
             last_name: { required: true, minlength: 3 },
             email: { required: true, email_inpe: true },
+            externo: { externo: true },
             telefone: { required: true, minlength: 8 },
             data_nascimento: { required: true },
             rg: { required: true },
@@ -69,7 +82,6 @@ $(document).ready(function () {
             data_nascimento: { required: true },
             vinculo: { required: true, min: 2 },
             ramal: { required: true },
-            responsavel: { required: true },
             password: { required: true, minlength: 10, pwcheck: true, },
             confirm_password: { required: true, equalTo: "#id_password" },
             data_inicio: { required: true },

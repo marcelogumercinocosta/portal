@@ -1,8 +1,7 @@
 import pytest
 from mixer.backend.django import mixer
-from apps.core.models import Divisao, Group
 from apps.colaborador.models import Colaborador, Vinculo
-from apps.core.models import GrupoTrabalho, GrupoAcesso
+from apps.core.models import GrupoTrabalho, GrupoAcesso, GrupoPortal
 from django.core.exceptions import ValidationError
 
 pytestmark = pytest.mark.django_db
@@ -54,16 +53,16 @@ def test_detail_colaborador() -> None:
 def test_colaborador_chefia() -> None:
     colaborador = mixer.blend(Colaborador)
     colaborador.save()
-    colaborador.chefia()
+    colaborador.chefia_aprovar()
     assert colaborador.is_active == True
 
 
 def test_colaborador_suporte() -> None:
-    group = mixer.blend(Group, name="Colaborador")
+    group = mixer.blend(GrupoPortal, name="Colaborador")
     group.save()
     colaborador = mixer.blend(Colaborador)
     colaborador.save()
-    colaborador.suporte()
+    colaborador.suporte_criar()
     assert colaborador.is_staff == True
     assert colaborador.groups.filter(name="Colaborador").exists() == True
 

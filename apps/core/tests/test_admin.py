@@ -2,10 +2,6 @@
 import datetime
 
 import pytest
-from django.contrib.admin.sites import AdminSite
-from django.contrib.auth.models import AnonymousUser, Group, Permission, User
-from django.contrib.messages.middleware import MessageMiddleware
-from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory
 from django.urls import reverse
 from mixer.backend.django import mixer
@@ -14,87 +10,11 @@ from apps.colaborador.models import Colaborador
 from apps.core.admin import (GrupoAcessoColaboradorInLineRead, GroupInLine,
                              GrupoAcessoAdmin, ColaboradorGrupoAcessoInLineRead,DivisaoAdmin,
                              GrupoTrabalhoAdmin, GrupoAcessoInLine, ColaboradorGrupoAcesso)
-from apps.core.models import (GrupoAcesso, GrupoTrabalho, Divisao,
-                              ColaboradorGrupoAcesso)
+from apps.core.models import (GrupoAcesso, GrupoTrabalho, Divisao, ColaboradorGrupoAcesso, GrupoPortal)
 from apps.core.utils.freeipa import FreeIPA
+from apps.core.tests.base import *
 
 pytestmark = pytest.mark.django_db
-
-@pytest.fixture
-def admin_site():
-    return AdminSite()
-
-def message_middleware(req):
-    """Annotate a request object with a session"""
-    middleware = SessionMiddleware()
-    middleware.process_request(req)
-    req.session.save()
-    """Annotate a request object with a messages"""
-    middleware = MessageMiddleware()
-    middleware.process_request(req)
-    req.session.save()
-    return req
-
-@pytest.fixture
-@pytest.mark.django_db
-def colaborador() -> Colaborador:
-    group = mixer.blend(Group, name="Colaborador")
-    group.permissions.add(Permission.objects.get(codename="change_conta"))
-    group.save()
-
-    colaborador = mixer.blend(Colaborador, first_name="Colaborador", last_name="Fulano de tal")
-    colaborador.username = None
-    colaborador.is_superuser = True
-    colaborador.clean()
-    colaborador.groups.add(group)
-    colaborador.save()
-    return colaborador
-
-
-@pytest.fixture
-@pytest.mark.django_db
-def superuser() -> Colaborador:
-    group = mixer.blend(Group, name="Responsavel")
-    responsavel_colaborador = Permission.objects.get(codename="responsavel_colaborador")
-    group.permissions.add(responsavel_colaborador)
-    group.save()
-
-    superuser = mixer.blend(Colaborador, email="teste.super_user@inpe.br")
-    superuser.is_staff = True
-    superuser.is_active = True
-    superuser.is_superuser = True
-    superuser.username = None
-    superuser.clean()
-    superuser.save()
-    superuser.groups.add(group)
-    superuser.save()
-    return superuser
-
-
-@pytest.fixture
-@pytest.mark.django_db
-def secretaria() -> Colaborador:
-    group = mixer.blend(Group, name="Secretaria")
-    group.permissions.add(Permission.objects.get(codename="change_divisao"))
-    group.save()
-
-    secretaria = mixer.blend(Colaborador, email="teste.secretaria@inpe.br")
-    secretaria.is_staff = True
-    secretaria.is_active = True
-    secretaria.username = None
-    secretaria.clean()
-    secretaria.save()
-    secretaria.groups.add(group)
-    secretaria.save()
-    return secretaria
-
-
-@pytest.fixture
-@pytest.mark.django_db
-def grupo_trabalho() -> GrupoTrabalho:
-    grupo_trabalho = mixer.blend(GrupoTrabalho, grupo="Grupo teste", grupo_sistema="teste", data_criado=None)
-    grupo_trabalho.save()
-    return grupo_trabalho
 
 
 def test_colaborador_grupoacesso_inline_read(admin_site, superuser) -> None:
@@ -108,7 +28,7 @@ def test_colaborador_grupoacesso_inline_read(admin_site, superuser) -> None:
 def test_group_inline(admin_site, superuser) -> None:
     request = RequestFactory().get(reverse('admin:colaborador_colaborador_change', args=(superuser.id,)))
     request.user = superuser
-    model_admin = GroupInLine(Group, admin_site)
+    model_admin = GroupInLine(GrupoPortal, admin_site)
     formset = model_admin.get_formset(request)
     assert formset.form.base_fields["group"].label == "Grupo no Portal"
 
@@ -189,7 +109,7 @@ def test_grupotrabalho_create_delete_not_freeipa(admin_site, superuser, grupo_tr
     model_admin.delete_model(request=request, obj=grupo_trabalho)
     assert GrupoTrabalho.objects.filter(id=grupo_trabalho.pk).exists() == False
 
-def test_grupotrabalho_create_delete_not_freeipa(admin_site, superuser) -> None:
+def test_grupotrabalho_create_delete_freeipa(admin_site, superuser) -> None:
     grupo_trabalho = mixer.blend(GrupoTrabalho, grupo="Grupo teste", grupo_sistema="teste", data_criado=None, gid=10)
     grupo_trabalho.save()
     request = RequestFactory().get(reverse('admin:core_grupotrabalho_change', args=(grupo_trabalho.id,)))
@@ -222,8 +142,7 @@ def test_divisao_admin(admin_site, superuser) -> None:
     model_admin = DivisaoAdmin(Divisao, admin_site)
     model_admin.change_view(request=request, object_id=str(divisao.id))
     assert model_admin.readonly_fields == []
-    assert model_admin.chefe_nome(divisao) == f"{chefe.first_name} {chefe.last_name}" 
-    assert model_admin.chefe_substituto_nome(divisao) == f"{chefe_substituto.first_name} {chefe_substituto.last_name}" 
+
 
 
 def test_divisao_admin_secretaria(admin_site, secretaria) -> None:
@@ -234,4 +153,4 @@ def test_divisao_admin_secretaria(admin_site, secretaria) -> None:
     request.user = secretaria
     model_admin = DivisaoAdmin(Divisao, admin_site)
     model_admin.change_view(request=request, object_id=str(divisao.id))
-    assert model_admin.readonly_fields == ["divisao", 'divisao_completo']
+    assert model_admin.readonly_fields == ["divisao", 'divisao_completo', 'coordenacao']

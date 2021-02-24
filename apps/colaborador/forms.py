@@ -8,8 +8,8 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db.models import Q
 
-from apps.colaborador.models import Colaborador, Conta, Vinculo
-from apps.core.models import ColaboradorGrupoAcesso, Predio
+from apps.colaborador.models import Colaborador, Vinculo
+from apps.core.models import ColaboradorGrupoAcesso, Divisao
 from apps.core.tasks import send_email_template_task
 from garb.forms import GarbModelForm
 
@@ -18,6 +18,9 @@ class EmailLowerField(forms.EmailField):
     def to_python(self, value):
         return value.lower()
 
+class DivisaoChoiceField(ModelChoiceField):
+    def label_from_instance(self, obj):
+        return f"{obj.divisao} - {obj.divisao_completo} "
 
 class SecretariaNegarForm(forms.Form):
     colaborador = forms.IntegerField(widget=forms.HiddenInput())
@@ -80,7 +83,6 @@ class SuporteForm(forms.ModelForm):
     def clean_email(self):
         email = self.cleaned_data.get("email")
         pk = int(self.request.POST.getlist("id")[0])
-        colaborador_externo = Colaborador.objects.get(id=pk)
         if Colaborador.objects.filter(email=email).exclude(id=pk).exists():
             messages.add_message(self.request, messages.ERROR, "Email já utilizado")
             raise forms.ValidationError("Email já utilizado", code="invalid")
@@ -126,9 +128,8 @@ class ColaboradorBaseForm(forms.ModelForm):
         ("Viúvo", "Viúvo(a)"),
     )
 
-    responsavel = forms.ModelChoiceField(queryset=Colaborador.objects.filter(Q(groups__name="Responsavel")).distinct(), label="Responsável", widget=forms.Select(attrs={"data-live-search": "True"}))
-    predio = forms.ModelChoiceField(queryset=Predio.objects.all(), label="Prédio")
-    first_name = forms.CharField(max_length=255, label="Primeiro Nome")
+    divisao = DivisaoChoiceField(queryset=Divisao.objects.all(), label="Divisão")
+    responsavel = forms.ModelChoiceField(queryset=Colaborador.objects.filter(Q(groups__name="Responsavel")).distinct(), label="Responsável", widget=forms.Select(attrs={"data-live-search": "True"}),required=False,)
     last_name = forms.CharField(max_length=255, label="Sobrenome(s)")
     documento_tipo = forms.ChoiceField(choices=documento_tipo, label="Tipo Documento")
     sexo = forms.ChoiceField(choices=sexo)
@@ -168,8 +169,9 @@ class ColaboradorBaseForm(forms.ModelForm):
             "data_fim",
             "registro_inpe",
             "empresa",
+            "externo",
         ]
-
+        
 
 class ColaboradorForm(ColaboradorBaseForm, GarbModelForm):
     check_me_out1 = forms.BooleanField(required=True, label="<a href='#' target='_blank'>Eu li e concordo com a RE/DIR-518 Normas de uso aceit&aacute;vel dos recursos computacionais do INPE</a>")
@@ -177,13 +179,14 @@ class ColaboradorForm(ColaboradorBaseForm, GarbModelForm):
     check_me_out3 = forms.BooleanField(required=True, label="<a href='#' target='_blank'>Eu li e concordo com a Pol&iacute;tica de acesso aos Dados e Servidores do CPTEC/INPE</a>")
     vinculo = forms.ModelChoiceField(queryset=Vinculo.objects.filter(Q(id__gte=2)), label="Vínculo")
 
+
     class Meta:
         model = Colaborador
         submit_text = "Enviar Informações"
         fieldsets = [
             ("Informações Pessoais", {"fields": ("first_name", "last_name", "email", "data_nascimento", "nacionalidade", "sexo", "estado_civil", "area_formacao", "telefone", "cpf", "documento_tipo", "documento",)}),
             ("Informações Residenciais", {"fields": ("cep", "endereco", "numero", "bairro", "cidade", "estado",)}),
-            ("Informações Profissionais", {"fields": ("vinculo", "predio", "divisao", "ramal", "responsavel", "data_inicio", "data_fim", "registro_inpe", "empresa",)}),
+            ("Informações Profissionais", {"fields": ("vinculo", "predio", "divisao", "ramal", "responsavel", "data_inicio", "data_fim", "registro_inpe", "empresa", "externo")}),
             ("seus Direitos e Deveres", {"fields": ("check_me_out1", "check_me_out2", "check_me_out3")}),
         ]
 
@@ -191,5 +194,7 @@ class ColaboradorForm(ColaboradorBaseForm, GarbModelForm):
         colaborador = super(ColaboradorForm, self).save(*args, **kwargs)
         send_email_template_task.delay("Seu cadastro foi enviado para secretaria", "colaborador/email/colaborador_cadastro.html", [colaborador.email], [["colaborador", colaborador.full_name]])
         context_email = [["sexo", colaborador.sexo], ["name", colaborador.full_name], ["divisao", colaborador.divisao.divisao], ["scheme", scheme], ["host", host]]
+        if colaborador.responsavel:
+            send_email_template_task.delay("Você é responsavel por um Colaborador", "colaborador/email/colaborador_responsavel.html", [colaborador.responsavel.email], [["colaborador", colaborador.full_name]])
         send_email_template_task.delay((f"Termo do {colaborador.full_name} para imprimir e assinar"), "colaborador/email/colaborador_termo.html", [colaborador.divisao.email,], context_email)
         return colaborador

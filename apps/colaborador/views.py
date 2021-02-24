@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.models import LogEntry
 from django.contrib.auth.forms import urlsafe_base64_encode
-from django.contrib.auth.mixins import (LoginRequiredMixin, PermissionRequiredMixin)
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.staticfiles import finders
 from django.http import Http404, HttpResponse, HttpResponseRedirect
@@ -12,17 +12,18 @@ from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
 from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes
+from django.views.generic import DetailView
 from django.views.generic.base import RedirectView, TemplateView, View
 from django.views.generic.edit import CreateView, FormView, UpdateView
-from garb.views import ViewContextMixin
 from xhtml2pdf import pisa
 
-from apps.colaborador.forms import (ColaboradorForm, ResponsavelNegarForm, SecretariaNegarForm, SuporteForm)
+from apps.colaborador.forms import  ColaboradorForm, ResponsavelNegarForm, SecretariaNegarForm, SuporteForm
 from apps.colaborador.models import Colaborador
 from apps.colaborador.utils import HistoryColaborador, gerar_password, get_user
-from apps.core.models import (ColaboradorGrupoAcesso, Divisao, GrupoAcesso,  GrupoTrabalho)
+from apps.core.models import ColaboradorGrupoAcesso, Divisao, GrupoAcesso, GrupoTrabalho
 from apps.core.tasks import send_email_template_task
 from apps.core.utils.freeipa import FreeIPA
+from garb.views import ViewContextMixin
 
 
 class InicioView(ViewContextMixin, TemplateView):
@@ -61,8 +62,8 @@ class SecretariaView(ViewContextMixin, LoginRequiredMixin, PermissionRequiredMix
 
     def get_context_data(self, **kwargs):
         context = super(SecretariaView, self).get_context_data(**kwargs)
-        context["divisao"] = Divisao.objects.get(pk=self.request.user.colaborador.divisao.pk)
-        context["colaboradores"] = Colaborador.objects.filter(divisao_id=self.request.user.colaborador.divisao.id, is_active=False, is_staff=False)
+        context["divisao"] = Divisao.objects.get(pk=self.request.user.divisao.pk)
+        context["colaboradores"] = Colaborador.objects.filter(divisao_id=self.request.user.divisao.id, is_active=False, is_staff=False)
         context["form_negar"] = SecretariaNegarForm
         return context
 
@@ -241,7 +242,7 @@ class ResponsavelView(ViewContextMixin, LoginRequiredMixin, PermissionRequiredMi
     title = "Responsável"
 
     def get_context_data(self, **kwargs):
-        responsavel = self.request.user.colaborador
+        responsavel = self.request.user
         responsavel_grupos_acesso = [GrupoAcesso.id for GrupoAcesso in GrupoAcesso.objects.filter(grupo_trabalho__responsavelgrupotrabalho__responsavel_id=responsavel.id, grupo_trabalho__confirmacao=1)]
         colaborador_grupo_acesso = ColaboradorGrupoAcesso.objects.filter(grupo_acesso_id__in=responsavel_grupos_acesso, aprovacao=0).order_by("colaborador__name")
         context = super(ResponsavelView, self).get_context_data(**kwargs)
@@ -300,3 +301,12 @@ class ColaboradorHistoricoView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context["action_list"] = LogEntry.objects.filter(content_type__model='Colaborador', object_id=self.request.user.id).exclude(change_message="No fields changed.").order_by('-action_time')
         return context
+
+
+class ColaboradorContaView(ViewContextMixin, LoginRequiredMixin, DetailView ):
+    model = Colaborador
+    template_name = "colaborador/conta.html"
+    title = "Sua Conta"
+
+    def get_object(self):
+        return get_object_or_404(Colaborador, pk=self.request.user.id)

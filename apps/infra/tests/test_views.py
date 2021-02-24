@@ -9,66 +9,24 @@ from django.urls import reverse
 from mixer.backend.django import mixer
 
 from apps.colaborador.models import Colaborador
-from apps.core.models import (Divisao, GrupoAcesso, GrupoTrabalho, Predio,
+from apps.core.models import ( GrupoAcesso, Predio,
                               ResponsavelGrupoTrabalho)
 from apps.core.utils.freeipa import FreeIPA
 from apps.core.utils.history import HistoryCore
 from apps.core.views import UpdateGrupoAcesso
-from apps.infra.models import (AmbienteVirtual, Equipamento,
+from apps.infra.models import ( Equipamento,
                                EquipamentoGrupoAcesso, EquipamentoParte,
-                               HostnameIP, Ocorrencia, Rack, Rede, Servidor,
-                               ServidorHostnameIP, Storage, StorageArea,
-                               StorageAreaGrupoTrabalho,
-                               StorageGrupoAcessoMontagem, Supercomputador)
+                               HostnameIP, Rack, Rede, Servidor,
+                               ServidorHostnameIP,
+                               StorageGrupoAcessoMontagem)
 from apps.infra.views import (CriarServidorView, DataCenterJSONView,
                               DataCenterMapView, DataCenterRackDetailView, DataCenterMapEditView,
                               DataCenterView, RackDetailView, RackQRCodeView, DataCenterPredioView,
                               RackServerDetailView, OcorrenciaNewView)
+from apps.core.tests.base import *
 
 pytestmark = pytest.mark.django_db
 
-def message_middleware(req):
-    """Annotate a request object with a session"""
-    middleware = SessionMiddleware()
-    middleware.process_request(req)
-    req.session.save()
-    """Annotate a request object with a messages"""
-    middleware = MessageMiddleware()
-    middleware.process_request(req)
-    req.session.save()
-    return req
-
-@pytest.mark.django_db
-@pytest.fixture(autouse=True)
-def set_permission() -> None:
-    group = mixer.blend(Group, name="Responsavel")
-    responsavel_colaborador = Permission.objects.get(codename="responsavel_colaborador")
-    group.permissions.add(responsavel_colaborador)
-    group.save()
-
-@pytest.fixture
-@pytest.mark.django_db
-def superuser() -> Colaborador:
-    group = mixer.blend(Group, name="Suporte")
-    group.permissions.add(Permission.objects.get(codename="change_servidor"))
-    group.save()
-
-    superuser = mixer.blend(Colaborador, email="teste.super_user@inpe.br")
-    superuser.is_staff = True
-    superuser.is_active = True
-    superuser.is_superuser = True
-    superuser.username = None
-    superuser.clean()
-    superuser.groups.add(group)
-    superuser.save()
-    return superuser
-
-@pytest.fixture
-@pytest.mark.django_db
-def grupo_trabalho() -> GrupoTrabalho:
-    grupo_trabalho = mixer.blend(GrupoTrabalho, grupo="Grupo teste", grupo_sistema="teste", data_criado=None, id=4)
-    grupo_trabalho.save()
-    return grupo_trabalho
 
 @pytest.fixture
 @pytest.mark.django_db
@@ -89,8 +47,8 @@ def responsavel() -> Colaborador:
     return responsavel
 
 
-def test_criar_servidor_error_view(superuser, grupo_trabalho, responsavel):
-    responsavel_grupo_trabalho = mixer.blend(ResponsavelGrupoTrabalho, grupo=grupo_trabalho, responsavel=responsavel)
+def test_criar_servidor_error_view(superuser, grupo_trabalho, responsavel_grupo):
+    responsavel_grupo_trabalho = mixer.blend(ResponsavelGrupoTrabalho, grupo=grupo_trabalho, responsavel=responsavel_grupo)
     responsavel_grupo_trabalho.save()
 
     rede = mixer.blend(Rede, rede="rede", ip='192.168.0', id=2)
@@ -104,13 +62,13 @@ def test_criar_servidor_error_view(superuser, grupo_trabalho, responsavel):
 
     request = RequestFactory().get(reverse("infra:criar_servidor", kwargs={"pk": servidor.pk}))
     request = message_middleware(request)
-    request.user = User(id=superuser.id)
+    request.user = superuser
     response = CriarServidorView.as_view()(request, pk=servidor.pk)
     assert response.status_code == 302
     assert FreeIPA(request).host_find_count(fqdn=servidor.freeipa_name) == 0
 
 
-def test_criar_servidor_view(superuser, grupo_trabalho, responsavel):
+def test_criar_servidor_view(superuser, grupo_trabalho, responsavel_grupo):
 
     rede = mixer.blend(Rede, rede="rede", ip='192.168.0', prioridade_montagem=1)
     mixer.blend(StorageGrupoAcessoMontagem, ip='192.168.0.1', parametro='-fstype=nfs4,rw', tipo='OPERACIONAL', montagem="/dados/teste", namespace="/oper/dados/teste", automount="auto.grupo" , rede=rede, grupo_trabalho=grupo_trabalho).save()
@@ -121,7 +79,7 @@ def test_criar_servidor_view(superuser, grupo_trabalho, responsavel):
     mixer.blend(StorageGrupoAcessoMontagem, ip='192.168.0.6', parametro='-fstype=nfs4,ro', tipo='OPERACIONAL', montagem="/oper/share", namespace="/share", automount="auto.oper", rede=rede).save()
     mixer.blend(StorageGrupoAcessoMontagem, ip='192.168.0.10', parametro='-fstype=nfs4,rw', tipo='OPERACIONAL', montagem="*", namespace="/HOME/&", automount="auto.home",rede=rede).save()
 
-    responsavel_grupo_trabalho = mixer.blend(ResponsavelGrupoTrabalho, grupo=grupo_trabalho, responsavel=responsavel)
+    responsavel_grupo_trabalho = mixer.blend(ResponsavelGrupoTrabalho, grupo=grupo_trabalho, responsavel=responsavel_grupo)
     responsavel_grupo_trabalho.save()
     grupo_trabalho.gid = 9000
     grupo_trabalho.desenvolvimento = True
@@ -138,7 +96,7 @@ def test_criar_servidor_view(superuser, grupo_trabalho, responsavel):
 
     request = RequestFactory().get(reverse("infra:criar_servidor", kwargs={"pk": servidor.pk}))
     request = message_middleware(request)
-    request.user = User(id=superuser.id)
+    request.user = superuser
 
     freeipa = FreeIPA(request) 
     freeipa.set_grupo(grupo_trabalho)

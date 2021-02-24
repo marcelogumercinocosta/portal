@@ -1,9 +1,7 @@
 import datetime
 
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group
 from django.db import models
-from django.utils import timezone
-
 from apps.core.managers import ColaboradorGrupoAcessoManager, DivisaoManager, GrupoAcessoManager, GrupoTrabalhoManager, ResponsavelGrupoTrabalhoManager
 
 
@@ -36,9 +34,9 @@ class Divisao(models.Model):
     divisao_completo = models.CharField("Nome Completo", max_length=255, null=True, blank=False)
     email = models.EmailField(null=True, max_length=255)
     coordenacao = models.CharField("Coordenação", max_length=255, null=True, blank=False)
-    chefe = models.ForeignKey('colaborador.Colaborador', verbose_name="Chefe", null=True, related_name="chefe_user", on_delete=models.PROTECT)
+    chefe = models.ForeignKey('colaborador.Colaborador', verbose_name="Chefe", null=True, blank=True, related_name="chefe_user", on_delete=models.PROTECT)
     chefe_ativo = models.BooleanField("Ativo", default=False, blank=True, null=True)
-    chefe_substituto = models.ForeignKey('colaborador.Colaborador', verbose_name="Chefe Substituto", null=True, related_name="chefe_user_2", on_delete=models.PROTECT)
+    chefe_substituto = models.ForeignKey('colaborador.Colaborador', verbose_name="Chefe Substituto", null=True, blank=True, related_name="chefe_user_2", on_delete=models.PROTECT)
     chefe_substituto_ativo = models.BooleanField("Ativo", default=False, blank=True, null=True)
 
     objects = DivisaoManager()

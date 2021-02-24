@@ -1,94 +1,14 @@
 
 import pytest
-from django.contrib.admin.sites import AdminSite
-from django.contrib.auth.models import AnonymousUser, Group, Permission, User
 from django.test import RequestFactory
 from django.urls import reverse
-from mixer.backend.django import mixer
-from django.contrib.messages.middleware import MessageMiddleware
-from django.contrib.sessions.middleware import SessionMiddleware
-from apps.colaborador.admin import (ColaboradorAdmin, ContaAdmin)
+from apps.colaborador.admin import ColaboradorAdmin
 from apps.colaborador.models import Colaborador
 from apps.core.admin import ColaboradorGrupoAcessoInLineRead, GroupInLine
-from apps.core.models import GrupoAcesso, ColaboradorGrupoAcesso
 from apps.core.utils.freeipa import FreeIPA
+from apps.core.tests.base import *
 
 pytestmark = pytest.mark.django_db
-
-def message_middleware(req):
-    """Annotate a request object with a session"""
-    middleware = SessionMiddleware()
-    middleware.process_request(req)
-    req.session.save()
-    """Annotate a request object with a messages"""
-    middleware = MessageMiddleware()
-    middleware.process_request(req)
-    req.session.save()
-    return req
-
-
-@pytest.fixture
-def admin_site():
-    return AdminSite()
-
-@pytest.fixture
-@pytest.mark.django_db
-def superuser() -> Colaborador:
-    group = mixer.blend(Group, name="Responsavel")
-    responsavel_colaborador = Permission.objects.get(codename="responsavel_colaborador")
-    group.permissions.add(responsavel_colaborador)
-    group.save()
-
-    superuser = mixer.blend(Colaborador, email="teste.super_user@inpe.br")
-    superuser.is_staff = True
-    superuser.is_active = True
-    superuser.is_superuser = True
-    superuser.username = None
-    superuser.clean()
-    superuser.save()
-    superuser.groups.add(group)
-    superuser.save()
-    return superuser
-
-
-@pytest.fixture
-@pytest.mark.django_db
-def secretaria() -> Colaborador:
-    group = mixer.blend(Group, name="Secretaria")
-    secretaria_colaborador = Permission.objects.get(codename="secretaria_colaborador",)
-    view_colaborador = Permission.objects.get(codename="view_colaborador",)
-    group.permissions.add(secretaria_colaborador)
-    group.permissions.add(view_colaborador)
-    group.save()
-    secretaria = mixer.blend(Colaborador, email="teste.secretaria@inpe.br")
-    secretaria.is_staff = True
-    secretaria.is_active = True
-    secretaria.username = None
-    secretaria.clean()
-    secretaria.save()
-    secretaria.groups.add(group)
-    secretaria.save()
-    return secretaria
-
-@pytest.fixture
-@pytest.mark.django_db
-def colaborador() -> Colaborador:
-    group = mixer.blend(Group, name="Colaborador")
-    group.permissions.add(Permission.objects.get(codename="change_conta"))
-    group.save()
-
-    colaborador = mixer.blend(Colaborador, first_name="Teste", last_name="Fulano de tal", uid=123)
-    colaborador.username = None
-    colaborador.is_superuser = True
-    colaborador.clean()
-    colaborador.groups.add(group)
-    colaborador.save()
-    return colaborador
-
-
-def test_an_admin_view( admin_client):
-    response = admin_client.get('/admin/')
-    assert response.status_code == 200
 
 
 def test_admin_colaborador_superuser_edit_email_user_not_activeview( admin_site, superuser, colaborador):
@@ -125,12 +45,4 @@ def test_admin_colaborador_secretaria_view( admin_site, colaborador, secretaria)
     request.user = secretaria
     model_admin = ColaboradorAdmin(Colaborador, admin_site)
     model_admin.change_view(request=request, object_id=str(colaborador.pk))
-    assert model_admin.inlines == [ColaboradorGrupoAcessoInLineRead]
-
-
-def test_admin_conta_view( admin_site, superuser):
-    request = RequestFactory().get(reverse('admin:colaborador_conta_conta'))
-    request.user = superuser
-    model_admin = ContaAdmin(Colaborador, admin_site)
-    model_admin.change_view(request=request)
     assert model_admin.inlines == [ColaboradorGrupoAcessoInLineRead]
