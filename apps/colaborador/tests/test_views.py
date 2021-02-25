@@ -132,7 +132,7 @@ def test_get_sercretaria_ok(secretaria):
     response = SecretariaView.as_view()(request)
     assert response.status_code == 200
 
-def test_post_secretaria_negar_form_ok(secretaria, colaborador_solicitacao):
+def test_post_secretaria_negado_ok(secretaria, colaborador_solicitacao):
     assert len(Colaborador.objects.filter(pk=colaborador_solicitacao.pk)) == 1
     request = RequestFactory().post("/secretaria/negar", data={"colaborador": colaborador_solicitacao.id, "motivo": "teste"})
     request = message_middleware(request)
@@ -150,7 +150,7 @@ def test_get_secretaria_aprovado(secretaria, colaborador):
     assert response.status_code == 302
 
 
-def test_get_chefia_error(colaborador):
+def test_get_chefia_link_errado_permissao_acesso(colaborador):
     uid = urlsafe_base64_encode(force_bytes(colaborador.pk))
     token_generator = default_token_generator.make_token(colaborador)
     request = RequestFactory().get(reverse("colaborador:chefia_aprovar", kwargs={"uidb64": uid, "token": token_generator}))
@@ -163,7 +163,7 @@ def test_get_chefia_error(colaborador):
     response = ChefiaAprovarView.as_view()(request)
     assert response.status_code == 302
 
-def test_get_chefia_error_link(colaborador, chefia):
+def test_get_chefia_link_errado_uid(colaborador, chefia):
     colaborador.is_active = False
     colaborador.save()
     uid = urlsafe_base64_encode(force_bytes(colaborador.pk))
@@ -177,6 +177,8 @@ def test_get_chefia_error_link(colaborador, chefia):
 
 
 def test_get_chefia_ok(colaborador, chefia):
+    colaborador.is_active = False
+    colaborador.save()
     uid = urlsafe_base64_encode(force_bytes(colaborador.pk))
     token_generator = default_token_generator.make_token(colaborador)
     request = RequestFactory().get(reverse("colaborador:chefia_aprovar", kwargs={"uidb64": uid, "token": token_generator}))
@@ -187,7 +189,7 @@ def test_get_chefia_ok(colaborador, chefia):
     colaborador_aprovado = Colaborador.objects.get(id=colaborador.id)
     assert colaborador_aprovado.is_active == True
 
-def test_get_suporte_error(colaborador):
+def test_get_suporte_erro_permissao_acesso(colaborador):
     request = RequestFactory().get("/suporte")
     request.user = colaborador
     with pytest.raises(PermissionDenied) as excinfo:
@@ -219,7 +221,7 @@ def test_post_suporte_criar_ok(colaborador_suporte, colaborador):
     assert FreeIPA(request).user_delete(username="teste.ok") == True
 
 
-def test_post_suporte_criar_error_username(colaborador_suporte):
+def test_post_suporte_criar_erro_username(colaborador_suporte):
     data = {"id": colaborador_suporte.id, "username": "colaborador_suporte.tal", "uid": "11111", "email": "teste.teste@inpe.br"}
     request = RequestFactory().post(reverse("colaborador:suporte_criar_conta", kwargs={"pk": colaborador_suporte.pk}), data=data)
     request = message_middleware(request)
@@ -229,7 +231,7 @@ def test_post_suporte_criar_error_username(colaborador_suporte):
     assert colaborador_reprovado.is_staff == False
 
 
-def test_post_suporte_criar_error_email(colaborador_suporte):
+def test_post_suporte_criar_erro_email(colaborador_suporte):
     data = {"id": colaborador_suporte.id, "username": "teste.teste", "uid": "11111", "email": "teste.teste@inpe.br"}
     request = RequestFactory().post(reverse("colaborador:suporte_criar_conta", kwargs={"pk": colaborador_suporte.pk}), data=data)
     request = message_middleware(request)
@@ -239,7 +241,7 @@ def test_post_suporte_criar_error_email(colaborador_suporte):
     assert colaborador_reprovado.is_staff == False
 
 
-def test_post_suporte_criar_error_uid(colaborador_suporte):
+def test_post_suporte_criar_erro_uid(colaborador_suporte):
     data = {"id": colaborador_suporte.id, "username": "teste2", "uid": "11", "email": "teste2@inpe.br"}
     request = RequestFactory().post(reverse("colaborador:suporte_criar_conta", kwargs={"pk": colaborador_suporte.pk}), data=data)
     request = message_middleware(request)
@@ -266,7 +268,7 @@ def test_get_termo_ok(secretaria):
     assert response.status_code == 200
 
 
-def test_password_reset_confirm_ok(colaborador_suporte):
+def test_password_reset_confirma_ok(colaborador_suporte):
     password = colaborador_suporte.password
     uid = urlsafe_base64_encode(force_bytes(colaborador_suporte.pk))
     token_generator = default_token_generator.make_token(colaborador_suporte)
@@ -282,7 +284,7 @@ def test_password_reset_confirm_ok(colaborador_suporte):
     assert FreeIPA(request).user_delete(username=colaborador_suporte.username) == True
 
 
-def test_password_reset_confirm_user_error(colaborador_suporte):
+def test_password_reset_confirma_error(colaborador_suporte):
     password = colaborador_suporte.password
     uid = urlsafe_base64_encode(force_bytes(51))
     token_generator = default_token_generator.make_token(colaborador_suporte)

@@ -92,6 +92,7 @@ def grupo_trabalho() -> GrupoTrabalho:
 @pytest.mark.django_db
 def colaborador_suporte() -> Colaborador:
     grupo_portal = mixer.blend(GrupoPortal, name="Suporte")
+    grupo_portal.permissions.add(Permission.objects.get(codename="change_colaborador"))
     grupo_portal.permissions.add(Permission.objects.get(codename="suporte_colaborador"))
     grupo_portal.permissions.add(Permission.objects.get(codename="responsavel_colaborador"))
     grupo_portal.save()

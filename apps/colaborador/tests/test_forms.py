@@ -1,13 +1,13 @@
 import pytest
 
-from apps.colaborador.forms import ColaboradorForm, SecretariaNegarForm, ResponsavelNegarForm
+from apps.colaborador.forms import ColaboradorForm, SecretariaNegarForm, ResponsavelNegarForm, DivisaoChoiceField
 from apps.core.tests.base import *
 
 pytestmark = pytest.mark.django_db
 
 
 @pytest.mark.django_db
-def test_form_colaborador_valid(responsavel_grupo, colaborador) -> None:
+def test_form_colaborador_valido(responsavel_grupo, colaborador) -> None:
     
     data = colaborador.__dict__
     data.update(
@@ -31,19 +31,18 @@ def test_form_colaborador_valid(responsavel_grupo, colaborador) -> None:
     assert form.is_valid() is True
 
 
-def test_form_colaborador_error(colaborador) -> None:
+def test_form_colaborador_erro(colaborador) -> None:
     colaborador.email = "fulano@test.com"
     colaborador.save()
     form = ColaboradorForm(data={})
     assert form.is_valid() is False
-
     data = {"email": "fulano@test.com"}
     form = ColaboradorForm(data=data)
     assert form.errors["last_name"] == ["Este campo é obrigatório."]
     assert form.errors["email"] == ["Email já existe"]
 
 
-def test_form_secretaria_negar_ok(colaborador) -> None:
+def test_form_secretaria_negar_colaborador_ok(colaborador) -> None:
     colaborador.is_active = False
     colaborador.save()
     form = SecretariaNegarForm(data={"colaborador": colaborador.id, "motivo": "teste"})
@@ -54,13 +53,18 @@ def test_form_secretaria_negar_ok(colaborador) -> None:
     assert colaborador_removido.id == colaborador.id
 
 
-def test_form_secretaria_negar_error_id() -> None:
+def test_form_secretaria_negar_colaborador_erro_id() -> None:
     form = SecretariaNegarForm(data={"colaborador": 0, "motivo": None})
     assert form.is_valid() is False
     assert form.errors["colaborador"] == ["Colaborador não encontrado"]
 
 
-def test_form_responsavel_negar_error_id() -> None:
+def test_form_responsavel_negar_colaborador_erro_id() -> None:
     form = ResponsavelNegarForm(data={"colaborador_grupoacesso": 120, "motivo": "teste"})
     assert form.is_valid() is False
     assert form.errors["colaborador_grupoacesso"] == ["Solicitação não encontrada"]
+
+def test_form_field_divisao() -> None:
+    divisao = mixer.blend(Divisao)
+    choice = DivisaoChoiceField(Divisao.objects.all())
+    assert choice.label_from_instance(divisao) == f"{divisao.divisao} - {divisao.divisao_completo}"

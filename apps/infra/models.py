@@ -355,7 +355,7 @@ class EquipamentoParte(Equipamento):
 
     def save(self, *args, **kwargs):
         if not self.pk:
-            self.tipo = "Parte de Equipamento"
+            self.tipo = "Equipamento Físico"
         super(EquipamentoParte, self).save(*args, **kwargs)
 
 

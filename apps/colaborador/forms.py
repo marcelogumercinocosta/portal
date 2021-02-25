@@ -20,7 +20,7 @@ class EmailLowerField(forms.EmailField):
 
 class DivisaoChoiceField(ModelChoiceField):
     def label_from_instance(self, obj):
-        return f"{obj.divisao} - {obj.divisao_completo} "
+        return f"{obj.divisao} - {obj.divisao_completo}"
 
 class SecretariaNegarForm(forms.Form):
     colaborador = forms.IntegerField(widget=forms.HiddenInput())

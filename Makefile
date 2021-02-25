@@ -87,7 +87,7 @@ start-prod:
 
 # target: test-dev - start test in dev
 test-dev:
-	../env/bin/pytest --cov=. --cov-report html
+	../env/bin/pytest -v --cov=. --cov-report html
 
 # target: dumpdata - dump data for database
 dumpdata:

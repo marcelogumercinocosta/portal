@@ -335,9 +335,9 @@ class FreeIPA(Client):
         message = f"{host} removed from hbacrule {hbac} ",
         return  self.__execute_freeipa(message, "hbacrule_remove_host",  hbac, params)
 
-    def hbacrule_remove_members_user(self, hbac, user):
-        params = {"user": user,}
-        return  self.__execute_freeipa(f"{user} removed from hbacrule {hbac} ", "hbacrule_remove_user",  hbac, params)
+    # def hbacrule_remove_members_user(self, hbac, user):
+    #     params = {"user": user,}
+    #     return  self.__execute_freeipa(f"{user} removed from hbacrule {hbac} ", "hbacrule_remove_user",  hbac, params)
 
     def hbacrule_show(self, criteria=None, allattr=True, rights=False,  raw=False, **kwargs):
         params = { "all": allattr, "rights": rights, "raw": raw}

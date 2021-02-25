@@ -53,6 +53,10 @@ class Divisao(models.Model):
     def color(self):
         cor = ["green", "red", "blue", "orange", "lime", "teal", "brown"]
         return cor[self.id - 1]
+    
+    @property
+    def full_name(self):
+        return f"{self.divisao} - {self.divisao_completo}"
 
     def emails_to(self):
         emails = [self.email]

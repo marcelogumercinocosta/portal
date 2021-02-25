@@ -70,7 +70,6 @@ class CriarContaGrupoTrabalhoView(LoginRequiredMixin, PermissionRequiredMixin, R
 
     def get_redirect_url(self, *args, **kwargs):
         grupo_trabalho = get_object_or_404(GrupoTrabalho, id=kwargs["pk"])
-        tste = grupo_trabalho.responsavelgrupotrabalho_set.all()
         if grupo_trabalho.responsavelgrupotrabalho_set.all().exists() and grupo_trabalho.gid > 0 and grupo_trabalho.confirmacao == True:
             client_feeipa = FreeIPA(self.request)
             if client_feeipa.group_find_count(cn=grupo_trabalho.grupo_sistema) == 0:

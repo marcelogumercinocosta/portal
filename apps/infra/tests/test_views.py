@@ -204,7 +204,8 @@ def test_ocorrencia_new_view(rack):
 
 
 def test_rack_detail_view(rack):
-    equipamento_parte = mixer.blend(EquipamentoParte, marca='HP', modelo='GEN 10', patrimonio="10", rack=rack, consumo=10)
+    equipamento_parte = mixer.blend(EquipamentoParte, marca='HP', modelo='GEN 10', patrimonio="10",  consumo=10)
+    equipamento_parte.rack = rack
     equipamento_parte.save()
     request = RequestFactory().get(reverse("infra:datacenter_rack_detail"))
     request.GET._mutable = True

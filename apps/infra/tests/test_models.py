@@ -57,8 +57,8 @@ def test_ambiente_virtual() -> None:
 
 def test_equipamento_parte() -> None:
     equipamento_parte = mixer.blend(EquipamentoParte, marca='HP', modelo='GEN 10', patrimonio="10" )
-    assert equipamento_parte.tipo == "Parte de Equipamento" 
-    assert str(equipamento_parte) == "Parte de Equipamento - HP GEN 10" 
+    assert equipamento_parte.tipo == "Equipamento Físico" 
+    assert str(equipamento_parte) == "Equipamento Físico - HP GEN 10" 
 
 
 def test_storage_storagearea() -> None:
@@ -144,10 +144,10 @@ def test_servidor_equipamento() -> None:
     assert equipamento.nome() == 'server1'
 
     equipamento_parte = mixer.blend(EquipamentoParte, marca='HP', modelo='GEN 10', patrimonio="10" )
-    assert equipamento_parte.tipo == "Parte de Equipamento" 
+    assert equipamento_parte.tipo == "Equipamento Físico" 
     equipamento = Equipamento.objects.get(pk=equipamento_parte.id)
     assert equipamento.nome() ==  'HP GEN 10'
-    assert str(equipamento) == '[ PARTE DE EQUIPAMENTO ] HP GEN 10'
+    assert str(equipamento) == '[ EQUIPAMENTO FÍSICO ] HP GEN 10'
 
 
 def test_rede() -> None:
