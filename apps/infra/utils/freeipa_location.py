@@ -20,7 +20,6 @@ class Automount:
             self.client_feeipa.sudorule_add_members_host(grupo_acesso.grupo_trabalho.get_sudo(), host=self.servidor.freeipa_name)
             if self.client_feeipa.automountmap_add_indirect(self.servidor.freeipa_name_mount, grupo_acesso.automountmap, '/-'):
                 storage_grupoacesso_montagens = StorageGrupoAcessoMontagem.objects.filter(tipo=grupo_acesso.tipo, automount='auto.grupo', grupo_trabalho__id=grupo_acesso.grupo_trabalho.id, rede__id=self.rede.id)
-                print(grupo_acesso.tipo,'auto.grupo',grupo_acesso.grupo_trabalho.id,self.rede.id)
                 if storage_grupoacesso_montagens.exists():
                     for key in storage_grupoacesso_montagens: 
                         self.client_feeipa.automountkey_add(self.servidor.freeipa_name_mount, grupo_acesso.automountmap, key.montagem, key.mount_information)

@@ -361,7 +361,7 @@ class EquipamentoParte(Equipamento):
 
 class EquipamentoGrupoAcesso(models.Model):
     equipamento = models.ForeignKey("infra.Equipamento", on_delete=models.CASCADE)
-    grupo_acesso = models.ForeignKey("core.GrupoAcesso", on_delete=models.CASCADE)
+    grupo_acesso = models.ForeignKey("core.GrupoAcesso", on_delete=models.PROTECT)
 
     class Meta:
         verbose_name = "Grupo Acesso do Equipamento"

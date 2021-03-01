@@ -3,15 +3,18 @@ from io import BytesIO
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.models import LogEntry
-from django.contrib.auth.forms import urlsafe_base64_encode
+from django.contrib.auth.forms import PasswordResetForm, urlsafe_base64_encode
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.views import PasswordContextMixin
 from django.contrib.staticfiles import finders
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
 from django.utils.encoding import force_bytes
+from django.views.decorators.csrf import csrf_protect
 from django.views.generic import DetailView
 from django.views.generic.base import RedirectView, TemplateView, View
 from django.views.generic.edit import CreateView, FormView, UpdateView
@@ -114,8 +117,9 @@ class ChefiaAprovarView(ViewContextMixin, LoginRequiredMixin, PermissionRequired
             context["validlink"] = True
             context["colaborador"] = colaborador
             HistoryColaborador(self.request).chefia(colaborador)
-            send_emails = [colaborador.email, colaborador.divisao.email, settings.EMAIL_SUPORTE]
-            send_email_template_task.delay((f"Agora é com o suporte"), "colaborador/email/chefia_aprovado.html", send_emails, [["name", colaborador.full_name]])
+            send_email_template_task.delay((f"Agora é com o suporte"), "colaborador/email/chefia_aprovado.html", [colaborador.email], [["name", colaborador.full_name]])
+            if not "@inpe.br" in colaborador.email:
+                send_email_template_task.delay((f"Novo Colaborador"), "colaborador/email/suporte_username.html", [settings.EMAIL_SUPORTE], [["name", colaborador.full_name],["username", colaborador.username]])
             messages.add_message(self.request, messages.SUCCESS, "Colaborador Aprovado com Sucesso")
         return context
 
@@ -168,7 +172,7 @@ class TermoCompromissoView(ViewContextMixin, LoginRequiredMixin, PermissionRequi
             motivo_detalhe = "Cadastro para atualização conta"
             motivo = "atualizacao"
         else:
-            motivo_detalhe = "Novo email / Conta Acesso aos Recursos (sugestão:" + colaborador.username + ")"
+            motivo_detalhe = "Novo email / Conta Acesso aos Recursos"
             motivo = "admissao"
         context = {"title": "Termo de Compromisso de " + colaborador.full_name, "logo": finders.find("image/logo.png"), "motivo_detalhe": motivo_detalhe, "motivo": motivo, "colaborador": colaborador}
         result = BytesIO()
@@ -197,7 +201,6 @@ class PasswordResetConfirmView(ViewContextMixin, TemplateView):
                 colaborador.save()
             context.update({"validlink": True, "password": tmp_password})
         return context
-
 
 class SolicitacaoView(ViewContextMixin, LoginRequiredMixin, TemplateView):
     template_name = "colaborador/solicitacao.html"

@@ -7,10 +7,12 @@
             <a href="{% url 'core:atualizar_assinatura' object_id  %}" class=" btn btn-info btn-verify-form" target="_blank">Atualizar Assinatura</a>
             <a href="{% url 'core:confirmar_assinatura' object_id  %}" class=" btn btn-danger btn-verify-form" >Confirmar Assinatura</a>
         {% else %}
-            {% if  original.gid > 0 and not original.data_criado %}
-                <a href="{% url 'core:criar_conta_grupo' object_id  %}" class=" btn btn-info btn-verify-form" >Criar Conta</a>
-            {% else %}
-                <a href="{% url 'core:atualizar_conta_grupo' object_id  %}" class=" btn btn-info btn-verify-form" >Atualizar Conta</a>
+            {% if original.gid > 0 %}
+                {% if  not original.data_criado %}
+                    <a href="{% url 'core:criar_conta_grupo' object_id  %}" class=" btn btn-info btn-verify-form" >Criar Conta</a>
+                {% else %}
+                    <a href="{% url 'core:atualizar_conta_grupo' object_id  %}" class=" btn btn-info btn-verify-form" >Atualizar Conta</a>
+                {% endif %}
             {% endif %}
         {% endif %}
     {% endif %}

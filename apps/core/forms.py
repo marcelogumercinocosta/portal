@@ -12,12 +12,17 @@ class UserChoiceField(ModelChoiceField):
         return f"{obj.first_name} {obj.last_name} | {obj.email}"
 
 
+class DivisaoChoiceField(ModelChoiceField):
+    def label_from_instance(self, obj):
+        return f"{obj.divisao} - {obj.divisao_completo}"
+
 class GrupoTrabalhoForm(forms.ModelForm):
     share = forms.BooleanField(required=False)
     operacional = forms.BooleanField(required=False, label="Operacional")
     desenvolvimento = forms.BooleanField(required=False, label="Desenvolvimento")
     pesquisa = forms.BooleanField(required=False, label="Pesquisa")
     documento = forms.BooleanField(required=False, label="Documento")
+    divisao = DivisaoChoiceField(queryset=Divisao.objects.all(), label="Divisão")
 
     class Meta:
         model = GrupoTrabalho

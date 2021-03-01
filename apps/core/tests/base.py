@@ -40,13 +40,12 @@ def superuser() -> Colaborador:
 @pytest.fixture
 @pytest.mark.django_db
 def colaborador() -> Colaborador:
-    vinculo = mixer.blend(Vinculo)
+    vinculo = mixer.blend(Vinculo, vinculo="Administrador")
     divisao = mixer.blend(Divisao)
     predio = mixer.blend(Predio)
     grupo_portal = mixer.blend(GrupoPortal, name="Colaborador")
     grupo_portal.permissions.add(Permission.objects.get(codename="view_colaboradorgrupoacesso"))
-    grupo_portal.permissions.add(Permission.objects.get(codename="view_conta"))
-    grupo_portal.permissions.add(Permission.objects.get(codename="change_conta"))
+    grupo_portal.permissions.add(Permission.objects.get(codename="view_colaborador"))
     grupo_portal.save()
     colaborador = mixer.blend(Colaborador, first_name="Teste", last_name="Fulano de tal", uid=123)
     colaborador.divisao = divisao

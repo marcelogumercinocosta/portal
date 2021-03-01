@@ -29,10 +29,10 @@ class Colaborador(AbstractUser):
     endereco = models.CharField(max_length=255, verbose_name="Endereço")
     numero = models.CharField(max_length=255, verbose_name="Número")
     estado = models.CharField(max_length=255)
-    predio = models.ForeignKey("core.Predio", verbose_name="Prédio", null=True, on_delete=models.PROTECT)
+    predio = models.ForeignKey("core.Predio", verbose_name="Prédio", null=True, blank=True, on_delete=models.PROTECT)
     data_inicio = models.DateField("Data de Início")
     data_fim = models.DateField("Data de Fim", null=True, blank=True)
-    ramal = models.CharField("Ramal", max_length=255, null=True)
+    ramal = models.CharField("Ramal", max_length=255, null=True, blank=True)
     nacionalidade = models.CharField(max_length=255)
     sexo = models.CharField(max_length=255, null=True)
     area_formacao = models.CharField(max_length=255, verbose_name="Área de Formação")
@@ -105,9 +105,3 @@ class Colaborador(AbstractUser):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
-
-class Conta(Colaborador):
-    class Meta:
-        proxy = True
-        verbose_name = "Conta"
-        verbose_name_plural = "Contas"

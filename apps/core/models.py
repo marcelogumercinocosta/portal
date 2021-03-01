@@ -59,7 +59,7 @@ class Divisao(models.Model):
         return f"{self.divisao} - {self.divisao_completo}"
 
     def emails_to(self):
-        emails = [self.email]
+        emails = []
         if self.chefe_ativo:
             emails.append(self.chefe.email)
         if self.chefe_substituto_ativo:
@@ -110,7 +110,7 @@ class GrupoAcesso(models.Model):
     hbac_freeipa = models.CharField("HBAC no FreeIPA", max_length=255)
     tipo = models.CharField("tipo", max_length=255)
     data = models.DateTimeField(auto_now_add=True)
-    grupo_trabalho = models.ForeignKey("core.GrupoTrabalho", on_delete=models.PROTECT)
+    grupo_trabalho = models.ForeignKey("core.GrupoTrabalho", on_delete=models.CASCADE)
     tipos = {"OPERACIONAL": "oper", "DESENVOLVIMENTO": "dev", "PESQUISA": "pesq", "DOCUMENTO": "doc"}
     objects = GrupoAcessoManager()
 

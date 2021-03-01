@@ -1,8 +1,9 @@
 {% load static %}
+{% load templatetags %}
 <html>
 
 <head>
-  <title>Requisi&ccedil;&atilde;o / Atualiza&ccedil;&atilde;o de Grupo de Trabalho no CPTEC/INPE</title>
+  <title>Requisi&ccedil;&atilde;o / Atualiza&ccedil;&atilde;o de Grupo de Trabalho na COIDS</title>
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <style type="text/css">
     .sub_header p {
@@ -39,7 +40,9 @@
       width: 300px;
       text-align: justify;
     }
-
+    .informacao3 { 
+      margin-left: 30px;
+    }
     table {
       width: 300px;
     }
@@ -63,46 +66,50 @@
   <img src="{{ logo }}" class="logo">
   <div class='wrapper'>
     <div class='header'>
-      <p>Formul&aacute;rio para Requisi&ccedil;&atilde;o / Atualiza&ccedil;&atilde;o <br> de Grupo de Trabalho no CPTEC/INPE</p>
+      <p>Formul&aacute;rio para Requisi&ccedil;&atilde;o/Atualiza&ccedil;&atilde;o de Grupo de Trabalho na COIDS</p>
     </div>
   </div>
   <div class="informacao2">
-    <br>
-    A utiliza&ccedil;&atilde;o dos recursos do sistema de Supercomputa&ccedil;&atilde;o est&aacute; sujeito a normas de
-    seguran&ccedil;a do INPE. <br> Como parte do cumprimento dessas normas,
-    solicitamos uma leitura atenta das pol&iacute;ticas e procedimentos do INPE, dispon&iacute;veis no Portal da
-    Supercomputa&ccedil;&atilde;o, das informa&ccedil;&otilde;es abaixo e
-    preenchimento desse documento.
-    <br><br>
-    Nome do Grupo de Trabalho: <b>{{ grupo.grupo|upper }}</b> &nbsp; &nbsp; &nbsp; &nbsp;
-    Divisão: <b>{{ grupo.divisao.divisao }}</b> <br><br>
-    Tipo: &nbsp;
-    {% if grupo.operacional_io %}
-      <b> <img src="{{ checkbox_on }}"> Implementação Operacional &nbsp; &nbsp; </b>
-    {% else %}
-      <b> <img {% if grupo.operacional %} src="{{ checkbox_on }}" {% else %} src="{{ checkbox_off }}" {% endif %}> Operacional &nbsp; &nbsp;  </b>
-    {% endif %}
-    <b> <img {% if grupo.desenvolvimento %} src="{{ checkbox_on }}" {% else %} src="{{ checkbox_off }}" {% endif %}> Desenvolvimento &nbsp; &nbsp;</b>
-    <b> <img {% if grupo.pesquisa %} src="{{ checkbox_on }}" {% else %} src="{{ checkbox_off }}" {% endif %}> Pesquisa &nbsp; &nbsp;  </b>
-    <b> <img {% if grupo.documento %} src="{{ checkbox_on }}" {% else %} src="{{ checkbox_off }}" {% endif %}> Documento &nbsp; &nbsp;  </b>
-    <br> <br>
-    Distribui&ccedil;&atilde;o de Dados: &nbsp;
-    <b> <img {% if grupo.share %} src="{{ checkbox_on }}" {% else %} src="{{ checkbox_off }}" {% endif %}> Share &nbsp; &nbsp; &nbsp; &nbsp; </b>
-    <br> <br>
+    A utiliza&ccedil;&atilde;o dos recursos do SESUP - Servi&ccedilo de Supercomputa&ccedil;&atilde;o est&aacute; sujeito a normas de
+    seguran&ccedil;a do INPE.  <br> 
+    Como parte do cumprimento dessas normas,solicitamos uma leitura atenta das pol&iacute;ticas e das informa&ccedil;&otilde;es abaixo e preenchimento desse documento:
+    <div class="informacao3">
+      Nome do Grupo de Trabalho: <b>{{ grupo.grupo|upper }}</b> &nbsp; &nbsp; &nbsp; &nbsp; GID: <b>{{ grupo.gid }}</b><br>
+      Divisão: <b>{{ grupo.divisao.full_name }}</b> <br>
+      Tipo: &nbsp;
+      {% if grupo.operacional_io %}
+        <b> <img src="{{ checkbox_on }}"> Implementação Operacional &nbsp; &nbsp; </b>
+      {% else %}
+        <b> <img {% if grupo.operacional %} src="{{ checkbox_on }}" {% else %} src="{{ checkbox_off }}" {% endif %}> Operacional &nbsp; &nbsp;  </b>
+      {% endif %}
+      <b> <img {% if grupo.desenvolvimento %} src="{{ checkbox_on }}" {% else %} src="{{ checkbox_off }}" {% endif %}> Desenvolvimento &nbsp; &nbsp;</b>
+      <b> <img {% if grupo.pesquisa %} src="{{ checkbox_on }}" {% else %} src="{{ checkbox_off }}" {% endif %}> Pesquisa &nbsp; &nbsp;  </b>
+      <b> <img {% if grupo.documento %} src="{{ checkbox_on }}" {% else %} src="{{ checkbox_off }}" {% endif %}> Documento &nbsp; &nbsp;  </b>
+      <br> 
+      Distribui&ccedil;&atilde;o de Dados: &nbsp;
+      <b> <img {% if grupo.share %} src="{{ checkbox_on }}" {% else %} src="{{ checkbox_off }}" {% endif %}> Share &nbsp; &nbsp; &nbsp; &nbsp; </b>
+      <br> 
+      {% for storageArea in grupo.storageareagrupotrabalho_set.all %}
+        {% if forloop.first %}
+          Recursos de Armazenamento: <br>
+        {% endif %}
+        &nbsp; &nbsp;&nbsp; &nbsp; - <b> {{storageArea.storage_area}} : {{storageArea.quota}}TB </b><br>
+      {% endfor %}
+    </div>
     <b>Informa&ccedil;&otilde;es adicionais:</b> <br>
-    &bull; A quota disponibilizada seguir&aacute; padr&atilde;o para os grupos. <br>
-    &bull; O solicitante do Grupo de Trabalho ser&aacute; do respons&aacute;vel do grupo podendo adicionar ou remover colaboradores<br>
-    &bull; Qualquer mudan&ccedil;a de respons&aacute;vel ou tipo ou distribui&ccedil;&atilde;o de dados esse documento dever&aacute; ser atualizado.
-    <br><br>
+    &bull; O solicitante do Grupo de Trabalho ser&aacute; do respons&aacute;vel respondendo por daddos e colaboradores autorizados.<br>
+    &bull; A quota disponibilizada segue o padr&atilde;o para todos grupos, podendo ser negociada por registro em email do respons&aacute;vel com c&oacute;pia para o Titular da Divis&atilde;o.<br>
+    &bull; Qualquer mudan&ccedil;a de respons&aacute;vel ou tipo ou distribui&ccedil;&atilde;o de dados necessita deste documento ser atualizado.
+    <br>    
     <b>Declaro que li:</b> <br>
     &bull; RE/DIR-518 Normas de uso aceit&aacute;vel dos recursos computacionais do INPE;<br>
-    &bull; Pol&iacute;tica do servi&ccedil;os Transf&ecirc;rencia de Dados CPTEC/INPE; <br>
-    &bull; Pol&iacute;tica de acesso aos Dados e Servidores do CPTEC/INPE.<br>
-    Procedimentos do CPTEC/INPE, necess&aacute;rios para acesso aos recursos de Supercomputa&ccedil;&atilde;o, e
-    compreendo e aceito minhas responsabilidades no uso dos recursos aos quais terei acesso.
+    &bull; Pol&iacute;tica do servi&ccedil;os Transf&ecirc;rencia de Dados da COIDS <br>
+    &bull; Pol&iacute;tica de acesso aos Dados e Servidores da COIDS<br>
+    Este documento &eacute; necess&aacute;rio para acesso aos recursos da COIDS, 
+    compreendo e aceito minhas responsabilidades no uso dos recursos aos quais eu e meu grupo teremos acesso:
   </div>
   <div class='sub_header'>
-    <p><b>Assinaturas</b></p>
+    <b>Assinaturas:</b>
   </div>
   {% for responsavel in responsaveis %}
   <table>
@@ -142,7 +149,7 @@
     </tr>
     <tr style="height:20px">
       <td style="width:40%; font-size:8px; text-align:center; border-top: 1px solid #000; padding-top:2px;">
-        Autoriza&ccedil;&atilde;o do Titular da Divis&atilde;o do Requisitante</td>
+        Autoriza&ccedil;&atilde;o do Titular do(a) <b> {{ grupo.divisao.full_name }}</b></td>
       <td style="width:40%; border-top: 1px solid #000; "></td>
       <td style="width:20%; border-top: 1px solid #000; "></td>
     </tr>
@@ -161,7 +168,7 @@
     </tr>
     <tr style="height:20px">
       <td style="width:40%; font-size:8px; text-align:center; border-top: 1px solid #000; padding-top:2px;">
-        Autoriza&ccedil;&atilde;o do Titular da Divis&atilde;o de Opera&ccedil;&otilde;es do CPTEC</td>
+        Autoriza&ccedil;&atilde;o do Titular do(a) <b> {{ grupo.divisao.coordenacao }}</b></td>
       <td style="width:40%; border-top: 1px solid #000; "></td>
       <td style="width:20%; border-top: 1px solid #000; "></td>
     </tr>
@@ -180,7 +187,7 @@
     </tr>
     <tr style="height:20px">
       <td style="width:40%; font-size:8px; text-align:center; border-top: 1px solid #000; padding-top:2px;">
-        Autoriza&ccedil;&atilde;o do Titular do Servi&ccedil;o de Supercomputa&ccedil;&atilde;o e Suporte </td>
+        Autoriza&ccedil;&atilde;o do Titular do(a) <b>SESUP -  Servi&ccedil;o de Supercomputa&ccedil;&atilde;o</b></td>
       <td style="width:40%; border-top: 1px solid #000; "></td>
       <td style="width:20%; border-top: 1px solid #000; "></td>
     </tr>

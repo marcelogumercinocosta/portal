@@ -164,7 +164,7 @@ class CriarServidorView(LoginRequiredMixin, PermissionRequiredMixin, RedirectVie
                 automount.adicionar_oper()
                 automount.adicionar_home()
                 HistoryInfra(self.request).novo_servidor(servidor=servidor)
-                send_email_task.delay("Servidor Criado",f"O Servidor: {servidor.nome} foi criado no FreeIPA, por:{self.request.user.username,}",[settings.EMAIL_SYSADMIN])
+                send_email_task.delay("Servidor Criado",f"O Servidor: {servidor.nome} foi criado no FreeIPA, por:{self.request.user.username}",[settings.EMAIL_SYSADMIN])
                 servidor.ldap = True
                 servidor.save()
         else:

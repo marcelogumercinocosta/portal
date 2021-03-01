@@ -5,15 +5,15 @@
     <div class="module-box">
         <div class="content-box">
                 <div class="title">
-                    <h2 class="m-0  text-center">{{ None|garb_title }} / SESUP / INPE</h2>
+                    <h2 class="m-0  text-center">{{ None|garb_title }} / COIDS / INPE</h2>
                 </div>
-                <div class="text text-justify p-4">
+                <div class="text text-center p-4">
                 {% if validlink %}
-                    <p> O Colaborador <b>{{ colaborador.full_name}}</b> foi aprovado.</p>
-                    <p> Obrigado.</p>
+                    <p class="msg text-center ">O Colaborador <b>{{ colaborador.full_name}}</b> foi <b class="text-success">APROVADO COM SUCESSO</b>.</p>
+                    <p class="msg text-center "> Obrigado.</p>
                     <br>
                 {% else %}
-                    <p class="msg">O Colaborador j&aacute; foi aprovado ou aconteceu algum problema com o cadastro, solicite para secretaria enviar a revisão novamente</p>
+                    <p class="msg text-center ">O Colaborador j&aacute; foi aprovado ou aconteceu algum <b>problema</b> com o cadastro, solicite para secretaria enviar a revisão novamente</p>
                     <p> Obrigado.</p>
                     <br>
                 {% endif %}

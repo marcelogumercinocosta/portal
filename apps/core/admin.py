@@ -17,6 +17,19 @@ class GroupInLine(admin.TabularInline):
         formset.form.base_fields["group"].label = "Grupo no Portal"
         return formset
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):    
+        formfield = super().formfield_for_foreignkey(db_field, request, **kwargs)
+        cache = getattr(request, 'db_field_cache', {})
+        formfield.cache_choices = True
+        if db_field.name in cache:
+            formfield.choices = cache[db_field.name]
+        else:
+            formfield.choice_cache = [
+                formfield.choices.choice(obj) for obj in formfield.choices.queryset.all()
+            ]
+            request.db_field_cache = cache
+            request.db_field_cache[db_field.name] = formfield.choices
+        return formfield
 
 class ResponsavelGrupoTrabalhoInLine(admin.TabularInline):
     model = ResponsavelGrupoTrabalho
@@ -171,8 +184,12 @@ class GrupoTrabalhoAdmin(admin.ModelAdmin):
         return super(GrupoTrabalhoAdmin, self).change_view(request, object_id, form_url, extra_context)
 
     def delete_model(self, request, obj):
-        if obj.data_criado and FreeIPA(request).group_find_count(cn=obj.grupo_sistema) == 1:
-            FreeIPA(request).remove_grupo(obj)
+        client_feeipa = FreeIPA(request)
+        if obj.data_criado and client_feeipa.group_find_count(cn=obj.grupo_sistema) == 1:
+            grupos_acesso = GrupoAcesso.objects.filter(grupo_trabalho__id=obj.id)
+            for grupo_acesso  in grupos_acesso:
+                client_feeipa.remove_hbac_group_rule(grupo_acesso)
+            client_feeipa.remove_grupo(obj)
         super(GrupoTrabalhoAdmin, self).delete_model(request, obj)
 
     def add_view(self, request, form_url="", extra_context=None):

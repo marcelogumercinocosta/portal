@@ -65,3 +65,9 @@ def test_form_divisao_error(chefia_1, chefia_2,) -> None:
 def test_field_error(chefia_1) -> None:
     choice = UserChoiceField(Colaborador.objects.all())
     assert choice.label_from_instance(chefia_1) == f"{chefia_1.first_name} {chefia_1.last_name} | {chefia_1.email}"
+
+
+def test_form_field_divisao() -> None:
+    divisao = mixer.blend(Divisao)
+    choice = DivisaoChoiceField(Divisao.objects.all())
+    assert choice.label_from_instance(divisao) == f"{divisao.divisao} - {divisao.divisao_completo}"

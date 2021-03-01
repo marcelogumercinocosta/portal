@@ -1,8 +1,7 @@
 import pytest
 from mixer.backend.django import mixer
 from apps.colaborador.models import Colaborador
-from apps.core.models import Divisao, GrupoTrabalho, Divisao, GrupoAcesso, Group
-from django.core.exceptions import ValidationError
+from apps.core.models import Divisao, GrupoTrabalho, Divisao, GrupoAcesso, Group, Predio
 from django.db import IntegrityError
 from django.contrib.auth.models import Permission
 
@@ -43,7 +42,7 @@ def test_create_divisao(chefia_1, chefia_2) -> None:
     assert divisao.full_name == "DIV - divisao"
     assert str(divisao) == "DIV"
     divisao.chefe_substituto_ativo = True
-    assert divisao.emails_to() == [divisao.email, chefia_1.email, chefia_2.email ]
+    assert divisao.emails_to() == [chefia_1.email, chefia_2.email ]
 
 @pytest.mark.django_db
 def test_create_grupo_trabalho() -> None:
@@ -74,3 +73,8 @@ def test_set_responsavel() -> None:
     colaborador = mixer.blend(Colaborador, first_name="Colaborador", last_name="Fulano de tal")
     responsavel_grupotrabalho = grupo.responsavelgrupotrabalho_set.create(responsavel=colaborador)
     assert str(responsavel_grupotrabalho) == "Colaborador Fulano de tal | Grupo"
+
+
+def test_create_predio():
+    predio = mixer.blend(Predio, predio="Predio")
+    assert str(predio) == "Predio"

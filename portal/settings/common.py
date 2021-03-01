@@ -99,7 +99,7 @@ MEDIA_URL = "/media/"
 
 
 GARB_CONFIG = {
-    "PROJECT_NAME": "Portal",
+    "PROJECT_NAME": "3SPortal",
     "ROUTE_PROFILE": "colaborador:conta",
     "NAME_PROFILE": "CONTA",
     "ADMIN_ACTIONS_ALL": False,

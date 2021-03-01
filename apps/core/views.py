@@ -75,7 +75,7 @@ class CriarContaGrupoTrabalhoView(LoginRequiredMixin, PermissionRequiredMixin, R
             if client_feeipa.group_find_count(cn=grupo_trabalho.grupo_sistema) == 0:
                 # Cria Conta de User Group
                 if client_feeipa.set_grupo(grupo_trabalho):
-                    send_email_task.delay("Conta de Grupo Criada",f"A Conta para Grupo de trabalho: <b>{grupo_trabalho.grupo}</b> foi criada no FreeIPA, por:{self.request.user.username,}",[settings.EMAIL_SYSADMIN])
+                    send_email_task.delay("Conta de Grupo Criada",f"A Conta para Grupo de trabalho: {grupo_trabalho.grupo} foi criada no FreeIPA, por:{self.request.user.username,}",[settings.EMAIL_SYSADMIN])
                     # Atualiza Grupos de Acesso
                     history_core = HistoryCore(self.request)
                     history_core.update_grupo_acesso(grupo=grupo_trabalho, assunto="Nova conta de Grupo de Trabalho")

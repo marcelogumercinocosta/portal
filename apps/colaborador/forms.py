@@ -1,11 +1,11 @@
 import re
 from datetime import datetime
 from unicodedata import normalize
+from django.db.models.query import QuerySet
 from django.forms.models import ModelChoiceField
 from django import forms
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.models import User
 from django.db.models import Q
 
 from apps.colaborador.models import Colaborador, Vinculo
@@ -100,7 +100,7 @@ class SuporteForm(forms.ModelForm):
         colaborador = super(SuporteForm, self).save(*args, **kwargs)
         colaborador.set_password(tmp_password)
         context_email = [["name", colaborador.full_name], ["username", colaborador.username], ["password", tmp_password]]
-        send_email_template_task.delay("Conta criada", "colaborador/email/suporte_criar.html", [colaborador.email], context_email)
+        send_email_template_task.delay("Conta criada com sucesso!", "colaborador/email/suporte_criar.html", [colaborador.email], context_email)
         send_email_template_task.delay("Conta criada", "colaborador/email/suporte_aviso.html", [settings.EMAIL_SYSADMIN], context_email)
         messages.add_message(self.request, messages.SUCCESS, "Contra criada no portal")
         return colaborador
@@ -171,15 +171,12 @@ class ColaboradorBaseForm(forms.ModelForm):
             "empresa",
             "externo",
         ]
-        
 
 class ColaboradorForm(ColaboradorBaseForm, GarbModelForm):
     check_me_out1 = forms.BooleanField(required=True, label="<a href='#' target='_blank'>Eu li e concordo com a RE/DIR-518 Normas de uso aceit&aacute;vel dos recursos computacionais do INPE</a>")
-    check_me_out2 = forms.BooleanField(required=True, label="<a href='#' target='_blank'>Eu li e concordo com a Pol&iacute;tica de distribui&ccedil;&atilde;o de dados do CPTEC/INPE</a>")
-    check_me_out3 = forms.BooleanField(required=True, label="<a href='#' target='_blank'>Eu li e concordo com a Pol&iacute;tica de acesso aos Dados e Servidores do CPTEC/INPE</a>")
+    check_me_out2 = forms.BooleanField(required=True, label="<a href='#' target='_blank'>Eu li e concordo com a Pol&iacute;tica de distribui&ccedil;&atilde;o de dados da COIDS</a>")
+    check_me_out3 = forms.BooleanField(required=True, label="<a href='#' target='_blank'>Eu li e concordo com a Pol&iacute;tica de acesso aos Dados e Servidores da COIDS</a>")
     vinculo = forms.ModelChoiceField(queryset=Vinculo.objects.filter(Q(id__gte=2)), label="Vínculo")
-
-
     class Meta:
         model = Colaborador
         submit_text = "Enviar Informações"
@@ -189,7 +186,11 @@ class ColaboradorForm(ColaboradorBaseForm, GarbModelForm):
             ("Informações Profissionais", {"fields": ("vinculo", "predio", "divisao", "ramal", "responsavel", "data_inicio", "data_fim", "registro_inpe", "empresa", "externo")}),
             ("seus Direitos e Deveres", {"fields": ("check_me_out1", "check_me_out2", "check_me_out3")}),
         ]
+    
 
+
+
+            
     def save_sendmail(self, scheme=None, host=None, *args, **kwargs):
         colaborador = super(ColaboradorForm, self).save(*args, **kwargs)
         send_email_template_task.delay("Seu cadastro foi enviado para secretaria", "colaborador/email/colaborador_cadastro.html", [colaborador.email], [["colaborador", colaborador.full_name]])

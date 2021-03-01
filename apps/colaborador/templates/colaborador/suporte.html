@@ -2,146 +2,173 @@
 {% load static i18n %}
 
 {% block content %}
-	<div id="content-main" >
-		<div class="change-columns">
-			<div class="main-column">
-				<div class="box-garb">
-					<div class="module-header">
-						<div class="legend">Cria&ccedil;&atilde;o de novos colaboradores</div>
-					</div>
-					<p >Voc&ecirc; &eacute; respon&aacute;vel por um importante controle dentro do CPTEC/INPE</p>
-					<p>Fique atento ao UID se for <b>atualiza&ccedil;&atilde;o</b> tem que consultar o UID na planilha</p>
-					<p>Fique atento para <b>novas contas</b>, pois &eacute; necess&aacute;rio confirma&ccedil;&atildeo da login com SCTI.</p>
+<div id="content-main">
+	<div class="change-columns">
+		<div class="main-column">
+			<div class="box-garb">
+				<div class="module-header">
+					<div class="legend">Cria&ccedil;&atilde;o de novos colaboradores</div>
 				</div>
-				{% for colaborador in colaboradores %}
-					<div class="box-garb">
-						<div id="accordion" role="tablist" aria-multiselectable="true">
-							<div class="panel panel-default">
-								<div class="panel-heading" role="tab" id="heading{{ colaborador.id }}">
-									<div class="module-header">
-										<a role="button" class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ colaborador.id }}" aria-expanded="false" aria-controls="collapse{{ colaborador.id }}">
-											<div class="legend">{{ colaborador.full_name|upper  }}</div>
-										</a>
-									</div>
-								</div>
-								<div id="collapse{{ colaborador.id }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{ colaborador.id }}">
-									<div class="panel-body">
-										<div class="row pr-2 pl-2">
-												<legend>Informa&ccedil;&otilde;es da Conta</legend>
-												<div class="col-sm-5 offset-1">
-													<div class="form-group">
-														<p><b class="font-weight-bold">Solicitante: </b>{{ colaborador.full_name }}</p>
-													</div>
-													<div class="form-group">
-														<p><b>Usu&aacute;rio: </b>{{ colaborador.username }}</p>
-													</div>
-													<div class="form-group">
-														<p><b>Colaborador Interno: </b>
-															{% if colaborador.externo %}
-																<img src="{% static '/static/admin/img/icon-no.svg' %}" alt="False">
-															{% else %}
-																<img src="{% static 'admin/img/icon-yes.svg' %}" alt="True">
-															{% endif %}
-
-													</div>
-												</div>
-												<div class="col-sm-5 ">
-													<div class="form-group">
-														<p><b class="font-weight-bold">Email: </b>{{ colaborador.email }}</p>
-													</div>
-													<div class="form-group">
-														<p><b>Uid: </b>{{ colaborador.uid }}</p>
-													</div>
-												</div>
-											</div>
-										<div class="row pr-2 pl-2">
-											<legend>Informa&ccedil;&otilde;es Profissionais</legend>
-											<div class="col-sm-5 offset-1">
-												<div class="form-group">
-													<p><b>V&iacute;nculo: </b>{{ colaborador.vinculo }}</p>
-												</div>
-												<div class="form-group">
-													<p><b>Ramal: </b>{{ colaborador.ramal }}</p>
-												</div>
-												<div class="form-group">
-													<p><b>Data de In&iacute;cio: </b>{{ colaborador.data_inicio }}</p>
-												</div>
-												{% if colaborador.vinculo.vinculo == 'Servidor' %}
-												<div class="form-group">
-													<p><b>Matr&iacute;cula SIAPE: </b>{{ colaborador.registro_inpe }}</p>
-												</div>
-												{% else %}
-												<div class="form-group">
-													<p><b>Data de Fim: </b>{{ colaborador.data_fim }}</p>
-												</div>
-												{% endif %}
-											</div>
-											<div class="col-sm-5">
-												<div class="form-group">
-													<p><b>Pr&eacute;dio: </b>{{ colaborador.predio }}</p>
-												</div>
-												<div class="form-group">
-													<p><b>Divis&atilde;o: </b> {{ colaborador.divisao }}</p>
-												</div>
-												{% if colaborador.vinculo.vinculo == 'Terceiro' %}
-												<div class="form-group">
-													<p><b>Empresa Terceirizada: </b>{{ colaborador.empresa }}</p>
-												</div>
-												{% endif %}
-											</div>
+				<p>Voc&ecirc; &eacute; respon&aacute;vel por um importante controle dentro do CPTEC/INPE</p>
+				<p>Fique atento ao UID se for <b>atualiza&ccedil;&atilde;o</b> tem que consultar o UID na planilha</p>
+				<p>Fique atento para <b>novas contas</b>, pois &eacute; necess&aacute;rio confirma&ccedil;&atildeo da
+					login com SCTI.</p>
+			</div>
+			{% for colaborador in colaboradores %}
+			<div class="box-garb">
+				<div id="accordion" role="tablist" aria-multiselectable="true">
+					<div class="panel panel-default">
+						<div class="panel-heading" role="tab" id="heading{{ colaborador.id }}">
+							<div class="module-header">
+								<a role="button" class="collapsed" data-toggle="collapse" data-parent="#accordion"
+									href="#collapse{{ colaborador.id }}" aria-expanded="false"
+									aria-controls="collapse{{ colaborador.id }}">
+									<div class="legend">{{ colaborador.full_name|upper  }}</div>
+								</a>
+							</div>
+						</div>
+						<div id="collapse{{ colaborador.id }}" class="panel-collapse collapse in" role="tabpanel"
+							aria-labelledby="heading{{ colaborador.id }}">
+							<div class="panel-body">
+								<div class="row pr-2 pl-2">
+									<legend class="txt_cor_primaria legend">Informa&ccedil;&otilde;es da Conta</legend>
+									<div class="col-sm-5 offset-1">
+										<div>
+											<p><b class="font-weight-bold">Solicitante: </b>{{ colaborador.full_name }}
+											</p>
 										</div>
-										<div class="module-footer">
-											<div class="buttons">
-												<button type="button" class="btn btn-primary width-btn-min criar" id="criar" data-toggle="modal"
-													data-target=".modal"
-													value="{{colaborador.id}}_{{colaborador.username}}_{{colaborador.uid}}_{{colaborador.email}}">Criar
-												</button>
-											</div>
-										</div> 
+										<div>
+											<p><b>Usu&aacute;rio: </b>{{ colaborador.username }}</p>
+										</div>
+									</div>
+									<div class="col-sm-5 ">
+										<div>
+											<p><b class="font-weight-bold">Email: </b>{{ colaborador.email }}</p>
+										</div>
+										<div>
+											<p><b>Uid: </b>{{ colaborador.uid }}</p>
+										</div>
+									</div>
+								</div>
+								<div class="row pr-2 pl-2">
+									<legend class="txt_cor_primaria">Informa&ccedil;&otilde;es Profissionais</legend>
+									<div class="col-sm-5 offset-1">
+										<div>
+											<p class="mb-0"><b>V&iacute;nculo: </b>{{ colaborador.vinculo }}</p>
+										</div>
+									</div>
+									<div class="col-sm-5">
+										<div>
+											<p class="mb-0"><b>Colaborador Externo: </b>
+												{% if colaborador.externo %}
+												<img src="{% static "admin/img/icon-yes.svg" %}">
+												{% else %}
+												<img src="{% static "admin/img/icon-no.svg" %}">
+												{% endif %}
+											</p>
+										</div>
+									</div>
+									<div class="col-sm-10 offset-1">
+										<div>
+											<p class="mb-0"><b>Divis&atilde;o: </b> {{ colaborador.divisao.full_name }}
+											</p>
+										</div>
+									</div>
+									<div class="col-sm-5 offset-1">
+										<div>
+											<p><b>Data de In&iacute;cio:
+												</b>{{ colaborador.data_inicio|date:"SHORT_DATE_FORMAT" }}</p>
+										</div>
+										{% if not colaborador.externo %}
+										<div>
+											<p><b>Ramal: </b>{{ colaborador.ramal }}</p>
+										</div>
+										{% endif %}
+										{% if colaborador.responsavel %}
+										<div>
+											<p><b>Respons&aacute;vel: </b>{{ colaborador.responsavel }}</p>
+										</div>
+										{% endif %}
+									</div>
+									<div class="col-sm-5  mt-0">
+										{% if colaborador.vinculo.vinculo != 'Administrador' %}
+										{% if colaborador.vinculo.vinculo == 'Servidor' %}
+										<div>
+											<p><b>Matr&iacute;cula SIAPE: </b>{{ colaborador.registro_inpe }}</p>
+										</div>
+										{% else %}
+										<div>
+											<p><b>Data de Fim: </b>{{ colaborador.data_fim|date:"SHORT_DATE_FORMAT" }}
+											</p>
+										</div>
+										{% endif %}
+										{% endif %}
+										{% if not colaborador.externo %}
+										<div>
+											<p><b>Pr&eacute;dio: </b>{{ colaborador.predio }}</p>
+										</div>
+										{% endif %}
+
+										{% if colaborador.vinculo.vinculo == 'Terceiro' %}
+										<div>
+											<p><b>Empresa Terceirizada: </b>{{ colaborador.empresa }}</p>
+										</div>
+										{% endif %}
+									</div>
+								</div>
+								<div class="module-footer">
+									<div class="buttons">
+										<button type="button" class="btn btn-primary width-btn-min criar" id="criar"
+											data-toggle="modal" data-target=".modal"
+											value="{{colaborador.id}}_{{colaborador.username}}_{{colaborador.uid}}_{{colaborador.email}}">Criar
+										</button>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-				{% empty %}
-					<div class="box-garb">
-						<p>N&atilde;o existe colaborador para ser criado.</p>
-					</div>
-				{% endfor %}
+				</div>
 			</div>
-			<div class="box-column box-garb">
-					<div class="module-header">
-						<div class="legend">Colaboradores</div>
-					</div>
+			{% empty %}
+			<div class="box-garb">
+				<p>N&atilde;o existe colaborador para ser criado.</p>
+			</div>
+			{% endfor %}
+		</div>
+		<div class="box-column box-garb">
+			<div class="module-header">
+				<div class="legend">Colaboradores</div>
+			</div>
 
-					<div id="status"></div>
-			</div>
+			<div id="status"></div>
 		</div>
 	</div>
-	<div class="modal" tabindex="-1" role="dialog">
-		<div class="modal-dialog modal-dialog-centered" role="document">
-			<div class="modal-content">
-				<div class="modal-header alert-danger">
-					<h5 class="modal-title">Criar conta no LDAP </h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<form method="post" id="form_suporte_aprovar" action="{% url 'colaborador:suporte_criar_conta' 0 %}">
-					<div class="modal-body">
-						{% csrf_token %}
-						{{  form_suporte.as_p }}
-						<div class="module-footer">
-							<div class="buttons">
-								<button type="submit" class="btn btn-danger width-btn-min">Criar</button>
-								<button type="button" class="btn btn-secondary width-btn-min" data-dismiss="modal">Cancelar</button>
-							</div>
+</div>
+<div class="modal" tabindex="-1" role="dialog">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header alert-danger">
+				<h5 class="modal-title">Criar conta no LDAP </h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form method="post" id="form_suporte_aprovar" action="{% url 'colaborador:suporte_criar_conta' 0 %}">
+				<div class="modal-body">
+					{% csrf_token %}
+					{{  form_suporte.as_p }}
+					<div class="module-footer">
+						<div class="buttons">
+							<button type="submit" class="btn btn-danger width-btn-min">Criar</button>
+							<button type="button" class="btn btn-secondary width-btn-min"
+								data-dismiss="modal">Cancelar</button>
 						</div>
 					</div>
-				</form>
-			</div>
+				</div>
+			</form>
 		</div>
 	</div>
+</div>
 {% endblock %}
 
 {% block extrajs %}
@@ -152,12 +179,10 @@
 		$('#form_suporte_aprovar').attr('action', url);
 		$("#id_username").attr('value', value_criar[1]);
 		$("#id_uid").attr('value', value_criar[2]);
-		if ( value_criar[3].includes("@inpe.br") ) {
-			$("#id_email").attr('value', value_criar[3]);
-		}
+		$("#id_email").attr('value', value_criar[3]);
 		$("#id_id").attr('value', value_criar[0]);
 	});
-	
+
 	$("#status").load("{% url 'colaborador:status' %}");
 </script>
 {% endblock %}

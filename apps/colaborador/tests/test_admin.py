@@ -37,7 +37,7 @@ def test_admin_colaborador_secretaria_visualizar_colaborador_ativo( admin_site, 
     request.user = secretaria
     model_admin = ColaboradorAdmin(Colaborador, admin_site)
     model_admin.change_view(request=request, object_id=str(colaborador.pk))
-    assert model_admin.readonly_fields == ["username", "uid", "email" , "is_staff", "is_active", "last_login", "date_joined", "data_fim"] 
+    assert model_admin.readonly_fields == ["username", "uid", "is_staff", "is_active", "last_login", "date_joined", "data_inicio", "registro_inpe", "data_fim", "vinculo"]
 
 
 
@@ -57,22 +57,22 @@ def test_admin_colaborador_secretaria_visualizar_colaborador_nao_ativo( admin_si
     model_admin = ColaboradorAdmin(Colaborador, admin_site)
     model_admin.change_view(request=request, object_id=str(colaborador.pk))
     assert model_admin.inlines == [] 
-    assert model_admin.readonly_fields == [ "first_name", "last_name",  "data_nascimento", "email", "telefone" ,"externo", 
-                                            "username", "uid", "is_staff", "is_active", "last_login", "date_joined", "vinculo", 
-                                            "predio", "divisao", "ramal", "responsavel", "registro_inpe", "empresa", "data_inicio", "data_fim"]
+    assert model_admin.readonly_fields ==  [ "first_name", "last_name", "email", "data_nascimento", "nacionalidade", "sexo", "estado_civil", "area_formacao", "telefone", "cpf", "documento_tipo",
+                                            "documento", "cep", "endereco", "numero", "bairro", "cidade", "estado", "vinculo", "predio", "divisao", "ramal", "responsavel", "data_inicio", "data_fim", "registro_inpe", "empresa", "externo", "username", "uid", "is_superuser", "is_staff", "is_active", "last_login", "date_joined"]
     
     
 def test_admin_colaborador_suporte_visualizar_colaborador_ativo( admin_site, colaborador, colaborador_suporte):
     colaborador.is_active = True
+    colaborador.externo = True
     colaborador.save()
     request = RequestFactory().get(reverse('admin:colaborador_colaborador_change', args=(colaborador.id,)))
     request.user = colaborador_suporte
     model_admin = ColaboradorAdmin(Colaborador, admin_site)
     model_admin.change_view(request=request, object_id=str(colaborador.pk))
-    assert model_admin.readonly_fields == [ "first_name", "last_name",  "data_nascimento", "username", "uid", "is_staff", "is_active", 
-                                    "last_login", "date_joined", "vinculo", "predio", "divisao", "responsavel", "registro_inpe", 
-                                    "empresa", "data_inicio", "data_fim"] 
-    assert model_admin.fieldsets == [ 
-                    ("Informações Pessoais", {"fields": ["first_name", "last_name",  "data_nascimento", "email", ]}), 
-                    ("Informações Portal", {"fields": ["username", "uid", "is_staff", "is_active", "last_login", "date_joined"]}), 
-                    ("Informações Profissionais", {"fields": ["vinculo", "predio", "divisao", "ramal", "responsavel", "registro_inpe", "empresa", "data_inicio", "data_fim", "externo"]})]
+    assert model_admin.readonly_fields ==  [ "first_name", "last_name",  "data_nascimento", "username", "uid", "is_staff", "registro_inpe", "is_active", "last_login", "date_joined", "vinculo",
+                "predio", "divisao", "responsavel", "registro_inpe", "empresa", "data_inicio", "data_fim", "vinculo", "is_superuser"]
+    assert model_admin.fieldsets == [
+                    ("Informações Pessoais", {"fields": ["first_name", "last_name", "email", "telefone"]}),
+                    ("Informações Profissionais", {"fields": ["vinculo", "divisao",  "data_inicio", "externo"]}),
+                    ("Informações Portal", {"fields": ["username", "uid", "is_superuser", "is_staff", "is_active", "last_login", "date_joined"]}),
+                ]

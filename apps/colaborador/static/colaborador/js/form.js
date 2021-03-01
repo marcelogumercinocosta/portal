@@ -1,17 +1,17 @@
 
 ///// funcao para corrigir os casmpos que somem do vinculo
 function combo_vinculo() {
-    if ($('#id_vinculo').length) {
+    if ($('#id_vinculo').length)  {
         $(".field-data_fim").hide();
         $(".field-empresa").hide();
         $(".field-registro_inpe").hide();
         $(".field-responsavel").hide();
         if ($('#id_vinculo').val() === '') { return; }
-        if ($('#id_vinculo').val() == "3") {  //se for servidor
+        if ($('#id_vinculo option:selected').text() == "Servidor" || $('#id_vinculo').val() == "Servidor" ) {  //se for servidor
             $(".field-registro_inpe").show();
             $('#id_registro_inpe').rules('add', { required: true });
             $('#id_responsavel').rules( "remove" );
-        } else if ($('#id_vinculo').val() == "4") { //se for terceiro
+        } else if ($('#id_vinculo option:selected').text() == "Terceiro" || $('#id_vinculo').val() == "Terceiro") { //se for terceiro
             $(".field-data_fim").show();
             $(".field-empresa").show();
             $('#id_data_fim').rules('add', { required: true });
@@ -28,7 +28,6 @@ function combo_vinculo() {
 }
 
 $(document).ready(function () {
-
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
 
@@ -40,19 +39,20 @@ $(document).ready(function () {
             return this.optional(element) || /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@(inpe.br)$/.test(value);
     }, 'Forneça um email do inpe válido.');
 
-        
-        
-
     if (urlParams.get('motivo') == "externo") {
-        $('#id_externo').prop('checked',true);
-        $('#id_externo').attr('disabled', 'disabled');
-        $('#id_vinculo').find('[value=3]').remove();
+        $('#id_externo').prop('checked', true);
         $('#id_vinculo').find('[value=5]').remove();
         $('#id_vinculo').selectpicker('refresh');
+        $(".field-ramal").hide();
+        $(".field-predio").hide();
     } else { 
         $(".field-externo").hide();
     }
 
+    $('#id_externo').on('change', function(){
+        $('#id_externo').prop('checked', true);
+    });
+    
     //Validacao do formulario
     $("#_form").validate({
         rules: {
@@ -72,10 +72,6 @@ $(document).ready(function () {
             bairro: { required: true },
             unidade: { required: true },
             predio: { required: true },
-            nacionalidade: { required: true },
-            contato_de_emergencia_nome: { required: true },
-            contato_de_emergencia_parentesco: { required: true },
-            contato_de_emergencia_telefone: { required: true },
             nacionalidade: { required: true },
             area_formacao: { required: true },
             data_inicio: { required: true },
@@ -111,8 +107,8 @@ $(document).ready(function () {
             neou_cms.remove_error_messages(); 
         },
     });
-
     // Esconde a data_fim se for servidor
+  
     combo_vinculo()
     $("select#id_vinculo").change(function () {
         combo_vinculo()

@@ -52,7 +52,7 @@ def set_divisao():
 
     organograma = (
         {
-            "divisao": "CGCT",
+            "divisao": "CG",
             "divisao_completo": "Coordenação Geral de Ciências da Terra",
             "coordenacao": "CGCT - Coordenação Geral de Ciências da Terra",
         },
@@ -63,17 +63,17 @@ def set_divisao():
         },
         {
             "divisao": "DIPTC",
-            "divisao_completo": "Divisão de Previsão de Tempo e Clima - DIPTC",
+            "divisao_completo": "Divisão de Previsão de Tempo e Clima",
             "coordenacao": "CGCT - Coordenação Geral de Ciências da Terra",
         },
         {
             "divisao": "DISSM",
-            "divisao_completo": "Divisão de Satélites e Sensores Meteorológicos - DISSM",
+            "divisao_completo": "Divisão de Satélites e Sensores Meteorológicos",
             "coordenacao": "CGCT - Coordenação Geral de Ciências da Terra",
         },
         {
-            "divisao": "PGMET",
-            "divisao_completo": "Pós Graduçao em Meteorologia",
+            "divisao": "DIIAV",
+            "divisao_completo": "Divisão de Impactos, Adaptação e Vulnerabilidades",
             "coordenacao": "CGCT - Coordenação Geral de Ciências da Terra",
         },
         {
@@ -82,9 +82,14 @@ def set_divisao():
             "coordenacao": "COIDS - Coordenação de Infraestrutura de Dados e Supercomputação",
         },
         {
-            "divisao": "DIIAV",
-            "divisao_completo": "Divisão de Impactos, Adaptação e Vulnerabilidades",
-            "coordenacao": "CGCT - Coordenação Geral de Ciências da Terra",
+            "divisao": "ICT",
+            "divisao_completo": "Infraestrutura Científica e Tecnológica",
+            "coordenacao": "COIDS - Coordenação de Infraestrutura de Dados e Supercomputação",
+        },
+        {
+            "divisao": "COPDT",
+            "divisao_completo": "Coordenação de Pesquisa Aplicada e Desenvolvimento Tecnológico",
+            "coordenacao": "COPDT - Coordenação de Pesquisa Aplicada e Desenvolvimento Tecnológico",
         },
     )
     for divisao in organograma:
@@ -117,7 +122,7 @@ def set_permissoes():
     permission_default = (
         {
             "grupo": "Secretaria",
-            "permission": ["change_divisao", "view_divisao", "view_colaborador", "secretaria_colaborador"],
+            "permission": ["change_divisao", "view_divisao", "view_colaborador", "change_colaborador", "secretaria_colaborador"],
         },
         {
             "grupo": "Servicedesk",
@@ -176,7 +181,7 @@ def set_permissoes():
                 "view_storageareagrupotrabalho",
             ],
         },
-        {"grupo": "Colaborador", "permission": ["view_colaboradorgrupoacesso", "view_conta"]},
+        {"grupo": "Colaborador", "permission": ["view_colaboradorgrupoacesso", "view_colaborador"]},
         {"grupo": "Responsável", "permission": ["responsavel_colaborador"]},
         {"grupo": "NOC", "permission": []},
         {"grupo": "Chefia da Divisão", "permission": []},
