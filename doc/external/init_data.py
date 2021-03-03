@@ -110,7 +110,6 @@ def set_vinculo():
         "Servidor",
         "Terceiro",
         "Estagiário",
-        "Aluno de Pós Graduação",
     )
     for vinculo_name in vinculos:
         vinculo = Vinculo(vinculo=vinculo_name)
@@ -120,14 +119,7 @@ def set_vinculo():
 def set_permissoes():
     from django.contrib.auth.models import Group, Permission
 
-    permission_default = (
-        {
-            "grupo": "Secretaria",
-            "permission": ["change_divisao", "view_divisao", "view_colaborador", "change_colaborador", "secretaria_colaborador"],
-        },
-        {
-            "grupo": "Servicedesk",
-            "permission": [
+    permission_suporte = [
                 "add_grupotrabalho",
                 "change_grupotrabalho",
                 "delete_grupotrabalho",
@@ -180,13 +172,16 @@ def set_permissoes():
                 "change_storageareagrupotrabalho",
                 "delete_storageareagrupotrabalho",
                 "view_storageareagrupotrabalho",
-            ],
-        },
-        {"grupo": "Colaborador", "permission": ["view_colaboradorgrupoacesso", "view_colaborador"]},
+            ]
+
+    permission_default = (
+        {"grupo": "Secretaria", "permission": ["change_divisao", "view_divisao", "view_colaborador", "change_colaborador", "secretaria_colaborador"]},
+        {"grupo": "Servicedesk", "permission": permission_suporte, },
+        {"grupo": "Colaborador", "permission": []},
         {"grupo": "Responsável", "permission": ["responsavel_colaborador"]},
         {"grupo": "NOC", "permission": []},
         {"grupo": "Chefia da Divisão", "permission": []},
-        {"grupo": "Supercomputação", "permission": []},
+        {"grupo": "Supercomputação", "permission": permission_suporte},
     )
 
     for grupo in permission_default:
