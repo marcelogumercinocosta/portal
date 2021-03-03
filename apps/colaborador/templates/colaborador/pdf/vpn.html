@@ -1,0 +1,100 @@
+{% load i18n  garb_tags %}
+{% load templatetags %}
+<div class='wrapper'>
+    <div class='header'>
+        <p>Formul&aacute;rio para solicita&ccedil;&atilde;o de acesso via VPN &aacute; COIDS</p>
+    </div>
+</div>
+<div class='informacoes'>
+    Eu, <b>{{ colaborador.full_name }}</b>, declaro para os devidos fins estar ciente da legisla&ccedil;&atilde;o brasileira, suas leis e normas para uso de recursos computacionais, acesso &agrave; informa&ccedil;&atilde;o, direitos autorais e demais leis pertinentes, e ser totalmente respons&aacute;vel por meus atos no uso dessa VPN. Declaro ter lido e entendido as normas vigentes no INPE quanto ao uso de recursos computacionais (RE/DIR 518) e estar disposto a atend&ecirc;-las assumindo toda a responsabilidade por preju&iacute;zos causados. Declaro que estou ciente que a VPN vence no prazo solicitado acima e que farei sua revalida&ccedil;&atilde;o segundo as normas vigentes. Declaro ainda estar ciente e de acordo que ao t&eacute;rmino do meu v&iacute;nculo com o INPE o acesso ser&aacute; cancelado e que 90 dias ap&oacute;s o t&eacute;rmino do v&iacute;nculo os dados ser&atilde;o removidos. Caso necess&aacute;rio, este prazo poder&aacute; ser reavaliado, mediante uma nova requisi&ccedil;&atilde;o.
+</div>
+<div class="informacoes_left">
+    Email: <b>{{ colaborador.email|safe }}</b>&nbsp;&nbsp;&nbsp;Telefone: <b>{{ colaborador.telefone|safe }}</b><br> 
+    Divis&atilde;o: <b>{{ colaborador.divisao.full_name }}</b><br>
+    {% if colaborador.externo %}
+        Colaborador Externo: <b>SIM</b>
+    {% else %}
+        Ramal: <b>{{ colaborador.ramal|default_if_none:"Não informado" }}</b>&nbsp;&nbsp;&nbsp;
+        Pr&eacute;dio: <b>{{ colaborador.predio }}</b>
+    {%  endif %}
+    </br>
+    Vínculo do Colaborador:<b> {{ colaborador.vinculo }}</b> <br>
+    Data de  In&iacute;cio: <b>{{ colaborador.data_inicio|date:"SHORT_DATE_FORMAT" }}</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    {% if colaborador.vinculo.vinculo == 'Servidor' %}
+        Matr&iacute;cula SIAPE: <b>{{ colaborador.registro_inpe }}</b>
+    {% else %}
+        Data de Fim: <b>{{ colaborador.data_fim|date:"SHORT_DATE_FORMAT" }}</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    {%  endif %}
+    {% if colaborador.vinculo.vinculo == 'Terceiro' %}
+        Empresa Terceirizada: <b>{{ colaborador.empresa }}</b>
+    {%  endif %}
+</div>
+<h6>Informa&ccedil;&atilde;oes para VPN</h6>
+<div class='informacoes_borda'>
+    {% get_verbose_name_field vpn 'recurso' %}: <b></b><br>
+    {% get_verbose_name_field vpn 'data_validade' %}: <b>{{vpn.data_fim_vpn|date:"SHORT_DATE_FORMAT"}}</b><br>
+    {% get_verbose_name_field vpn 'mac_cabeado' %}:  <b>{{vpn.get_mac_cabeado}}</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    {% get_verbose_name_field vpn 'mac_wifi' %}: <b>{{vpn.get_mac_cabeado}}</b><br>
+</div>
+<h6>Justificativa</h6>
+<div class='informacoes_borda'>
+    {% get_verbose_name_field vpn 'justificativa' %}: <b>{{vpn.justificativa}}</b>
+</div>
+<br><br>
+    Cachoeira Paulista, {% now "d/m/Y" %}
+    <br><br>
+    <table>
+        <tr>
+            <td></td>
+            <td style="font-size:10px; width:30%; border-left: 1px solid #000; padding-left:2px;">Nome por extenso</td>
+            <td style="font-size:10px; width:10%; border-left: 1px solid #000; padding-left:2px;">Data</td>
+        </tr>
+        <tr style="height:30px">
+            <td></td>
+            <td style="font-size:12px; width:30%; border-left: 1px solid #000; padding-left:2px;"> <b>{{ colaborador.full_name }}</b></td>
+            <td style="border-left: 1px solid #000; "></td>
+        </tr>
+        <tr style="height:20px">
+            <td style="width:40%; font-size:10px; text-align:center; border-top: 1px solid #000; padding-top:2px;">Solicitante</td>
+            <td style="width:40%; border-top: 1px solid #000; "></td>
+            <td style="width:20%; border-top: 1px solid #000; "></td>
+        </tr>
+    </table><br>
+
+<table>
+    <tr>
+        <td></td>
+        <td style="font-size:10px; width:30%; border-left: 1px solid #000; padding-left:2px;">Carimbo ou nome por extenso</td>
+        <td style="font-size:10px; width:10%; border-left: 1px solid #000; padding-left:2px;">Data</td>
+    </tr>
+    <tr style="height:30px">
+        <td></td>
+        <td style="border-left: 1px solid #000; "></td>
+        <td style="border-left: 1px solid #000; "></td>
+    </tr>
+    <tr style="height:20px">
+        <td style="width:40%; font-size:12px; text-align:center; border-top: 1px solid #000; padding-top:2px;">Autoriza&ccedil;&atilde;o do Titular da(o) {{colaborador.divisao}}</td>
+        <td style="width:40%; border-top: 1px solid #000; "></td>
+        <td style="width:20%; border-top: 1px solid #000; "></td>
+    </tr>
+</table>
+<br>
+<table>
+    <tr>
+        <td></td>
+        <td style="font-size:10px; width:30%; border-left: 1px solid #000; padding-left:2px;">Carimbo ou nome por extenso</td>
+        <td style="font-size:10px; width:10%; border-left: 1px solid #000; padding-left:2px;">Data</td>
+    </tr>
+    <tr style="height:30px">
+        <td></td>
+        <td style="border-left: 1px solid #000; "></td>
+        <td style="border-left: 1px solid #000; "></td>
+    </tr>
+    <tr style="height:20px">
+        <td style="width:40%; font-size:12px; text-align:center; border-top: 1px solid #000; padding-top:2px;">Autoriza&ccedil;&atilde;o do Titular da SESUP</td>
+        <td style="width:40%; border-top: 1px solid #000; "></td>
+        <td style="width:20%; border-top: 1px solid #000; "></td>
+    </tr>
+</table>
+<br>
+<br>

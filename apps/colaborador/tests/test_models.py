@@ -54,7 +54,7 @@ def test_colaborador_chefia() -> None:
     colaborador = mixer.blend(Colaborador)
     colaborador.save()
     colaborador.chefia_aprovar()
-    assert colaborador.is_active == True
+    assert colaborador.is_staff == True
 
 
 def test_colaborador_suporte() -> None:
@@ -63,7 +63,7 @@ def test_colaborador_suporte() -> None:
     colaborador = mixer.blend(Colaborador)
     colaborador.save()
     colaborador.suporte_criar()
-    assert colaborador.is_staff == True
+    assert colaborador.is_active == True
     assert colaborador.groups.filter(name="Colaborador").exists() == True
 
 

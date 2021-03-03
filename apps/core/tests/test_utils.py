@@ -59,7 +59,7 @@ def test_set_sudo_error():
 
 
 def test_remove_grupo_error():
-    grupo_trabalho = mixer.blend(GrupoTrabalho, grupo="Grupo de teste", grupo_sistema="teste", gid=0)
+    grupo_trabalho = mixer.blend(GrupoTrabalho, grupo="Grupo de teste", grupo_sistema="teste_error", gid=0)
     grupo_trabalho.save()
     assert FreeIPA().remove_grupo(grupo_trabalho) == False
 

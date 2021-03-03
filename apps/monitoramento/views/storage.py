@@ -1,5 +1,5 @@
 import math
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta
 import pandas as pd
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q

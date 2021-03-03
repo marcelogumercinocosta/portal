@@ -28,7 +28,7 @@ share/python-wheels/
 MANIFEST
 .DS_Store 
 celerybeat-schedule.db
-.freeipa_chave.crt
+.freeipa_chave*crt
 env.sh
 staticfiles/
 

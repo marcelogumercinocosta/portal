@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import re
 from unicodedata import normalize
 from django.contrib.auth.models import AbstractUser
@@ -19,15 +20,15 @@ class Vinculo(models.Model):
 
 class Colaborador(AbstractUser):
     telefone = models.CharField("telefone", max_length=255)
-    data_nascimento = models.DateField(max_length=255, verbose_name="Data de Nascimento")
-    documento = models.CharField(max_length=255, verbose_name="Documento")
-    documento_tipo = models.CharField(max_length=255, verbose_name="Tipo Documento")
-    cpf = models.CharField(max_length=255, blank=True, null=True, verbose_name="CPF")
+    data_nascimento = models.DateField("Data de Nascimento", max_length=255)
+    documento = models.CharField("Documento", max_length=255)
+    documento_tipo = models.CharField("Tipo Documento", max_length=255)
+    cpf = models.CharField("CPF", max_length=255, blank=True, null=True)
     bairro = models.CharField(max_length=255)
     cidade = models.CharField(max_length=255)
     cep = models.CharField(max_length=255, verbose_name="CEP")
-    endereco = models.CharField(max_length=255, verbose_name="Endereço")
-    numero = models.CharField(max_length=255, verbose_name="Número")
+    endereco = models.CharField("Endereço", max_length=255, )
+    numero = models.CharField("Número", max_length=255, )
     estado = models.CharField(max_length=255)
     predio = models.ForeignKey("core.Predio", verbose_name="Prédio", null=True, blank=True, on_delete=models.PROTECT)
     data_inicio = models.DateField("Data de Início")
@@ -35,10 +36,10 @@ class Colaborador(AbstractUser):
     ramal = models.CharField("Ramal", max_length=255, null=True, blank=True)
     nacionalidade = models.CharField(max_length=255)
     sexo = models.CharField(max_length=255, null=True)
-    area_formacao = models.CharField(max_length=255, verbose_name="Área de Formação")
-    empresa = models.CharField(max_length=255, blank=True, null=True, verbose_name="Empresa Terceirizada")
-    registro_inpe = models.CharField(max_length=255, null=True, blank=True, verbose_name="Matrícula SIAPE")
-    estado_civil = models.CharField(max_length=255, blank=True, null=True)
+    area_formacao = models.CharField("Área de Formação", max_length=255)
+    empresa = models.CharField("Empresa Terceirizada", max_length=255, blank=True, null=True)
+    registro_inpe = models.CharField("Matrícula SIAPE", max_length=255, null=True, blank=True)
+    estado_civil = models.CharField("Estado Civil", max_length=255, blank=True, null=True)
     externo = models.BooleanField("Usuário Externo", default=False)
     uid = models.IntegerField("UID", default=0)
     is_active = models.BooleanField('ativo', default=False)
@@ -90,11 +91,11 @@ class Colaborador(AbstractUser):
         super().clean()
 
     def chefia_aprovar(self):
-        self.is_active = True
+        self.is_staff = True
         self.save()
 
     def suporte_criar(self):
-        self.is_staff = True
+        self.is_active = True
         self.groups.add(GrupoPortal.objects.get(name="Colaborador"))
         self.save()
 
@@ -105,3 +106,43 @@ class Colaborador(AbstractUser):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
+class VPN(models.Model):
+    recurso = models.CharField('Recurso a ser acessado', max_length=255 )
+    data_solicitacao = models.DateTimeField('Data da solicitação', auto_now_add=True)
+    data_abertura = models.DateTimeField('Data da Abertura', null=True, blank=True)
+    data_validade = models.DateTimeField('Data Validade', null=True, blank=True)
+    mac_cabeado = models.CharField('MAC Address Cabeado', max_length=255 )
+    mac_wifi = models.CharField('MAC Address Wireless', max_length=255 )
+    justificativa = models.CharField('Justificativa', max_length=255 )
+    documento = models.CharField('Documento referência', max_length=255 )
+    status = models.CharField('Status', max_length=255 )
+    colaborador = models.ForeignKey("colaborador.Colaborador", verbose_name="Colaborador", on_delete=models.PROTECT)
+    class Meta :
+        ordering = ['-data_validade']
+        verbose_name = "VPN"
+        verbose_name_plural = "VPNs"
+
+    def __str__(self):
+        return self.field
+
+    @property
+    def data_fim_vpn(self):
+        if self.data_validade:
+            if self.data_validade <= datetime.now() + timedelta(days=365):
+                return self.data_validade
+        else:
+            return datetime.now() + timedelta(days=365)
+
+    @property
+    def get_mac_cabeado(self):
+        if self.mac_cabeado: 
+            return self.mac_cabeado
+        else:
+            return  "___:___:___:___:___"
+
+    @property
+    def get_mmac_wifi(self):
+        if self.mac_wifi: 
+            return self.mac_wifi
+        else:
+            return  "___:___:___:___:___"

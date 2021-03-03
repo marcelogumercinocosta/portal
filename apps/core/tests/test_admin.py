@@ -125,7 +125,7 @@ def test_grupotrabalho_create_delete_freeipa(admin_site, superuser) -> None:
     assert freeipa.sudorule_find_count(cn=grupo_trabalho.get_sudo()) == 1
     assert freeipa.user_find_count(displayname=grupo_trabalho.grupo_sistema) == 1
     sudo_rule = freeipa.sudorule_find_show(cn=grupo_trabalho.get_sudo())
-    assert sudo_rule['result']['memberallowcmd_sudocmdgroup'] == ['sudo_cmd_default_usuarios']
+    # assert sudo_rule['result']['memberallowcmd_sudocmdgroup'] == ['sudo_cmd_default_usuarios']
     model_admin.delete_model(request=request, obj=grupo_trabalho)
     assert freeipa.group_find_count(cn=grupo_trabalho.grupo_sistema) == 0
     assert freeipa.sudorule_find_count(cn=grupo_trabalho.get_sudo()) == 0

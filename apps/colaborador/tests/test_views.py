@@ -187,7 +187,7 @@ def test_get_chefia_ok(colaborador, chefia):
     response = ChefiaAprovarView.as_view()(request, uidb64=uid, token=token_generator)
     assert response.status_code == 200
     colaborador_aprovado = Colaborador.objects.get(id=colaborador.id)
-    assert colaborador_aprovado.is_active == True
+    assert colaborador_aprovado.is_staff == True
 
 def test_get_suporte_erro_permissao_acesso(colaborador):
     request = RequestFactory().get("/suporte")

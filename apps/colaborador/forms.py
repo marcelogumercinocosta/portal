@@ -136,7 +136,7 @@ class ColaboradorBaseForm(forms.ModelForm):
     cidade = forms.CharField(widget=forms.TextInput(attrs={"readonly": "readonly"}))
     estado = forms.CharField(widget=forms.TextInput(attrs={"readonly": "readonly"}))
     email = forms.EmailField()
-    estado_civil = forms.ChoiceField(choices=estado_civil)
+    estado_civil = forms.ChoiceField(choices=estado_civil, label="Estado Civil")
 
 
     class Meta:

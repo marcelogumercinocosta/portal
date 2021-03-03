@@ -5,7 +5,7 @@
 </div>
 <h6>TERMO DE COMPROMISSO</h6>
 <br>
-<div class='informacoes2'>
+<div class='informacoes'>
     Eu <b>{{ colaborador.full_name }}</b>, {{ colaborador.get_documento_principal|safe }}, estado civil <b>{{ colaborador.estado_civil }}(a)</b>,  residente à <b>{{ colaborador.endereco }}</b>, nº <b>{{ colaborador.numero }}</b>,
     na cidade de <b>{{ colaborador.cidade }} - {{ colaborador.estado }}</b>, na qualidade de <b>{{ colaborador.vinculo }}</b> no Instituto Nacional de Pesquisas
     Espaciais - INPE, assumo inteira responsabilidade por eventuais danos que venha a causar
@@ -13,7 +13,7 @@
     judicial ou extrajudicial, a ressarcir o INPE dos prejuízos daí decorrentes, conforme
     valor a ser oportunamente calculado. Da mesma forma respeitarei todas as normas internas
     do Instituto e devolverei o <b> crachá de identificação </b> à Unidade Responsável,
-    segundo a RE/DIR-029, em São José dos Campos, {% now "d/m/Y" %}.
+    segundo a RE/DIR-029, em Cachoeira Paulista, {% now "d/m/Y" %}.
 </div>
 <br>
 <table>
@@ -37,14 +37,14 @@
 <br/><br/>
 <h6>TERMO DE COMPROMISSO - SERVIDOR RESPONSÁVEL</h6>
 <br>
-<div class='informacoes2'>
+<div class='informacoes'>
     Eu <b>{{colaborador.responsavel.full_name}}</b>, servidor do Instituto Nacional de Pesquisas Espaciais - INPE, registro nº
     <b>{{ colaborador.responsavel.registro_inpe}}</b>, nos termos das normas vigentes no INPE, assumo, no período de
     <b>{{ colaborador.data_inicio|date:"d/m/Y"}}</b> a <b>{{colaborador.data_fim|date:"d/m/Y" }}</b>, a responsabilidade solid&aacute;ria pelos
     atos e eventuais danos praticados por <b>{{colaborador.full_name}}</b> acima identificado sob a minha
     assistência/orientação, comprometendo-me a ressarcir o INPE dos prejuízos da&iacute; recorrentes, conforme valor a ser oportunamente calculado.
     <br/><br/>
-    São José dos Campos, {% now "d/m/Y" %}
+    Cachoeira Paulista, {% now "d/m/Y" %}
 </div>
 <table>
     <tr>

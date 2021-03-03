@@ -1,27 +1,25 @@
+from datetime import datetime, timedelta
 from io import BytesIO
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.models import LogEntry
-from django.contrib.auth.forms import PasswordResetForm, urlsafe_base64_encode
+from django.contrib.auth.forms import urlsafe_base64_encode
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth.views import PasswordContextMixin
 from django.contrib.staticfiles import finders
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
 from django.urls import reverse_lazy
-from django.utils.decorators import method_decorator
 from django.utils.encoding import force_bytes
-from django.views.decorators.csrf import csrf_protect
 from django.views.generic import DetailView
 from django.views.generic.base import RedirectView, TemplateView, View
 from django.views.generic.edit import CreateView, FormView, UpdateView
 from xhtml2pdf import pisa
 
 from apps.colaborador.forms import  ColaboradorForm, ResponsavelNegarForm, SecretariaNegarForm, SuporteForm
-from apps.colaborador.models import Colaborador
+from apps.colaborador.models import Colaborador, VPN
 from apps.colaborador.utils import HistoryColaborador, gerar_password, get_user
 from apps.core.models import ColaboradorGrupoAcesso, Divisao, GrupoAcesso, GrupoTrabalho
 from apps.core.tasks import send_email_template_task
@@ -131,7 +129,7 @@ class SuporteView(ViewContextMixin, LoginRequiredMixin, PermissionRequiredMixin,
 
     def get_context_data(self, **kwargs):
         context = super(SuporteView, self).get_context_data(**kwargs)
-        context["colaboradores"] = Colaborador.objects.filter(is_active=True, is_staff=False)
+        context["colaboradores"] = Colaborador.objects.filter(is_active=False, is_staff=True)
         context["form_suporte"] = SuporteForm
         return context
 
@@ -168,13 +166,16 @@ class TermoCompromissoView(ViewContextMixin, LoginRequiredMixin, PermissionRequi
 
     def get(self, request, *args, **kwargs):
         colaborador = get_object_or_404(Colaborador, id=kwargs["pk"])
+        vpn = VPN()
         if "@inpe.br" in colaborador.email:
             motivo_detalhe = "Cadastro para atualização conta"
             motivo = "atualizacao"
         else:
             motivo_detalhe = "Novo email / Conta Acesso aos Recursos"
             motivo = "admissao"
-        context = {"title": "Termo de Compromisso de " + colaborador.full_name, "logo": finders.find("image/logo.png"), "motivo_detalhe": motivo_detalhe, "motivo": motivo, "colaborador": colaborador}
+        if colaborador.externo:
+            vpn.justificativa = "Acesso para trabalho como Colaborador Externo"
+        context = {"title": "Termo de Compromisso de " + colaborador.full_name, "logo": finders.find("image/logo.png"), "motivo_detalhe": motivo_detalhe, "motivo": motivo, "colaborador": colaborador, "vpn": vpn}
         result = BytesIO()
         template = get_template(self.template_name)
         html = template.render(context)

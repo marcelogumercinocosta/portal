@@ -110,6 +110,7 @@ def set_vinculo():
         "Servidor",
         "Terceiro",
         "Estagiário",
+        "Aluno de Pós Graduação",
     )
     for vinculo_name in vinculos:
         vinculo = Vinculo(vinculo=vinculo_name)

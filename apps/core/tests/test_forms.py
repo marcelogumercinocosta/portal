@@ -3,7 +3,7 @@ import time
 import pytest
 from django.contrib.auth.models import Group, Permission
 from mixer.backend.django import mixer
-from apps.core.forms import DivisaoForm, UserChoiceField 
+from apps.core.forms import DivisaoChoiceField, DivisaoForm, UserChoiceField 
 from apps.colaborador.models import Colaborador, Vinculo
 from apps.core.models import Divisao
 from django.core.exceptions import ValidationError

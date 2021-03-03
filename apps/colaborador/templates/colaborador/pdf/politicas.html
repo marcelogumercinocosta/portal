@@ -5,7 +5,7 @@
 </div>
 <h6>TERMO DE COMPROMISSO</h6>
 <br>
-<div class='informacoes2'>
+<div class='informacoes'>
     Eu, <b>{{ colaborador.full_name }}</b>, {{ colaborador.get_documento_principal|safe }},
     abaixo assinado, declaro que li e entendi os termos do documento intitulado "Política de acesso aos Dados e Servidores da COIDS"
     e estou ciente que a violação destas Políticas me sujeita às medidas disciplinares descritas neste documento, assim como aquelas previstas na legislação em vigor.
@@ -37,7 +37,7 @@
 </div>
 <h6>TERMO DE COMPROMISSO</h6>
 <br>
-<div class='informacoes2'>
+<div class='informacoes'>
     Eu, <b>{{ colaborador.full_name }}</b>, {{ colaborador.get_documento_principal|safe }},
     abaixo assinado, declaro que li e entendi os termos do documento intitulado "Pol&iacute;tica para uso dos serviços de transfer&ecirc;ncia de dados da COIDS"
     e estou ciente que a violação destas Políticas me sujeita às medidas disciplinares descritas neste documento, assim como aquelas previstas na legislação em vigor.
@@ -74,7 +74,7 @@
         <td style="border-left: 1px solid #000; "></td>
     </tr>
     <tr style="height:20px">
-        <td style="width:40%; font-size:10px; text-align:center; border-top: 1px solid #000; padding-top:2px;">Autoriza&ccedil;&atilde;o do Titular da Divis&atilde;o do Requisitante</td>
+        <td style="width:40%; font-size:12px; text-align:center; border-top: 1px solid #000; padding-top:2px;">Autoriza&ccedil;&atilde;o do Titular da(o) {{colaborador.divisao}}</td>
         <td style="width:40%; border-top: 1px solid #000; "></td>
         <td style="width:20%; border-top: 1px solid #000; "></td>
     </tr>
