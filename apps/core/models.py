@@ -94,7 +94,7 @@ class GrupoTrabalho(models.Model):
         return f"{self.divisao} | {self.grupo.upper()}"
 
     def get_sudo(self):
-        return f"sudo_{self.grupo_sistema}"
+        return f"sudo_rules_{self.grupo_sistema}"
 
     def save(self, *args, **kwargs):
         self.confirmacao = False
@@ -130,7 +130,7 @@ class GrupoAcesso(models.Model):
             self.tipo = tipo.upper()
             self.grupo_trabalho = grupo_trabalho
             self.grupo_acesso = f"{grupo_trabalho.grupo_sistema.upper()} | {self.tipo}"
-            self.hbac_freeipa = f"hbac_srv_{grupo_trabalho.grupo_sistema}_{self.tipos[self.tipo]}"
+            self.hbac_freeipa = f"hbac_{grupo_trabalho.grupo_sistema}_{self.tipos[self.tipo]}"
 
     @property
     def description(self):

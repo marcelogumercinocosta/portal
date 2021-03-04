@@ -50,7 +50,7 @@ def test_create_grupo_trabalho() -> None:
     grupo_trabalho = mixer.blend(GrupoTrabalho, grupo="Grupo dados", grupo_sistema="dados", divisao=divisao)
     grupo_trabalho.confirmacao = True
     grupo_trabalho.save()
-    assert grupo_trabalho.get_sudo() == "sudo_dados"
+    assert grupo_trabalho.get_sudo() == "sudo_rules_dados"
     assert grupo_trabalho.confirmacao == False
     assert str(grupo_trabalho) == (f"{divisao.divisao} | GRUPO DADOS")
     grupo_trabalho.save_confirm()
@@ -65,7 +65,7 @@ def test_create_grupo_acesso() -> None:
     grupo_acesso = GrupoAcesso(tipo="Desenvolvimento", grupo_trabalho=grupo)
     assert str(grupo_acesso) == "DADOS | DESENVOLVIMENTO" 
     assert grupo_acesso.description == "HBAC Rule de DESENVOLVIMENTO do Grupo DADOS"
-    assert grupo_acesso.hbac_freeipa == "hbac_srv_dados_dev"
+    assert grupo_acesso.hbac_freeipa == "hbac_dados_dev"
 
 
 def test_set_responsavel() -> None:
