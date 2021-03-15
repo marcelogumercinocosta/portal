@@ -41,7 +41,7 @@ class FreeIPA(Client):
             display_name=colaborador.username,
             noprivate=False,
             mail=colaborador.email,
-            home_directory="/users/" + colaborador.username,
+            home_directory="/home/" + colaborador.username,
             disabled=False,
             user_password=password,
             login_shell="/bin/bash",

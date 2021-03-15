@@ -262,20 +262,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-import datetime
-import getpass
-import os
-import sys
-import django
-from django.contrib.auth import get_user_model
-from django.contrib.auth.password_validation import validate_password
-from django.core import exceptions
-sys.path.append(os.path.abspath("./"))
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", os.environ["django_settings_module"])
-django.setup()
-from mixer.backend.django import mixer
-from apps.colaborador.models import Colaborador, Vinculo
-from apps.core.models import Divisao, Predio
