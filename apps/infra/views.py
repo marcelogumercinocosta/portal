@@ -1,30 +1,31 @@
+
+from django.http.response import Http404
+from apps.infra.utils.xen_crud import XenCrud
 import base64
 import io
 import json
-from builtins import range
 from itertools import chain
 
-import png
 import pyqrcode
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.mixins import (LoginRequiredMixin,
-                                        PermissionRequiredMixin)
+from django.contrib.auth.mixins import (LoginRequiredMixin, PermissionRequiredMixin)
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView
 from django.views.generic.base import RedirectView, TemplateView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, FormView, UpdateView
 
 from apps.core.tasks import send_email_task
+from apps.infra.tasks import create_vm_task
 from apps.core.utils.freeipa import FreeIPA
-from apps.infra.forms import OcorrenciaForm
+from apps.infra.forms import OcorrenciaForm, ServidorVMForm
 from apps.core.models import Predio
-from apps.infra.models import (LINHAS, Equipamento, EquipamentoParte, Ocorrencia, Rack, Rede, Servidor, StorageGrupoAcessoMontagem)
+from apps.infra.models import (AmbienteVirtual, LINHAS, Equipamento, EquipamentoParte, Ocorrencia, Rack, Servidor)
 from apps.infra.utils.freeipa_location import Automount
-from apps.infra.utils.datacenter import (DatacenterArea, DataCenterMap, RackMap)
+from apps.infra.utils.datacenter import ( DataCenterMap, RackMap)
 from apps.infra.utils.history import HistoryInfra
 from garb.views import ViewContextMixin
 
@@ -37,7 +38,7 @@ class DataCenterView(ViewContextMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context["predios"] = Predio.objects.all().filter(linhas__isnull=False, colunas__isnull=False,)
         return context
-
+ 
 
 class DataCenterPredioView(TemplateView):
     template_name = "infra/datacenter/datacenter_predio.html"
@@ -150,13 +151,13 @@ class OcorrenciaNewView(CreateView):
         return reverse_lazy("infra:rack_detail", kwargs={"pk": self.rack_id})
 
 
-class CriarServidorView(LoginRequiredMixin, PermissionRequiredMixin, RedirectView):
+class CriarServidorLdapView(LoginRequiredMixin, PermissionRequiredMixin, RedirectView):
     permission_required = "infra.change_servidor"
 
     def get_redirect_url(self, *args, **kwargs):
         servidor = get_object_or_404(Servidor, id=kwargs["pk"])
         grupos_acesso = servidor.grupos_acesso.all()
-        if grupos_acesso.exists() and servidor.ldap == False:
+        if grupos_acesso.exists() and servidor.ldap == 0:
             client_feeipa = FreeIPA(self.request)
             if client_feeipa.set_host(servidor, description=servidor.descricao):
                 automount = Automount(client_feeipa, servidor, self.request)
@@ -165,8 +166,66 @@ class CriarServidorView(LoginRequiredMixin, PermissionRequiredMixin, RedirectVie
                 automount.adicionar_home()
                 HistoryInfra(self.request).novo_servidor(servidor=servidor)
                 send_email_task.delay("Servidor Criado",f"O Servidor: {servidor.nome} foi criado no FreeIPA, por:{self.request.user.username}",[settings.EMAIL_SYSADMIN])
-                servidor.ldap = True
+                servidor.ldap = 1
                 servidor.save()
+                if servidor.tipo == 'Servidor Virtual':
+                    return reverse_lazy("infra:criar_vm", kwargs={"pk": servidor.id, })
+               
         else:
             messages.add_message(self.request, messages.ERROR, "Confira o Cadastro, existe informação faltando ou não salva! É necessário um grupo de acesso! ")
-        return reverse_lazy("admin:infra_servidor_change", kwargs={"object_id": servidor.id})
+        return reverse_lazy("admin:infra_servidor_change", kwargs={"object_id": servidor.id, })
+
+
+class CriarServidorLocalView(LoginRequiredMixin, PermissionRequiredMixin, RedirectView):
+    permission_required = "infra.change_servidor"
+
+    def get_redirect_url(self, *args, **kwargs):
+        servidor = get_object_or_404(Servidor, id=kwargs["pk"])
+        grupos_acesso = servidor.grupos_acesso.all()
+        if grupos_acesso.exists() and servidor.ldap == 0:
+            HistoryInfra(self.request).novo_servidor(servidor=servidor)
+            send_email_task.delay("Servidor Criado",f"O Servidor: {servidor.nome} foi criado com conta Local, por:{self.request.user.username}",[settings.EMAIL_SYSADMIN])
+            servidor.ldap = 2
+            servidor.save()
+            if servidor.tipo == 'Servidor Virtual':
+                return reverse_lazy("infra:criar_vm", kwargs={"pk": servidor.id, })
+        else:
+            messages.add_message(self.request, messages.ERROR, "Confira o Cadastro, existe informação faltando ou não salva! É necessário um grupo de acesso! ")
+        return reverse_lazy("admin:infra_servidor_change", kwargs={"object_id": servidor.id, })
+
+class CriarVmView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
+    form_class = ServidorVMForm
+    template_name = "infra/servidor/vm.html"
+    permission_required = "infra.change_servidor"
+    task = 0
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = ServidorVMForm(initial={'servidor': self.kwargs['pk'] })
+        context["opts"] = Servidor._meta
+        context["original"] = get_object_or_404(Servidor, id=self.kwargs['pk'])
+        return context
+    
+    def form_valid(self, form):
+        servidor = get_object_or_404(Servidor, id=form.cleaned_data['servidor'])
+        template = form.cleaned_data['template']
+        memoria = form.cleaned_data['memoria']
+        cpu = form.cleaned_data['cpu']
+        self.task = XenCrud(servidor, self.request).create_vm(template, memoria, cpu)
+        if not self.task:
+            return super().form_invalid(form)
+        return super().form_valid(form)
+    
+    def get_success_url(self):                           
+        return reverse_lazy("infra:criar_vm_progress", kwargs={"pk": self.kwargs['pk'], "task_id": self.task.id })
+
+class CriarVmProgressView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    template_name = "infra/servidor/vm.html"
+    permission_required = "infra.change_servidor"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["opts"] = Servidor._meta
+        context["original"] = get_object_or_404(Servidor, id=self.kwargs['pk'])
+        context["task_id"] = self.kwargs['task_id'] 
+        return context

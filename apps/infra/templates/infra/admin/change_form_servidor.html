@@ -20,8 +20,10 @@
 {% endblock %}
 
 {% block submit_buttons_extra_bottom %}
-    {% if  object_id and not original.ldap  %}
-        <a href="{% url 'infra:criar_servidor' object_id  %}" class=" btn btn-info btn-verify-form" >Criar no FreeIPA</a>
+    {% if  object_id and original.ldap == 0 %}
+        <a href="{% url 'infra:criar_servidor_ldap' object_id  %}" class=" btn btn-info btn-verify-form" >Criar no FreeIPA</a>
+        <a href="{% url 'infra:criar_servidor_local' object_id  %}" class=" btn btn-info btn-verify-form" >Criar com Conta Local</a>
     {% endif %}
+
 {% endblock %}
 

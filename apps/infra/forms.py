@@ -121,3 +121,32 @@ class AmbienteVirtualServidorInLineForm(forms.ModelForm):
     class Meta:
         model = Servidor
         fields = ["servidor"]
+
+class ServidorVMForm(forms.Form):
+    CPU_CHOICES =( 
+        ("1", "1"), 
+        ("2", "2"), 
+        ("4", "4"), 
+        ("8", "8"), 
+        ("16", "16"), 
+    ) 
+    TEMPLATE_CHOICES =( 
+        ("UBUNTU20_G_147", "UBUNTU20_G_147"), 
+    ) 
+    MEMORIA_CHOICES =( 
+        ("2", "2"), 
+        ("4", "4"), 
+        ("8", "8"), 
+        ("16", "16"), 
+    ) 
+
+    servidor = forms.IntegerField(widget=forms.HiddenInput())
+    template = forms.ChoiceField(choices = TEMPLATE_CHOICES) 
+    cpu = forms.ChoiceField(choices = CPU_CHOICES) 
+    memoria = forms.ChoiceField(label="Memória", choices = MEMORIA_CHOICES) 
+
+    class Meta:
+        fieldsets = [
+            ("Nova VM", {"fields": ("template", "cpu", "memoria")}),
+        ]
+    

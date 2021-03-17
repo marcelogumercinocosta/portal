@@ -1,0 +1,115 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block breadcrumbs %}
+{% include "admin/includes/breadcrumbs.html" with nivel=3 breadcrumbs_action='Criar VM' %}
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="change-columns">
+        <div class="main-column">
+            <div class="box-garb">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="module-header">
+                            <div class=" legend"><b>{{ original|upper  }}</b></div>
+                        </div>
+                    </div>
+                    <div class="panel-collapse">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-9 offset-1">
+                                    <div class="row p-1 pt-3">
+                                        <div class="col-sm-3 text-right pr-0"><b>Servidor:</b></div>
+                                        <div class="col-sm-9">{{ original.servidor }}</div>
+                                    </div>
+                                    <div class="row p-1">
+                                        <div class="col-sm-3 text-right pr-0"><b>Tipo de Uso:</b></div>
+                                        <div class="col-sm-9">{{ original.tipo_uso }}</div>
+                                    </div>
+                                    <div class="row p-1">
+                                        <div class="col-sm-3 text-right pr-0"><b>Descrição:</b></div>
+                                        <div class="col-sm-9">{{ original.descricao }}</div>
+                                    </div>
+                                    <div class="row p-1">
+                                        <div class="col-sm-3 text-right pr-0"><b>Grupo Acesso:</b></div>
+                                        <div class="col-sm-9">
+                                            {% for grupo in original.grupos_acesso.all %}
+                                            {{ grupo.grupo_trabalho }}<br>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div class="row p-1">
+                                        <div class="col-sm-3 text-right pr-0"><b>Rede:</b></div>
+                                        <div class="col-sm-9">
+                                            {% for hostname in original.hostname_ip.all %}
+                                            {{ hostname.ip }} / {{ hostname.tipo }}<br>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="col-sm-9 offset-1">
+                                        {% for grupo in original.grupos_acesso_set.all %}
+                                        <div>
+                                            <p><b>Hostname IP: </b>{{ grupo.grupo }}</p>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box-garb">
+                {% if not task_id %}
+                <div class="row">
+                    <div class="col-sm-9 offset-1">
+                        <form method="post" id="formValidate" action="{% url 'infra:criar_vm' original.id %}">
+                            <div class="modal-body">
+                                {% csrf_token %}
+                                {{  form }}
+                                <br> <br>
+                                <div class="module-footer">
+                                    <div class="buttons">
+                                        <button type="submit" class="btn btn-primary width-btn-min">Criar
+                                            Automaticamente</button>
+                                        <a class="btn btn-secondary  text-white width-btn-min"
+                                            href="{% url 'admin:infra_servidor_change' original.id %}">Criar
+                                            Manualmente</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                {% else %}
+                <div class="row">
+                    <div class="col-sm-9 offset-1">
+                        <div class='progress-wrapper'>
+                            <div id='progress-bar' class='progress-bar' style="background-color: #68a9ef; width: 0%;"> &nbsp;</div>
+                        </div>
+                        <div id="progress-bar-message">Waiting for progress to start...</div>
+                        <div id="celery-result"></div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+{{ block.super }}
+    {% if task_id %}
+        <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
+        <script>
+            $(function () {
+                var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
+                CeleryProgressBar.initProgressBar(progressUrl)
+            });
+        </script>
+    {% endif %}
+{% endblock %}

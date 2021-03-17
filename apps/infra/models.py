@@ -119,13 +119,12 @@ class Equipamento(models.Model):
         if self.tipo == "Servidor Físico" or self.tipo == "Servidor Virtual":
             grupos = " | ".join([x.grupo_acesso.replace(" | OPERACIONAL", "").replace(" | DESENVOLVIMENTO", "").replace(" | PESQUISA", "") for x in self.grupos_acesso.all()])
             if grupos:
-                return f"[ {self.servidor.nome.upper()} - {grupos} - {self.tipo_uso} ] {self.descricao}"
+                return f"{self.servidor.nome} [ {self.tipo_uso} - {grupos} ] {self.descricao}"
             else:
-                return f"[ {self.servidor.nome.upper()} - {self.tipo_uso} ] {self.descricao}"
+                return f"{self.servidor.nome } [ {self.tipo_uso} ] {self.descricao}"
         else:
             return f"[ {self.tipo.upper()} ] {self.marca} {self.modelo}"
-
-
+    
 class Supercomputador(Equipamento):
     arquitetura = models.CharField("Arquitetura", max_length=255, blank=True, null=True)
     nos = models.CharField("Nós Computacionais", max_length=255, blank=True, null=True)
@@ -243,7 +242,7 @@ class Servidor(Equipamento):
     configuracao = models.TextField("Configuração", blank=True, null=True)
     vinculado = models.ForeignKey("infra.Equipamento", verbose_name="Equipamento Vinculado", blank=True, null=True, related_name="servidor_vinculo", on_delete=models.PROTECT)
     hostname_ip = models.ManyToManyField("infra.HostnameIP", through="ServidorHostnameIP")
-    ldap = models.BooleanField("ldap", default=False, blank=True, null=True)
+    ldap = models.IntegerField("ldap", default=0)
 
     class Meta:
         verbose_name = "Servidor"

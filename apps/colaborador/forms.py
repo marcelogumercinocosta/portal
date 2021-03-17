@@ -188,9 +188,6 @@ class ColaboradorForm(ColaboradorBaseForm, GarbModelForm):
         ]
     
 
-
-
-            
     def save_sendmail(self, scheme=None, host=None, *args, **kwargs):
         colaborador = super(ColaboradorForm, self).save(*args, **kwargs)
         send_email_template_task.delay("Seu cadastro foi enviado para secretaria", "colaborador/email/colaborador_cadastro.html", [colaborador.email], [["colaborador", colaborador.full_name]])

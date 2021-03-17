@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "django.contrib.humanize",
     "freeipa",
     "celery",
+    "celery_progress",
     "apps.core",
     "apps.colaborador",
     "apps.infra",

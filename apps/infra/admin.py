@@ -224,7 +224,7 @@ class ServidorAdmin(admin.ModelAdmin):
         obj.nome = hostname_str[0]
         hostname = HostnameIP.objects.get(hostname=obj.nome)
         if change:
-            if "descricao" in form.changed_data and obj.ldap:
+            if "descricao" in form.changed_data and obj.ldap == 1:
                 FreeIPA(request).host_mod(obj.freeipa_name, description=obj.descricao)
             super().save_model(request, obj, form, change)
         else:
@@ -239,7 +239,7 @@ class ServidorAdmin(admin.ModelAdmin):
             hostnameip.reservado = False
             hostnameip.save()
             HistoryInfra(request).delete_servidor(servidor=obj, hostnameip=hostnameip)
-        if obj.ldap:
+        if obj.ldap == 1:
             client_feeipa = FreeIPA(request)
             client_feeipa.automountlocation_del(obj.freeipa_name_mount)
             client_feeipa.host_delete(obj.freeipa_name)
@@ -274,7 +274,7 @@ class ServidorAdmin(admin.ModelAdmin):
                 hostnameip.save()
                 instance.save
         for obj in formset.deleted_objects:
-            if isinstance(obj, EquipamentoGrupoAcesso) and formset.instance.ldap:
+            if isinstance(obj, EquipamentoGrupoAcesso) and formset.instance.ldap == 1:
                 Automount(FreeIPA(request), formset.instance, request).remover_grupos([obj.grupo_acesso])
             if isinstance(obj, ServidorHostnameIP):
                 hostnameip = obj.hostnameip
