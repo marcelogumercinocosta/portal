@@ -57,8 +57,7 @@ def test_admin_colaborador_secretaria_visualizar_colaborador_nao_ativo( admin_si
     model_admin = ColaboradorAdmin(Colaborador, admin_site)
     model_admin.change_view(request=request, object_id=str(colaborador.pk))
     assert model_admin.inlines == [] 
-    assert model_admin.readonly_fields ==  [ "first_name", "last_name", "email", "data_nascimento", "nacionalidade", "sexo", "estado_civil", "area_formacao", "telefone", "cpf", "documento_tipo",
-                                            "documento", "cep", "endereco", "numero", "bairro", "cidade", "estado", "vinculo", "predio", "divisao", "ramal", "responsavel", "data_inicio", "data_fim", "registro_inpe", "empresa", "externo", "username", "uid", "is_superuser", "is_staff", "is_active", "last_login", "date_joined"]
+    assert model_admin.readonly_fields ==  [ "first_name", "last_name", "email", "data_nascimento",  "estado_civil", "area_formacao", "telefone", "cpf", "documento_tipo", "documento", "vinculo", "predio", "divisao", "ramal", "responsavel", "data_inicio", "data_fim", "registro_inpe", "empresa", "externo", "username", "uid", "is_superuser", "is_staff", "is_active", "last_login", "date_joined"]
     
     
 def test_admin_colaborador_suporte_visualizar_colaborador_ativo( admin_site, colaborador, colaborador_suporte):

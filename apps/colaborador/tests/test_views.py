@@ -49,8 +49,6 @@ def colaborador_data() -> Colaborador:
             "check_me_out2": True,
             "check_me_out3": True,
             "documento_tipo": "RG",
-            "estado_civil": "Solteiro",
-            "sexo": "Masculino",
             "predio": predio.id,
             "vinculo": vinculo.id,
             "divisao": divisao.id,

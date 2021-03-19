@@ -129,6 +129,7 @@ def set_permissoes():
                 "delete_responsavelgrupotrabalho",
                 "view_responsavelgrupotrabalho",
                 "view_grupoacesso",
+                "view_colaboradorgrupoacesso"
                 "view_equipamento",
                 "add_rack",
                 "change_rack",
@@ -205,18 +206,12 @@ def set_colaborador():
     colaborador.first_name = "Administrador"
     colaborador.last_name = "do Portal"
     colaborador.data_nascimento = datetime.date.today()
-    colaborador.telefone = "(12) 31868476"
+    colaborador.telefone = "(12) 3186-8476"
     colaborador.ramal = "8476"
-    colaborador.bairro = "CPTEC"
-    colaborador.cidade = "Cachoeira Paulsita"
-    colaborador.cep = "12630-000"
-    colaborador.endereco = "Rodovia Presidente Dutra KM 41"
-    colaborador.numero = "s/n"
-    colaborador.estado = "SP"
+    colaborador.documento = "."
+    colaborador.documento_tipo = "RG"
     colaborador.predio_id = 1
     colaborador.data_inicio = datetime.date.today()
-    colaborador.nacionalidade = "Brasileira"
-    colaborador.sexo = "Masculino"
     colaborador.divisao = Divisao.objects.get(divisao="SESUP")
     colaborador.vinculo = Vinculo.objects.get(vinculo="Administrador")
     colaborador.set_password(password())

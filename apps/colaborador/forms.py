@@ -111,7 +111,6 @@ class SuporteForm(forms.ModelForm):
 
 
 class ColaboradorBaseForm(forms.ModelForm):
-    sexo = (("", ""), ("Feminino", "Feminino"), ("Masculino", "Masculino"))
 
     documento_tipo = (
         ("", ""),
@@ -119,24 +118,12 @@ class ColaboradorBaseForm(forms.ModelForm):
         ("Passaporte", "Passaporte"),
     )
 
-    estado_civil = (
-        ("", ""),
-        ("Solteiro", "Solteiro(a)"),
-        ("Casado", "Casado(a)"),
-        ("Separado", "Separado(a)"),
-        ("Divorciado", "Divorciado(a)"),
-        ("Viúvo", "Viúvo(a)"),
-    )
 
     divisao = DivisaoChoiceField(queryset=Divisao.objects.all(), label="Divisão")
     responsavel = forms.ModelChoiceField(queryset=Colaborador.objects.filter(Q(groups__name="Responsavel")).distinct(), label="Responsável", widget=forms.Select(attrs={"data-live-search": "True"}),required=False,)
     last_name = forms.CharField(max_length=255, label="Sobrenome(s)")
     documento_tipo = forms.ChoiceField(choices=documento_tipo, label="Tipo Documento")
-    sexo = forms.ChoiceField(choices=sexo)
-    cidade = forms.CharField(widget=forms.TextInput(attrs={"readonly": "readonly"}))
-    estado = forms.CharField(widget=forms.TextInput(attrs={"readonly": "readonly"}))
     email = forms.EmailField()
-    estado_civil = forms.ChoiceField(choices=estado_civil, label="Estado Civil")
 
 
     class Meta:
@@ -146,20 +133,10 @@ class ColaboradorBaseForm(forms.ModelForm):
             "last_name",
             "email",
             "data_nascimento",
-            "nacionalidade",
-            "sexo",
-            "estado_civil",
-            "area_formacao",
             "telefone",
             "cpf",
             "documento_tipo",
             "documento",
-            "cep",
-            "endereco",
-            "numero",
-            "bairro",
-            "cidade",
-            "estado",
             "vinculo",
             "predio",
             "divisao",
@@ -172,6 +149,7 @@ class ColaboradorBaseForm(forms.ModelForm):
             "externo",
         ]
 
+
 class ColaboradorForm(ColaboradorBaseForm, GarbModelForm):
     check_me_out1 = forms.BooleanField(required=True, label="<a href='#' target='_blank'>Eu li e concordo com a RE/DIR-518 Normas de uso aceit&aacute;vel dos recursos computacionais do INPE</a>")
     check_me_out2 = forms.BooleanField(required=True, label="<a href='#' target='_blank'>Eu li e concordo com a Pol&iacute;tica de distribui&ccedil;&atilde;o de dados da COIDS</a>")
@@ -181,8 +159,7 @@ class ColaboradorForm(ColaboradorBaseForm, GarbModelForm):
         model = Colaborador
         submit_text = "Enviar Informações"
         fieldsets = [
-            ("Informações Pessoais", {"fields": ("first_name", "last_name", "email", "data_nascimento", "nacionalidade", "sexo", "estado_civil", "area_formacao", "telefone", "cpf", "documento_tipo", "documento",)}),
-            ("Informações Residenciais", {"fields": ("cep", "endereco", "numero", "bairro", "cidade", "estado",)}),
+            ("Informações Pessoais", {"fields": ("first_name", "last_name", "email", "data_nascimento", "telefone", "cpf", "documento_tipo", "documento",)}),
             ("Informações Profissionais", {"fields": ("vinculo", "predio", "divisao", "ramal", "responsavel", "data_inicio", "data_fim", "registro_inpe", "empresa", "externo")}),
             ("seus Direitos e Deveres", {"fields": ("check_me_out1", "check_me_out2", "check_me_out3")}),
         ]
@@ -191,7 +168,7 @@ class ColaboradorForm(ColaboradorBaseForm, GarbModelForm):
     def save_sendmail(self, scheme=None, host=None, *args, **kwargs):
         colaborador = super(ColaboradorForm, self).save(*args, **kwargs)
         send_email_template_task.delay("Seu cadastro foi enviado para secretaria", "colaborador/email/colaborador_cadastro.html", [colaborador.email], [["colaborador", colaborador.full_name]])
-        context_email = [["sexo", colaborador.sexo], ["name", colaborador.full_name], ["divisao", colaborador.divisao.divisao], ["scheme", scheme], ["host", host]]
+        context_email = [["name", colaborador.full_name], ["divisao", colaborador.divisao.divisao], ["scheme", scheme], ["host", host]]
         if colaborador.responsavel:
             send_email_template_task.delay("Você é responsavel por um Colaborador", "colaborador/email/colaborador_responsavel.html", [colaborador.responsavel.email], [["colaborador", colaborador.full_name]])
         send_email_template_task.delay((f"Termo do {colaborador.full_name} para imprimir e assinar"), "colaborador/email/colaborador_termo.html", [colaborador.divisao.email,], context_email)

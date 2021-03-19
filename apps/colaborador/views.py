@@ -166,21 +166,13 @@ class TermoCompromissoView(ViewContextMixin, LoginRequiredMixin, PermissionRequi
 
     def get(self, request, *args, **kwargs):
         colaborador = get_object_or_404(Colaborador, id=kwargs["pk"])
-        vpn = VPN()
-        if "@inpe.br" in colaborador.email:
-            motivo_detalhe = "Cadastro para atualização conta"
-            motivo = "atualizacao"
-        else:
-            motivo_detalhe = "Novo email / Conta Acesso aos Recursos"
-            motivo = "admissao"
-        if colaborador.externo:
-            vpn.justificativa = "Acesso para trabalho como Colaborador Externo"
-        context = {"title": "Termo de Compromisso de " + colaborador.full_name, "logo": finders.find("image/logo.png"), "motivo_detalhe": motivo_detalhe, "motivo": motivo, "colaborador": colaborador, "vpn": vpn}
-        result = BytesIO()
+        context = {"logo": finders.find("image/logo.png"), "colaborador": colaborador, "vpn": VPN()}
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f"attachment; filename=\"Termo_de_Compromisso_{colaborador.full_name.replace(' ', '_')}\""
         template = get_template(self.template_name)
         html = template.render(context)
-        pisa.pisaDocument(BytesIO(html.encode("utf8")), result)
-        return HttpResponse(result.getvalue(), content_type="application/pdf")
+        pisa.CreatePDF(html.encode("utf8"), dest=response)
+        return response
 
 
 class PasswordResetConfirmView(ViewContextMixin, TemplateView):
@@ -225,7 +217,6 @@ class SolicitacaoEnviarView(LoginRequiredMixin, RedirectView):
         send_emails = [responsavel.email for responsavel in grupo_acesso.grupo_trabalho.responsavel.all()]
         colaborador = get_object_or_404(Colaborador, id=self.request.user.id)
         context_email = [
-            ["sexo", colaborador.sexo],
             ["name", colaborador.full_name],
             ["divisao", colaborador.divisao.divisao],
             ["scheme", self.request.scheme],

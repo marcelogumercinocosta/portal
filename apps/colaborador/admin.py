@@ -23,27 +23,24 @@ class ColaboradorAdmin(admin.ModelAdmin):
     form = ColaboradorBaseForm
     fieldsets = [
             ("Informações Pessoais", {"fields": ["first_name", "last_name",  "data_nascimento", "email", "telefone"  ]}),
-            ("Informações Residenciais", {"fields": ["cep", "endereco", "numero", "bairro", "cidade", "estado"]}),
             ("Informações Profissionais", {"fields": ["vinculo", "predio", "divisao", "ramal", "responsavel", "registro_inpe", "empresa", "data_inicio", "data_fim", "externo"]}),
             ("Informações Portal", {"fields": [ "is_active",  "date_joined"]}),
         ]
-    readonly_fields =  [ "first_name", "last_name", "email", "data_nascimento", "nacionalidade", "sexo", "estado_civil", "area_formacao", "telefone", "cpf", "documento_tipo", "documento", "cep", "endereco", "numero", "bairro", "cidade", "estado", "vinculo", "predio", "divisao", "ramal", "responsavel", "data_inicio", "data_fim", "registro_inpe", "empresa", "externo", "username", "uid", "is_superuser", "is_staff", "is_active", "last_login", "data_inicio", "data_fim", "date_joined"]
+    readonly_fields =  [ "first_name", "last_name", "email", "data_nascimento", "telefone", "cpf", "documento_tipo", "documento", "vinculo", "predio", "divisao", "ramal", "responsavel", "data_inicio", "data_fim", "registro_inpe", "empresa", "externo", "username", "uid", "is_superuser", "is_staff", "is_active", "last_login", "data_inicio", "data_fim", "date_joined"]
     
     def change_view(self, request, object_id, form_url="", extra_context=None):
         colaborador = Colaborador.objects.get(pk=object_id)
         if (not colaborador.is_active):
             self.fieldsets = [
                 ("Informações Pessoais", {"fields": ["first_name", "last_name",  "data_nascimento", "email", "telefone"  ]}),
-                ("Informações Residenciais", {"fields": ["cep", "endereco", "numero", "bairro", "cidade", "estado"]}),
                 ("Informações Profissionais", {"fields": ["vinculo", "predio", "divisao", "ramal", "responsavel", "registro_inpe", "empresa", "data_inicio", "data_fim", "externo"]}),
                 ("Informações Portal", {"fields": [ "is_active",  "date_joined"]}),
             ]
-            self.readonly_fields =  [ "first_name", "last_name", "email", "data_nascimento", "nacionalidade", "sexo", "estado_civil", "area_formacao", "telefone", "cpf", "documento_tipo", "documento", "cep", "endereco", "numero", "bairro", "cidade", "estado", "vinculo", "predio", "divisao", "ramal", "responsavel", "data_inicio", "data_fim", "registro_inpe", "empresa", "externo", "username", "uid", "is_superuser", "is_staff", "is_active", "last_login", "date_joined"]
+            self.readonly_fields =  [ "first_name", "last_name", "email", "data_nascimento", "nacionalidade","telefone", "cpf", "documento_tipo", "documento",  "vinculo", "predio", "divisao", "ramal","responsavel", "data_inicio", "data_fim", "registro_inpe", "empresa", "externo", "username", "uid", "is_superuser", "is_staff", "is_active", "last_login", "date_joined"]
             self.inlines = []
         elif request.user.is_superuser:
             self.fieldsets = [
-                ("Informações Pessoais", {"fields": ["first_name", "last_name", "email", "data_nascimento", "nacionalidade", "sexo", "estado_civil", "telefone", "area_formacao", "cpf", "documento_tipo", "documento"]}),
-                ("Informações Residenciais", {"fields": ["cep", "endereco", "numero", "bairro", "cidade", "estado"]}),
+                ("Informações Pessoais", {"fields": ["first_name", "last_name", "email", "data_nascimento",  "telefone", "cpf", "documento_tipo", "documento"]}),
                 ("Informações Profissionais", {"fields": ["vinculo", "predio", "divisao", "ramal", "responsavel", "registro_inpe", "empresa", "data_inicio", "data_fim", "externo"]}),
                 ("Informações Portal", {"fields": ["username", "uid", "is_superuser", "is_staff", "is_active", "last_login", "date_joined"]}),
             ]
@@ -52,25 +49,24 @@ class ColaboradorAdmin(admin.ModelAdmin):
         else:
             if request.user.has_perm("colaborador.secretaria_colaborador"):
                 self.fieldsets = [
-                    ("Informações Pessoais", {"fields": ["first_name", "last_name", "email", "data_nascimento", "nacionalidade", "sexo", "estado_civil", "telefone", "area_formacao", "cpf", "documento_tipo", "documento"]}),
-                    ("Informações Residenciais", {"fields": ["cep", "endereco", "numero", "bairro", "cidade", "estado"]}),
+                    ("Informações Pessoais", {"fields": ["first_name", "last_name", "email", "data_nascimento", "telefone",  "cpf", "documento_tipo", "documento"]}),
                     ("Informações Profissionais", {"fields": ["vinculo", "predio", "divisao", "ramal", "responsavel", "registro_inpe", "empresa", "data_inicio", "data_fim", "externo"]}),
                 ]
                 self.readonly_fields = ["username", "uid", "is_staff", "is_active", "last_login", "date_joined", "data_inicio", "registro_inpe", "data_fim", "vinculo"]
             else:
                 self.fieldsets = [
-                    ("Informações Pessoais", {"fields": ["first_name", "last_name", "data_nascimento", "email", "telefone", ]}),
+                    ("Informações Pessoais", {"fields": ["first_name", "last_name", "data_nascimento", "email", "telefone",]}),
                     ("Informações Profissionais", {"fields": ["vinculo", "predio", "divisao", "ramal", "responsavel", "registro_inpe", "empresa", "data_inicio", "data_fim", "externo"]}),
                     ("Informações Portal", {"fields": ["username", "uid", "is_superuser", "is_staff", "is_active", "last_login", "date_joined"]}),
                 ]
                 self.readonly_fields = [ "first_name", "last_name",  "data_nascimento", "username", "uid", "is_staff", "registro_inpe", "is_active", "last_login", "date_joined", "vinculo", "predio", "divisao", "responsavel", "registro_inpe", "empresa", "data_inicio", "data_fim", "vinculo", "is_superuser"]
-            self.inlines = [ColaboradorGrupoAcessoInLineRead]
+            self.inlines = [GroupInLine, ColaboradorGrupoAcessoInLineRead]
         self.fieldsets = self._corrigir_fieldsets(colaborador, self.fieldsets)
         return super(ColaboradorAdmin, self).change_view(request, object_id, form_url, extra_context)
 
     def _corrigir_fieldsets(self, colaborador, fieldsets_puro):
         fields_exclude_colaborador = {
-            "Administrador":["cpf","sexo", "estado_civil", "data_nascimento", "area_formacao",  "nacionalidade", "registro_inpe", "empresa", "data_fim", "responsavel", "documento", "documento_tipo"],
+            "Administrador":["cpf", "data_nascimento", "registro_inpe", "empresa", "data_fim", "responsavel", ],
             "Servidor":["responsavel", "empresa", "data_fim", "externo"],
             "Bolsista":["empresa", "registro_inpe",],
             "Estagiário":["empresa", "registro_inpe",],

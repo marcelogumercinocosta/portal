@@ -16,8 +16,6 @@ def test_form_colaborador_valido(responsavel_grupo, colaborador) -> None:
             "check_me_out2": True,
             "check_me_out3": True,
             "documento_tipo": "RG",
-            "estado_civil": "Solteiro",
-            "sexo": "Masculino",
             "predio": colaborador.predio.id,
             "vinculo": colaborador.vinculo.id,
             "divisao": colaborador.divisao.id,

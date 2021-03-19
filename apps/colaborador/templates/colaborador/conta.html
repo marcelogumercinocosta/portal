@@ -23,12 +23,7 @@
 										<div>
 											<p><b>Data Nascimento: </b> {{ colaborador.data_nascimento }}</p>
 										</div>
-										<div>
-											<p><b>Nacionalidade: </b>{{ colaborador.nacionalidade }}</p>
-										</div>
-										<div>
-											<p><b>Telefone: </b> {{ colaborador.telefone }}</p>
-										</div>
+										
 										{% if colaborador.cpf %}
 											<div>
 												<p><b>CPF: </b> {{ colaborador.cpf }}</p>
@@ -40,13 +35,7 @@
 											<p><b>Email: </b>{{ colaborador.email }}</p>
 										</div>
 										<div>
-											<p><b>Sexo: </b>{{ colaborador.sexo }}</p>
-										</div>
-										<div>
-											<p><b>Estado Civil: </b> {{ colaborador.estado_civil|default_if_none:"--" }}</p>
-										</div>
-										<div>
-											<p><b>&Aacute;rea de Forma&ccedil;&atilde;o: </b> {{ colaborador.area_formacao|default_if_none:"--" }}</p>
+											<p><b>Telefone: </b> {{ colaborador.telefone }}</p>
 										</div>
 										{% if colaborador.documento_tipo %}
 											<div>
@@ -56,34 +45,12 @@
 									</div>
 								</div>
 								<div class="row pr-2 pl-2">
-									<legend class="txt_cor_primaria legend" >Informa&ccedil;&otilde;es Residenciais</legend>
-									<div class="col-sm-3 offset-1">
-										<div>
-											<p><b>CEP: </b>{{ colaborador.cep }}</p>
-										</div>
-										<div>
-											<p><b>Bairro: </b>{{ colaborador.bairro }}</p>
-										</div>
-									</div>
-									<div class="col-sm-5">
-										<div>
-											<p><b>Cidade: </b> {{ colaborador.cidade }}</p>
-										</div>
-										<div>
-											<p><b>Endere&ccedil;o: </b> {{ colaborador.endereco }}</p>
-										</div>
-									</div>
-									<div class="col-sm-3">
-										<div>
-											<p><b>Estado: </b> {{ colaborador.estado }}</p>
-										</div>
-										<div>
-											<p><b>N&uacute;mero: </b>{{ colaborador.numero }}</p>
-										</div>
-									</div>
-								</div>
-								<div class="row pr-2 pl-2">
 									<legend  class="txt_cor_primaria">Informa&ccedil;&otilde;es Profissionais</legend>
+									<div class="col-sm-10 offset-1">
+										<div>
+											<p class="mb-0"><b>Divis&atilde;o: </b> {{ colaborador.divisao.full_name }}</p>
+										</div>
+									</div>
 									<div class="col-sm-5 offset-1">
 										<div>
 											<p class="mb-0"><b>V&iacute;nculo: </b>{{ colaborador.vinculo }}</p>
@@ -100,11 +67,7 @@
 											</p>
 										</div>
 									</div>
-									<div class="col-sm-10 offset-1">
-										<div>
-											<p class="mb-0"><b>Divis&atilde;o: </b> {{ colaborador.divisao.full_name }}</p>
-										</div>
-									</div>
+									
 									<div class="col-sm-5 offset-1">
 										<div>
 											<p><b>Data de In&iacute;cio: </b>{{ colaborador.data_inicio|date:"SHORT_DATE_FORMAT" }}</p>

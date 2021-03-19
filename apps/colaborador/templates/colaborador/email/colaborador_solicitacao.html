@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
     <p>Ol&aacute;,</p>
-    <p>&emsp;{% if sexo == 'Masculino' %} O colaborador {% else %} A colaboradora {% endif %} <b>{{ name }}</b> da <b>{{ divisao }}</b>, solicitou no <b>3SPORTAL</b> o acesso aos recursos computacionais do Grupo <b>{{ grupo }}</b></p>
+    <p>&emsp;<b>{{ name }}</b> da <b>{{ divisao }}</b>, solicitou no <b>3SPORTAL</b> o acesso aos recursos computacionais do Grupo <b>{{ grupo }}</b></p>
     <p>Por favor, como respons&aacute;vel do <b>GRUPO</b> avalie o pedido</p>
     <br>
     <p style="text-align:center;"><a  href="{{scheme}}://{{host}}{% url 'colaborador:responsavel' %}" class="btn">Avaliar o pedido</a></p>

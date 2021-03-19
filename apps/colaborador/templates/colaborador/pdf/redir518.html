@@ -26,7 +26,12 @@
 
 <h6>Qual o motivo do Preenchimento?</h6>
 <div class='informacoes_borda'>
-    Motivo do Preenchimento: <b>{{ motivo_detalhe }}</b>
+    Motivo do Preenchimento: 
+    {% if "@inpe.br" in colaborador.email %} 
+        <b>Atualização ou Nova de Conta para Acesso aos Recursos</b>
+    {% else %}
+        <b>{% if not colaborador.externo %} Novo email / {%  endif %} Conta para Acesso aos Recursos</b>
+    {% endif %}
 </div>
 <br/>
 <table>

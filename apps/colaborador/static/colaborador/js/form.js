@@ -64,16 +64,7 @@ $(document).ready(function () {
             data_nascimento: { required: true },
             rg: { required: true },
             cpf: { required: true },
-            cep: { required: true },
-            endereco: { required: true },
-            estado: { required: true },
-            numero: { required: true },
-            cidade: { required: true },
-            bairro: { required: true },
-            unidade: { required: true },
             predio: { required: true },
-            nacionalidade: { required: true },
-            area_formacao: { required: true },
             data_inicio: { required: true },
             data_nascimento: { required: true },
             vinculo: { required: true, min: 2 },
@@ -108,7 +99,6 @@ $(document).ready(function () {
         },
     });
     // Esconde a data_fim se for servidor
-  
     combo_vinculo()
     $("select#id_vinculo").change(function () {
         combo_vinculo()
@@ -120,14 +110,22 @@ $(document).ready(function () {
     });
 
     //Mascaras
-    $('#id_telefone').mask('(00) 0000-00009');
-    $('#id_contato_de_emergencia_telefone').mask('(00) 0000-00009');
     $('#id_ramal').mask('0000');
     $('#id_cpf').mask('999.999.999-99');
-    $('#id_cep').mask('99999-999');
     $('#id_data_nascimento').mask('99/99/9999');
     $('#id_data_inicio').mask('99/99/9999');
     $('#id_data_fim').mask('99/99/9999');
+    
+    var behavior = function (val) {
+        return val.replace(/\D/g, '').length === 11 ? '(00) 00000-0000' : '(00) 0000-00009';
+    },
+    options = {
+        onKeyPress: function (val, e, field, options) {
+            field.mask(behavior.apply({}, arguments), options);
+        }
+    };
+    
+    $('#id_telefone').mask(behavior, options);
 });
 
 
