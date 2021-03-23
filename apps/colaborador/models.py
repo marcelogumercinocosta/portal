@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 import re
 from unicodedata import normalize
 from django.contrib.auth.models import AbstractUser
@@ -98,14 +98,13 @@ class Colaborador(AbstractUser):
 
 class VPN(models.Model):
     recurso = models.CharField('Recurso a ser acessado', max_length=255 )
-    data_solicitacao = models.DateTimeField('Data da solicitação', auto_now_add=True)
-    data_abertura = models.DateTimeField('Data da Abertura', null=True, blank=True)
-    data_validade = models.DateTimeField('Data Validade', null=True, blank=True)
-    mac_cabeado = models.CharField('MAC Address Cabeado', max_length=255 )
-    mac_wifi = models.CharField('MAC Address Wireless', max_length=255 )
+    data_solicitacao = models.DateField('Data da solicitação', auto_now_add=True)
+    data_abertura = models.DateField('Data da Abertura', null=True, blank=True)
+    data_validade = models.DateField('Data Validade', null=True, blank=True)
+    mac_cabeado = models.CharField('MAC Address Cabeado', max_length=255 ,null=True, blank=True)
+    mac_wifi = models.CharField('MAC Address Wireless', max_length=255, null=True, blank=True)
     justificativa = models.CharField('Justificativa', max_length=255 )
-    documento = models.CharField('Documento referência', max_length=255 )
-    status = models.CharField('Status', max_length=255 )
+    status = models.CharField('Status', default='Solicitada', max_length=255, null=True, blank=True)
     colaborador = models.ForeignKey("colaborador.Colaborador", verbose_name="Colaborador", on_delete=models.PROTECT)
     class Meta :
         ordering = ['-data_validade']
@@ -113,7 +112,7 @@ class VPN(models.Model):
         verbose_name_plural = "VPNs"
 
     def __str__(self):
-        return self.field
+        return f"{self.recurso} | {self.colaborador.username}"
 
     @property
     def data_fim_vpn(self):
@@ -136,3 +135,12 @@ class VPN(models.Model):
             return self.mac_wifi
         else:
             return  "___:___:___:___:___"
+
+    @property
+    def status_atualizado(self):
+        if self.data_validade  < date.today():
+            return "Vencida"
+        elif self.data_validade > date.today() - timedelta(days=30) :
+            return "Vai vencer"
+        else:
+            return self.status

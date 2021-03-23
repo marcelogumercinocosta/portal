@@ -166,7 +166,10 @@ class TermoCompromissoView(ViewContextMixin, LoginRequiredMixin, PermissionRequi
 
     def get(self, request, *args, **kwargs):
         colaborador = get_object_or_404(Colaborador, id=kwargs["pk"])
-        context = {"logo": finders.find("image/logo.png"), "colaborador": colaborador, "vpn": VPN()}
+        vpn = VPN()
+        vpn.justificativa = "Novo acesso de Colaborador Externo"
+        vpn.recurso = "VPN-CPTEC"
+        context = {"logo": finders.find("image/logo.png"), "colaborador": colaborador, "vpn": vpn}
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = f"attachment; filename=\"Termo_de_Compromisso_{colaborador.full_name.replace(' ', '_')}\""
         template = get_template(self.template_name)
@@ -305,3 +308,23 @@ class ColaboradorContaView(ViewContextMixin, LoginRequiredMixin, DetailView ):
 
     def get_object(self):
         return get_object_or_404(Colaborador, pk=self.request.user.id)
+
+
+class VPNFormularioView(ViewContextMixin, LoginRequiredMixin, PermissionRequiredMixin, View):
+    template_name = "colaborador/pdf/VPN.html"
+    permission_required = "colaborador.secretaria_suporte"
+    title = "VPN"
+
+    def get(self, request, *args, **kwargs):
+        vpn = get_object_or_404(VPN, id=kwargs["pk"])
+        vpn.status = "Aguardando assinaturas"
+        vpn.save()
+        colaborador  = vpn.colaborador
+        context = {"logo": finders.find("image/logo.png"), "vpn": vpn, "colaborador":colaborador}
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f"attachment; filename=\"VPN_{vpn.justificativa.replace(' ', '_')}_{colaborador.full_name.replace(' ', '_')}\""
+        template = get_template(self.template_name)
+        html = template.render(context)
+        pisa.CreatePDF(html.encode("utf8"), dest=response)
+        messages.add_message(self.request, messages.SUCCESS, "Por favor, Envie o formulário para o Colaborador")
+        return response

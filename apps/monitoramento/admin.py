@@ -2,7 +2,6 @@
 from django.contrib import admin
 from apps.monitoramento.models import Monitoramento, TipoMonitoramento
 
-
 class MonitoramentoInLine(admin.TabularInline):
     model = Monitoramento
     fields = ("nome", "url", "prioridade", "target", "tipo")

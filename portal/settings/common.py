@@ -118,6 +118,7 @@ GARB_CONFIG = {
                 {"label": "Secretaria", "permission": "colaborador.secretaria_colaborador", "route": "colaborador:secretaria",},
                 {"label": "Suporte", "permission": "colaborador.suporte_colaborador", "route": "colaborador:suporte",},
                 {"label": "Responsável", "permission": "colaborador.responsavel_colaborador", "route": "colaborador:responsavel",},
+                {"model": "colaborador.vpn"},
                 {"model": "colaborador.vinculo"},
                 {"model": "core.divisao"},
             ],

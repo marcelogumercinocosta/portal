@@ -1,5 +1,108 @@
 {% load i18n  garb_tags %}
 {% load templatetags %}
+
+<html>
+
+<head>
+    <title>Termo de Compromisso</title>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <style type="text/css">
+        body {
+            font-weight: 200;
+            font-size: 14px;
+        }
+
+        .header {
+            font-size: 20px;
+            font-weight: 100;
+            text-align: center;
+            padding: 10px 0 -20px 0;
+        }
+
+        .header p {
+            text-align: center;
+        }
+
+        .informacoes_borda {
+            width: 300px;
+            border: 1px solid;
+            padding: 15px;
+            padding-bottom: 0px;
+            margin: 0px;
+            text-align: justify;
+            border-radius: 15px;
+        }
+
+        .informacoes {
+            width: 300px;
+            padding: 15px;
+            padding-bottom: 0px;
+            margin: 0px;
+            text-align: justify;
+        }
+
+        .informacoes_left {
+            width: 300px;
+            padding: 0px 0px 0xp 50px;
+            margin: 0px;
+            text-align: justify;
+            border: none;
+        }
+
+        table {
+            width: 300px;
+        }
+
+        img {
+            zoom: 60%
+        }
+
+        h6 {
+            text-align: center;
+            padding: 10px 0 -24px 0;
+        }
+
+        .assinar {
+            padding-left: 3000%;
+            padding-top: -300%;
+        }
+
+        .carimbo {
+            padding-left: 3200%;
+            padding-top: -100%;
+        }
+
+        .data {
+            padding-left: 150%;
+        }
+
+        .assinar_titular {
+            padding-left: 3000%;
+            padding-top: -500%;
+        }
+
+        .assinar_centralizado {
+            padding-left: 1700%;
+            padding-top: -500%;
+        }
+
+        .carimbo_centralizado {
+            padding-left: 2200%;
+            padding-top: -100%;
+        }
+
+        img {
+            zoom: 60%
+        }
+        .informacao-boder img {
+            zoom: 40%
+        }
+
+    </style>
+</head>
+
+<body>
+<img src="{{ logo }}" class="logo">
 <div class='wrapper'>
     <div class='header'>
         <p>Formul&aacute;rio para solicita&ccedil;&atilde;o de acesso via VPN &aacute; COIDS</p>
@@ -31,14 +134,14 @@
 </div>
 <h6>Informa&ccedil;&atilde;oes para VPN</h6>
 <div class='informacoes_borda'>
-    {% get_verbose_name_field vpn 'recurso' %}: <b>VPN CPTEC</b><br>
+    {% get_verbose_name_field vpn 'recurso' %}: <b>{{vpn.recurso}}</b><br>
     {% get_verbose_name_field vpn 'data_validade' %}: <b>{{vpn.data_fim_vpn|date:"SHORT_DATE_FORMAT"}}</b><br>
     {% get_verbose_name_field vpn 'mac_cabeado' %}:  <b>{{vpn.get_mac_cabeado}}</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     {% get_verbose_name_field vpn 'mac_wifi' %}: <b>{{vpn.get_mac_cabeado}}</b><br>
 </div>
 <h6>Justificativa</h6>
 <div class='informacoes_borda'>
-    {% get_verbose_name_field vpn 'justificativa' %}: <b>"Acesso para trabalho como Colaborador Externo"</b>
+    {% get_verbose_name_field vpn 'justificativa' %}: <b>{{vpn.justificativa}}</b>
 </div>
 <br><br>
     Cachoeira Paulista, {% now "d/m/Y" %}
@@ -98,3 +201,8 @@
 </table>
 <br>
 <br>
+<small>* Depois do preenchimento das Informa&ccedil;&otilde;es para VPN encaminhe o documento para secretaria: {{ colaborador.divisao.email }} </small>
+</body>
+
+
+</html>

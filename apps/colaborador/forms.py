@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.db.models import Q
 
-from apps.colaborador.models import Colaborador, Vinculo
+from apps.colaborador.models import Colaborador, VPN, Vinculo
 from apps.core.models import ColaboradorGrupoAcesso, Divisao
 from apps.core.tasks import send_email_template_task
 from garb.forms import GarbModelForm
@@ -173,3 +173,27 @@ class ColaboradorForm(ColaboradorBaseForm, GarbModelForm):
             send_email_template_task.delay("Você é responsavel por um Colaborador", "colaborador/email/colaborador_responsavel.html", [colaborador.responsavel.email], [["colaborador", colaborador.full_name]])
         send_email_template_task.delay((f"Termo do {colaborador.full_name} para imprimir e assinar"), "colaborador/email/colaborador_termo.html", [colaborador.divisao.email,], context_email)
         return colaborador
+
+class VPNForm(forms.ModelForm):
+    JUSTIFICATIVA_CHOICES =( 
+        ("",""),
+        ("Novo acesso de Colaborador Externo", "Novo acesso de Colaborador Externo"), 
+        ("Novo acesso de Colaborador Interno", "Novo acesso de Colaborador Interno"), 
+        ("Novo Equipamento com VPN ativa", "Novo Equipamento com VPN ativa"), 
+        ("Troca de Equipamento com VPN ativa", "Troca de Equipamento com VPN ativa"), 
+        ("Renovação da VPN", "Renovação da VPN"), 
+    ) 
+    RECURSO_CHOICES = (
+        ("",""),
+        ("VPN-CPTEC", "VPN-CPTEC"),
+        ("VPN-HPC", "VPN-HPC"),
+    )
+
+    colaborador = forms.ModelChoiceField(Colaborador.objects.filter(is_active=1), widget=forms.Select(attrs={"data-live-search": "True"}))
+    justificativa = forms.ChoiceField(choices = JUSTIFICATIVA_CHOICES) 
+    recurso = forms.ChoiceField(choices = RECURSO_CHOICES) 
+
+    class Meta:
+        model = VPN
+        fields = "__all__"
+    

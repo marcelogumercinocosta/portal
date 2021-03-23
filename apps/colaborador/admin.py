@@ -1,16 +1,15 @@
-from apps.colaborador.forms import ColaboradorBaseForm
+from apps.colaborador.forms import ColaboradorBaseForm, VPNForm
 from functools import update_wrapper
 
 from django.contrib import admin
 
-from apps.colaborador.models import (Colaborador, Vinculo)
+from apps.colaborador.models import (Colaborador, VPN, Vinculo)
 from apps.core.admin import ColaboradorGrupoAcessoInLineRead, GroupInLine
 from apps.core.utils.freeipa import FreeIPA
-
+from datetime import datetime, timedelta
 @admin.register(Vinculo)
 class VinculoAdmin(admin.ModelAdmin):
     search_fields = ["vinculo"]
-
 
 @admin.register(Colaborador)
 class ColaboradorAdmin(admin.ModelAdmin):
@@ -86,3 +85,38 @@ class ColaboradorAdmin(admin.ModelAdmin):
         if change and ("ramal" in form.changed_data or "email" in form.changed_data):
             FreeIPA(request).user_mod(obj.username, email=obj.email, ramal=obj.ramal)
         super().save_model(request, obj, form, change)
+
+
+@admin.register(VPN)
+class VPNAdmin(admin.ModelAdmin):
+    change_form_template = "colaborador/admin/change_form_vpn.html"
+    extra_context = dict( show_save=False, show_save_and_continue=True)
+    search_fields = ["colaborador"]
+    list_filter = ["status"]
+    list_display = ["colaborador", "recurso", "status", "data_validade"]
+    readonly_fields = ["status", "data_validade", "data_abertura", "mac_cabeado", "mac_wifi", 'data_solicitacao',]
+    fields = ['colaborador', 'recurso', 'justificativa']
+    form = VPNForm
+
+    def add_view(self, request, form_url="", extra_context=None):
+        extra_context = dict( show_save=False, show_save_and_continue=True)
+        self.fields = ['colaborador', 'recurso', 'justificativa']
+        self.readonly_fields = ["status", "data_validade", "data_abertura", "mac_cabeado", "mac_wifi", 'data_solicitacao', 'status']
+        return super().add_view(request, form_url=form_url, extra_context=extra_context)
+
+    def change_view(self, request, object_id, form_url="", extra_context=None):
+        self.readonly_fields = ["colaborador", "recurso", "justificativa", 'status', "data_solicitacao"]
+        self.fields = ["colaborador", "recurso", "justificativa", "data_solicitacao", "data_abertura", "data_validade",  "mac_cabeado", "mac_wifi", "status"]
+        return super().change_view(request, object_id, form_url=form_url, extra_context=extra_context)
+
+    def save_model(self, request, obj, form, change):
+        if obj.data_abertura and obj.data_validade and (obj.mac_cabeado or obj.mac_wifi):
+            obj.status = "Ativa"
+        return super().save_model(request, obj, form, change)
+
+    def delete_model(self, request, obj):
+        if obj.status == "Inativa":
+            return super().delete_model(request, obj)
+        obj.status = "Inativa"
+        obj.save()
+    

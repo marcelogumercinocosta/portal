@@ -1,0 +1,21 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static  %}
+
+
+
+{% block extrajs %}
+    <script>
+        {% if add %}
+            $("[name='_addanother']").hide()
+            
+        {% endif %}
+    </script>
+{% endblock %}
+
+{% block submit_buttons_extra_bottom %}
+    {% if not add and not original.data_abertura %}
+        <a href="{% url 'colaborador:vpn_formulario' object_id  %}" class=" btn btn-info btn-verify-form" >Gerar Formulário</a>
+    {% endif %}
+
+{% endblock %}
+

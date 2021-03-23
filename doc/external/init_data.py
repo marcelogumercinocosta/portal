@@ -129,7 +129,7 @@ def set_permissoes():
                 "delete_responsavelgrupotrabalho",
                 "view_responsavelgrupotrabalho",
                 "view_grupoacesso",
-                "view_colaboradorgrupoacesso"
+                "view_colaboradorgrupoacesso",
                 "view_equipamento",
                 "add_rack",
                 "change_rack",
