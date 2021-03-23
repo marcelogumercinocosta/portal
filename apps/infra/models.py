@@ -238,11 +238,13 @@ class HostnameIP(models.Model):
 
 
 class Servidor(Equipamento):
-    nome = models.CharField("hostname", max_length=255, blank=True, null=True)
+    nome = models.CharField("nome", max_length=255, blank=True, null=True)
     configuracao = models.TextField("Configuração", blank=True, null=True)
     vinculado = models.ForeignKey("infra.Equipamento", verbose_name="Equipamento Vinculado", blank=True, null=True, related_name="servidor_vinculo", on_delete=models.PROTECT)
     hostname_ip = models.ManyToManyField("infra.HostnameIP", through="ServidorHostnameIP")
     ldap = models.IntegerField("ldap", default=0)
+    vm_remover = models.BooleanField("Remover VM", default=False, blank=True, null=True)
+    vm_template = models.ForeignKey("infra.TemplateVM", verbose_name="Template", related_name="servidor_template", blank=True, null=True, on_delete=models.PROTECT)
 
     class Meta:
         verbose_name = "Servidor"
@@ -260,13 +262,55 @@ class Servidor(Equipamento):
     def freeipa_name_mount(self):
         return f"mount_{self.nome}"
 
-    def delete(self, using=None, keep_parents=False):
-        for server_hostnameip in ServidorHostnameIP.objects.filter(servidor__id=self.pk):
-            hostnameip = server_hostnameip.hostnameip
-            hostnameip.reservado = False
-            hostnameip.save()
-        return super().delete(using=using, keep_parents=keep_parents)
+    @property
+    def host_principal(self):
+        if self.hostname_ip: 
+            host = self.hostname_ip.all()[0]
+            return host.hostname, host.ip
+        return None
 
+
+class TemplateVM(models.Model):
+    nome = models.CharField("nome", max_length=255, blank=True, null=True)
+    configuracao = models.CharField("Configuração", max_length=255)
+    comando_antes = models.TextField("Configuração Antes do Reboot", blank=True, null=True)
+    comando_depois = models.TextField("Configuração Depois do  Reboot", blank=True, null=True)
+    ambiente_virtual =  models.ForeignKey("infra.AmbienteVirtual", verbose_name="Ambiente Virtual", related_name="template_ambiente_virtual", on_delete=models.PROTECT)
+    origens = models.ManyToManyField("infra.HostnameIP", through="TemplateHostnameIP")
+    class Meta:
+        verbose_name = "Template"
+        verbose_name_plural = "Templates"
+        ordering = ["nome"]
+
+    def __str__(self):
+        return f"{self.nome} | {self.ambiente_virtual}"
+
+    @property
+    def host_principal(self):
+        if self.origens: 
+            host = self.origens.all()[0]
+            return host.hostname, host.ip
+        return None
+
+    @property
+    def ambiente_virtual_servidores(self):
+        if self.ambiente_virtual: 
+            return self.ambiente_virtual.servidor.all()
+        return None
+
+
+
+class TemplateHostnameIP(models.Model):
+    template = models.ForeignKey("infra.TemplateVM", on_delete=models.CASCADE)
+    hostnameip = models.ForeignKey("infra.HostnameIP", verbose_name="Hostname", on_delete=models.PROTECT)
+
+    class Meta:
+        unique_together = (("hostnameip"),)
+        verbose_name = "Hostname"
+        verbose_name_plural = "Hostnames"
+
+    def __str__(self):
+        return self.hostnameip.hostname
 
 class ServidorHostnameIP(models.Model):
     servidor = models.ForeignKey("infra.Servidor", on_delete=models.CASCADE)

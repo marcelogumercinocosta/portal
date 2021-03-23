@@ -150,7 +150,7 @@ class ColaboradorBaseForm(forms.ModelForm):
         ]
 
 
-class ColaboradorForm(ColaboradorBaseForm, GarbModelForm):
+class ColaboradorForm(ColaboradorBaseForm, GarbModelForm): 
     check_me_out1 = forms.BooleanField(required=True, label="<a href='#' target='_blank'>Eu li e concordo com a RE/DIR-518 Normas de uso aceit&aacute;vel dos recursos computacionais do INPE</a>")
     check_me_out2 = forms.BooleanField(required=True, label="<a href='#' target='_blank'>Eu li e concordo com a Pol&iacute;tica de distribui&ccedil;&atilde;o de dados da COIDS</a>")
     check_me_out3 = forms.BooleanField(required=True, label="<a href='#' target='_blank'>Eu li e concordo com a Pol&iacute;tica de acesso aos Dados e Servidores da COIDS</a>")

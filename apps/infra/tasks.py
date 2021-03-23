@@ -1,5 +1,8 @@
 from __future__ import absolute_import, unicode_literals
 
+from django.shortcuts import get_object_or_404
+from apps.infra.models import Servidor, TemplateVM
+
 from celery import Celery, shared_task, states
 from celery_progress.backend import ProgressRecorder
 from datetime import datetime
@@ -10,16 +13,21 @@ import time
 
 
 @shared_task(bind=True)
-def create_vm_task(self,vm, vm_descricao, template, memoria, cpu):
+def create_vm_task(self, servidor, vm_id,  template_id, memoria, cpu):
+    server = servidor
+    origem = get_object_or_404(TemplateVM, id=template_id)
+    destino = get_object_or_404(Servidor, id=vm_id)
+    template = origem.nome
+    template_origem, template_origem_ip = origem.host_principal
+    vm, vm_ip = destino.host_principal
+    vm_descricao = f"[ {destino.tipo_uso} - {destino.grupo_acesso_name()} ] {destino.descricao}"
     progress_recorder = ProgressRecorder(self)
     user = settings.XEN_AUTH_USER
     password = settings.XEN_AUTH_PASSWORD
-    memoria = int(memoria) * 1024 * 1024 * 1024
-    server = 'tentilhao'
-    vm_ip = "150.163.147.169"
-    template_origem = "tapera"
-    template_origem_ip = "150.163.147.180"
+    memoria = str(int(memoria) * 1024 * 1024 * 1024)
+    cpu = int(cpu)
     total = 100
+    
     try:
         progress_recorder.set_progress(5, total, description=f"Conetando no XEN")
         session = Session(f"http://{server}.cptec.inpe.br")
@@ -32,10 +40,9 @@ def create_vm_task(self,vm, vm_descricao, template, memoria, cpu):
         progress_recorder.set_progress(20, total, description=f"Criando novo Servidor")
         vm_ref = session.xenapi.VM.clone(template_ref, vm)
         progress_recorder.set_progress(30, total, description=f"Corrigindo Memória")
-        session.xenapi.VM.set_memory(vm_ref,"17188651008")
+        session.xenapi.VM.set_memory(vm_ref, memoria)
         progress_recorder.set_progress(35, total, description=f"Corrigindo CPU")
-        session.xenapi.VM.set_VCPUs_max(vm_ref,16)
-        session.xenapi.VM.set_VCPUs_at_startup(vm_ref,16)
+        session.xenapi.VM.set_VCPUs_at_startup(vm_ref,cpu)
         progress_recorder.set_progress(40, total, description=f"Corrigindo Descrição")
         session.xenapi.VM.set_name_description(vm_ref,vm_descricao)
         progress_recorder.set_progress(45, total, description=f"Corrigindo Nome do Disco")
@@ -75,7 +82,7 @@ def create_vm_task(self,vm, vm_descricao, template, memoria, cpu):
         progress_recorder.set_progress(95, total, description=f"          Desabilitando ssh root")
         command.run("sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config")
         command.run("service sshd restart")
-        progress_recorder.set_progress(total, total, description=f"{vm} OK")
+        progress_recorder.set_progress(total, total, description=f"{vm} Criada")
         return f"{vm} OK"
     except Exception as e:
         self.update_state(state=states.FAILURE, meta={'custom': str(e)})

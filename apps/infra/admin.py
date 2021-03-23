@@ -3,25 +3,20 @@ from distutils.command import clean
 from distutils.command.clean import clean
 from secrets import choice
 
-import numpy as np
 from django.contrib import admin, messages
-from django.contrib.admin import TabularInline
-from django.core.exceptions import ValidationError
 from django.db.models import Q, Sum
-from django.forms.models import BaseInlineFormSet
 from django.shortcuts import get_object_or_404
-from apps.core.models import GrupoAcesso
 from apps.core.utils.freeipa import FreeIPA
 from apps.infra.forms import (AmbienteVirtualServidorInLineForm,
                               EquipamentoGrupoAcessoForm, EquipamentoParteForm,
                               HostnameIPForm, HostnameIPInLineForm,
                               OcorrenciaInLineForm, RackForm, ServidorForm,
                               StorageAreaGrupoTrabalhoInLineForm)
-from apps.infra.models import (AmbienteVirtual, Equipamento,
+from apps.infra.models import (AmbienteVirtual, 
                                EquipamentoGrupoAcesso, EquipamentoParte,
                                HostnameIP, Ocorrencia, Rack, Rede, Servidor,
                                ServidorHostnameIP, Storage, StorageArea,
-                               StorageAreaGrupoTrabalho, Supercomputador)
+                               StorageAreaGrupoTrabalho, Supercomputador, TemplateHostnameIP, TemplateVM)
 from apps.infra.utils.freeipa_location import Automount
 from apps.infra.utils.history import HistoryInfra
 from apps.infra.views import DataCenterMap
@@ -99,7 +94,7 @@ class GrupoAcessoEquipamentoInLineRead(admin.TabularInline):
         return False
 
 
-class HostnameIPInLine(admin.TabularInline):
+class HostnameIPServidorInLine(admin.TabularInline):
     model = ServidorHostnameIP
     extra = 0
     form = HostnameIPInLineForm
@@ -107,6 +102,13 @@ class HostnameIPInLine(admin.TabularInline):
     def has_change_permission(self, request, obj=None):
         return False
 
+class HostnameIPTemplateInLine(admin.TabularInline):
+    model = TemplateHostnameIP
+    extra = 0
+    form = HostnameIPInLineForm
+    
+    def has_change_permission(self, request, obj=None):
+        return False
 
 class EquipamentoRackInLine(admin.TabularInline):
     model = Servidor
@@ -213,7 +215,7 @@ class ServidorAdmin(admin.ModelAdmin):
     fields = ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "ldap"]
     readonly_fields = ("status","ldap")
     form = ServidorForm
-    inlines = (HostnameIPInLine,)
+    inlines = (HostnameIPServidorInLine,)
 
     def grupo(self, obj):
         return obj.grupo_acesso_name()
@@ -259,14 +261,13 @@ class ServidorAdmin(admin.ModelAdmin):
         else:
             self.fields = ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "ldap"]
         self.readonly_fields = ("nome", "status", "ldap", "tipo", "tipo_uso", "predio")
-        self.inlines = (HostnameIPInLine, GrupoAcessoEquipamentoInLine, OcorrenciaInLine)
+        self.inlines = (HostnameIPServidorInLine, GrupoAcessoEquipamentoInLine, OcorrenciaInLine)
         return super().change_view(request, object_id, form_url=form_url, extra_context=extra_context)
 
     def save_formset(self, request, form, formset, change):
-        grupos_acesso_add = []
         instances = formset.save(commit=False)
         for instance in instances:
-            if isinstance(instance, EquipamentoGrupoAcesso) and formset.instance.ldap:
+            if isinstance(instance, EquipamentoGrupoAcesso) and formset.instance.ldap == 1:
                 Automount(FreeIPA(request), formset.instance, request).adicionar_grupos([instance.grupo_acesso])
             if isinstance(instance, ServidorHostnameIP):
                 hostnameip = instance.hostnameip
@@ -285,6 +286,37 @@ class ServidorAdmin(admin.ModelAdmin):
     def get_form(self, request, obj=None, **kwargs):
             request._obj_ = obj
             return super(ServidorAdmin, self).get_form(request, obj, **kwargs)
+
+
+@admin.register(TemplateVM)
+class TemplateVMAdmin(admin.ModelAdmin):
+    search_fields = ["nome", "ambiente_virtual"]
+    list_filter = ["ambiente_virtual"]
+    list_display = ["nome", "configuracao", "ambiente_virtual" ]
+    inlines = (HostnameIPTemplateInLine,)
+
+    def save_formset(self, request, form, formset, change):
+        instances = formset.save(commit=False)
+        for instance in instances:
+            print(instance)
+            if isinstance(instance, TemplateHostnameIP):
+                hostnameip = instance.hostnameip
+                hostnameip.reservado = True
+                hostnameip.save()
+                instance.save
+        for obj in formset.deleted_objects:
+            if isinstance(obj, TemplateHostnameIP):
+                hostnameip = obj.hostnameip
+                hostnameip.reservado = False
+                hostnameip.save()
+        return super().save_formset(request, form, formset, change)
+
+    def delete_model(self, request, obj):
+        for template_hostnameip in TemplateHostnameIP.objects.filter(servidor__id=obj.pk):
+            hostnameip = template_hostnameip.hostnameip
+            hostnameip.reservado = False
+            hostnameip.save()
+        return super().delete_model(request, obj)
 
 
 @admin.register(EquipamentoParte)

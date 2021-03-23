@@ -1,115 +1,162 @@
 {% extends "admin/base.html" %}
 {% load static %}
+{% load garb_form %}
+
 
 {% block breadcrumbs %}
 {% include "admin/includes/breadcrumbs.html" with nivel=3 breadcrumbs_action='Criar VM' %}
 {% endblock %}
 
 {% block content %}
-<div id="content-main">
-    <div class="change-columns">
-        <div class="main-column">
-            <div class="box-garb">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <div class="module-header">
-                            <div class=" legend"><b>{{ original|upper  }}</b></div>
+    <div id="content-main">
+        <div class="change-columns">
+            <div class="main-column">
+                <div class="box-garb">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div class="module-header">
+                                <div class=" legend"><b>{{ original|upper  }}</b></div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="panel-collapse">
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-sm-9 offset-1">
-                                    <div class="row p-1 pt-3">
-                                        <div class="col-sm-3 text-right pr-0"><b>Servidor:</b></div>
-                                        <div class="col-sm-9">{{ original.servidor }}</div>
-                                    </div>
-                                    <div class="row p-1">
-                                        <div class="col-sm-3 text-right pr-0"><b>Tipo de Uso:</b></div>
-                                        <div class="col-sm-9">{{ original.tipo_uso }}</div>
-                                    </div>
-                                    <div class="row p-1">
-                                        <div class="col-sm-3 text-right pr-0"><b>Descrição:</b></div>
-                                        <div class="col-sm-9">{{ original.descricao }}</div>
-                                    </div>
-                                    <div class="row p-1">
-                                        <div class="col-sm-3 text-right pr-0"><b>Grupo Acesso:</b></div>
-                                        <div class="col-sm-9">
-                                            {% for grupo in original.grupos_acesso.all %}
-                                            {{ grupo.grupo_trabalho }}<br>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                    <div class="row p-1">
-                                        <div class="col-sm-3 text-right pr-0"><b>Rede:</b></div>
-                                        <div class="col-sm-9">
-                                            {% for hostname in original.hostname_ip.all %}
-                                            {{ hostname.ip }} / {{ hostname.tipo }}<br>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                    <br>
+                        <div class="panel-collapse">
+                            <div class="panel-body">
+                                <div class="row">
                                     <div class="col-sm-9 offset-1">
-                                        {% for grupo in original.grupos_acesso_set.all %}
-                                        <div>
-                                            <p><b>Hostname IP: </b>{{ grupo.grupo }}</p>
+                                        <div class="row p-1 pt-3">
+                                            <div class="col-sm-3 text-right pr-0"><b>Servidor:</b></div>
+                                            <div class="col-sm-9">{{ original.servidor }}</div>
                                         </div>
-                                        {% endfor %}
+                                        <div class="row p-1">
+                                            <div class="col-sm-3 text-right pr-0"><b>Tipo de Uso:</b></div>
+                                            <div class="col-sm-9">{{ original.tipo_uso }}</div>
+                                        </div>
+                                        <div class="row p-1">
+                                            <div class="col-sm-3 text-right pr-0"><b>Descrição:</b></div>
+                                            <div class="col-sm-9">{{ original.descricao }}</div>
+                                        </div>
+                                        <div class="row p-1">
+                                            <div class="col-sm-3 text-right pr-0"><b>Grupo Acesso:</b></div>
+                                            <div class="col-sm-9">
+                                                {% for grupo in original.grupos_acesso.all %}
+                                                {{ grupo.grupo_trabalho }}<br>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        <div class="row p-1">
+                                            <div class="col-sm-3 text-right pr-0"><b>Rede:</b></div>
+                                            <div class="col-sm-9">
+                                                {% for hostname in original.hostname_ip.all %}
+                                                {{ hostname.ip }} / {{ hostname.tipo }}<br>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="col-sm-9 offset-1">
+                                            {% for grupo in original.grupos_acesso_set.all %}
+                                            <div>
+                                                <p><b>Hostname IP: </b>{{ grupo.grupo }}</p>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="box-garb">
-                {% if not task_id %}
-                <div class="row">
-                    <div class="col-sm-9 offset-1">
-                        <form method="post" id="formValidate" action="{% url 'infra:criar_vm' original.id %}">
-                            <div class="modal-body">
-                                {% csrf_token %}
-                                {{  form }}
-                                <br> <br>
-                                <div class="module-footer">
-                                    <div class="buttons">
-                                        <button type="submit" class="btn btn-primary width-btn-min">Criar
-                                            Automaticamente</button>
-                                        <a class="btn btn-secondary  text-white width-btn-min"
-                                            href="{% url 'admin:infra_servidor_change' original.id %}">Criar
-                                            Manualmente</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                {% else %}
-                <div class="row">
-                    <div class="col-sm-9 offset-1">
-                        <div class='progress-wrapper'>
-                            <div id='progress-bar' class='progress-bar' style="background-color: #68a9ef; width: 0%;"> &nbsp;</div>
-                        </div>
-                        <div id="progress-bar-message">Waiting for progress to start...</div>
-                        <div id="celery-result"></div>
-                    </div>
-                </div>
-                {% endif %}
             </div>
         </div>
     </div>
-</div>
+    {% if not task_id %}
+        <form method="post" id="formValidate" action="{% url 'infra:criar_vm' original.id %}">
+            {% csrf_token %}
+            {{ form|render }}
+            <div id="content-main">
+                <div class="change-columns">
+                    <div class="main-column">
+                        <div class="box-garb module aligned {{ fieldset.classes }} text-right pr-5">
+                            <button type="submit" class="btn btn-primary width-btn-min ">Criar Automaticamente</button>
+                            <a class="btn btn-secondary  text-white width-btn-min"
+                                href="{% url 'admin:infra_servidor_change' original.id %}">Criar Manualmente</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    {% else %}
+        <div id="content-main">
+            <div class="change-columns">
+                <div class="main-column">
+                    <div class="box-garb">
+                        <div class="row">
+                            <br><br><br>
+                            <div class="col-sm-10 offset-1 p-4">
+                                <div id="progress-bar-message">Waiting for progress to start...</div>
+                                <div class='progress-wrapper'>
+                                    <div id='progress-bar' class='progress-bar' style="background-color: #68a9ef; width: 0%;">
+                                        &nbsp;</div>
+                                </div>
+                                <div id="celery-result"></div><br><br>
+                                <div class="text-center pr-5" >
+                                    <a class="btn btn-success text-white width-btn-min" id="btnPronto"
+                                    href="{% url 'admin:infra_servidor_change' original.id %}">Pronto!</a>
+                                    <a class="btn btn-danger text-white width-btn-min" id="btnErro"
+                                    href="{% url 'admin:infra_servidor_change' original.id %}">Corrigir!</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block extrajs %}
-{{ block.super }}
+    {{ block.super }}
     {% if task_id %}
         <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
         <script>
+            $("#btnPronto").hide();
+            $('#btnErro').hide();
+            function customProgress(progressBarElement, progressBarMessageElement, progress) {
+                progressBarElement.style.backgroundColor = this.barColors.progress;
+                progressBarElement.style.width = progress.percent + "%";
+                var description = progress.description || "";
+                if (progress.current == 0) {
+                    if (progress.pending === true) {
+                        progressBarMessageElement.textContent = 'Esperando que a tarefa comece...';
+                    } else {
+                        progressBarMessageElement.textContent = 'Tarefa iniciada...';
+                    }
+                } else {
+                    progressBarMessageElement.textContent =  description;
+                }
+            }
+            function  customSuccess(progressBarElement, progressBarMessageElement, result) {
+                    result = this.getMessageDetails(result);
+                    progressBarElement.style.backgroundColor = this.barColors.success;
+                    progressBarMessageElement.textContent = "Success! " + result;
+                    $("#btnPronto").show();
+                }
+            
+            function customError(progressBarElement, progressBarMessageElement, excMessage)  {
+                progressBarElement.style.backgroundColor = this.barColors.error;
+                excMessage = excMessage || '';
+                progressBarMessageElement.textContent = "Algo deu errado!  " + excMessage;
+                $("#btnErro").show();
+            }
+
+            
             $(function () {
                 var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
-                CeleryProgressBar.initProgressBar(progressUrl)
+                CeleryProgressBar.initProgressBar(progressUrl, {
+                    onProgress: customProgress,
+                    onSuccess: customSuccess,
+                    onError: customError,
+                })
             });
+            
         </script>
     {% endif %}
 {% endblock %}

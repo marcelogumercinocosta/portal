@@ -23,7 +23,7 @@ from apps.infra.tasks import create_vm_task
 from apps.core.utils.freeipa import FreeIPA
 from apps.infra.forms import OcorrenciaForm, ServidorVMForm
 from apps.core.models import Predio
-from apps.infra.models import (AmbienteVirtual, LINHAS, Equipamento, EquipamentoParte, Ocorrencia, Rack, Servidor)
+from apps.infra.models import (AmbienteVirtual, LINHAS, Equipamento, EquipamentoParte, Ocorrencia, Rack, Servidor, TemplateVM)
 from apps.infra.utils.freeipa_location import Automount
 from apps.infra.utils.datacenter import ( DataCenterMap, RackMap)
 from apps.infra.utils.history import HistoryInfra
@@ -170,7 +170,6 @@ class CriarServidorLdapView(LoginRequiredMixin, PermissionRequiredMixin, Redirec
                 servidor.save()
                 if servidor.tipo == 'Servidor Virtual':
                     return reverse_lazy("infra:criar_vm", kwargs={"pk": servidor.id, })
-               
         else:
             messages.add_message(self.request, messages.ERROR, "Confira o Cadastro, existe informação faltando ou não salva! É necessário um grupo de acesso! ")
         return reverse_lazy("admin:infra_servidor_change", kwargs={"object_id": servidor.id, })
@@ -211,11 +210,11 @@ class CriarVmView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
         template = form.cleaned_data['template']
         memoria = form.cleaned_data['memoria']
         cpu = form.cleaned_data['cpu']
-        self.task = XenCrud(servidor, self.request).create_vm(template, memoria, cpu)
+        self.task = XenCrud(servidor, self.request).create_vm(template.pk, memoria, cpu)
         if not self.task:
             return super().form_invalid(form)
         return super().form_valid(form)
-    
+
     def get_success_url(self):                           
         return reverse_lazy("infra:criar_vm_progress", kwargs={"pk": self.kwargs['pk'], "task_id": self.task.id })
 

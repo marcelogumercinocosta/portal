@@ -134,6 +134,7 @@ GARB_CONFIG = {
                 {"model": "infra.supercomputador"},
                 {"model": "infra.equipamentoparte"},
                 {"model": "infra.ambientevirtual"},
+                {"model": "infra.templatevm"},
                 {"model": "infra.rack"},
                 {"model": "infra.hostnameip"},
             ],

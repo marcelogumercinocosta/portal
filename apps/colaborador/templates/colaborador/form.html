@@ -3,10 +3,10 @@
 {% load garb_form %}
 
 {% block content %}
-                <form method="post" id="_form" novalidate>
-                    {% csrf_token %}
-                    {{ form|render }}
-                </form>
+    <form method="post" id="_form" novalidate>
+        {% csrf_token %}
+        {{ form|render }}
+    </form>
 {% endblock %}
 
 {% block extrajs %}

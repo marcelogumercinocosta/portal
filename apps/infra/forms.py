@@ -2,9 +2,10 @@ import re
 from django import forms
 from django.db.models import Q
 from django.forms import ModelChoiceField
+from garb.forms import GarbForm, GarbModelForm
 
 from apps.core.models import GrupoAcesso, GrupoTrabalho, Predio
-from apps.infra.models import Equipamento, EquipamentoGrupoAcesso, EquipamentoParte, HostnameIP, Ocorrencia, Rack, Servidor, ServidorHostnameIP, StorageAreaGrupoTrabalho, Rede
+from apps.infra.models import Equipamento, EquipamentoGrupoAcesso, EquipamentoParte, HostnameIP, Ocorrencia, Rack, Servidor, ServidorHostnameIP, StorageAreaGrupoTrabalho, Rede, TemplateVM
 from django.core.exceptions import ValidationError
 
 
@@ -122,16 +123,12 @@ class AmbienteVirtualServidorInLineForm(forms.ModelForm):
         model = Servidor
         fields = ["servidor"]
 
-class ServidorVMForm(forms.Form):
+class ServidorVMForm(GarbForm):
     CPU_CHOICES =( 
         ("1", "1"), 
         ("2", "2"), 
         ("4", "4"), 
         ("8", "8"), 
-        ("16", "16"), 
-    ) 
-    TEMPLATE_CHOICES =( 
-        ("UBUNTU20_G_147", "UBUNTU20_G_147"), 
     ) 
     MEMORIA_CHOICES =( 
         ("2", "2"), 
@@ -141,12 +138,12 @@ class ServidorVMForm(forms.Form):
     ) 
 
     servidor = forms.IntegerField(widget=forms.HiddenInput())
-    template = forms.ChoiceField(choices = TEMPLATE_CHOICES) 
-    cpu = forms.ChoiceField(choices = CPU_CHOICES) 
-    memoria = forms.ChoiceField(label="Memória", choices = MEMORIA_CHOICES) 
+    template = forms.ModelChoiceField(TemplateVM.objects.all(), widget=forms.Select(attrs={"data-live-search": "True"}))
+    cpu = forms.ChoiceField(choices = CPU_CHOICES, initial='4') 
+    memoria = forms.ChoiceField(label="Memória GB", initial='8', choices = MEMORIA_CHOICES) 
 
     class Meta:
         fieldsets = [
-            ("Nova VM", {"fields": ("template", "cpu", "memoria")}),
+            ("Nova VM", {"fields": ("servidor","template", "cpu", "memoria")}),
         ]
     
