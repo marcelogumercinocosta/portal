@@ -49,7 +49,7 @@ services:
       - /bin/bash
       - -c
       - |
-        celery -A portal worker -l info -E
+        celery -A portal worker -l info --concurrency=4
     volumes:
       - .:/app
     depends_on:

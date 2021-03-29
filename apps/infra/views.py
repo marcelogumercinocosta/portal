@@ -19,11 +19,10 @@ from django.views.generic.base import RedirectView, TemplateView
 from django.views.generic.edit import CreateView, FormView, UpdateView
 
 from apps.core.tasks import send_email_task
-from apps.infra.tasks import create_vm_task
 from apps.core.utils.freeipa import FreeIPA
 from apps.infra.forms import OcorrenciaForm, ServidorVMForm
 from apps.core.models import Predio
-from apps.infra.models import (AmbienteVirtual, LINHAS, Equipamento, EquipamentoParte, Ocorrencia, Rack, Servidor, TemplateVM)
+from apps.infra.models import ( LINHAS, Equipamento, EquipamentoParte, Ocorrencia, Rack, Servidor)
 from apps.infra.utils.freeipa_location import Automount
 from apps.infra.utils.datacenter import ( DataCenterMap, RackMap)
 from apps.infra.utils.history import HistoryInfra
@@ -38,7 +37,6 @@ class DataCenterView(ViewContextMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context["predios"] = Predio.objects.all().filter(linhas__isnull=False, colunas__isnull=False,)
         return context
- 
 
 class DataCenterPredioView(TemplateView):
     template_name = "infra/datacenter/datacenter_predio.html"
@@ -206,21 +204,21 @@ class CriarVmView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
         return context
     
     def form_valid(self, form):
-        servidor = get_object_or_404(Servidor, id=form.cleaned_data['servidor'])
+        vm = get_object_or_404(Servidor, id=form.cleaned_data['servidor'])
         template = form.cleaned_data['template']
         memoria = form.cleaned_data['memoria']
         cpu = form.cleaned_data['cpu']
-        self.task = XenCrud(servidor, self.request).create_vm(template.pk, memoria, cpu)
+        
+        self.task = XenCrud(self.request, vm, template.ambiente_virtual).create_vm(template, memoria, cpu)
         if not self.task:
             return super().form_invalid(form)
         return super().form_valid(form)
 
-    def get_success_url(self):                           
+    def get_success_url(self):
         return reverse_lazy("infra:criar_vm_progress", kwargs={"pk": self.kwargs['pk'], "task_id": self.task.id })
 
-class CriarVmProgressView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+class CriarVmProgressView(LoginRequiredMixin, TemplateView):
     template_name = "infra/servidor/vm.html"
-    permission_required = "infra.change_servidor"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

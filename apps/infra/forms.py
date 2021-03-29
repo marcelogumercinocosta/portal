@@ -5,7 +5,7 @@ from django.forms import ModelChoiceField
 from garb.forms import GarbForm, GarbModelForm
 
 from apps.core.models import GrupoAcesso, GrupoTrabalho, Predio
-from apps.infra.models import Equipamento, EquipamentoGrupoAcesso, EquipamentoParte, HostnameIP, Ocorrencia, Rack, Servidor, ServidorHostnameIP, StorageAreaGrupoTrabalho, Rede, TemplateVM
+from apps.infra.models import Equipamento, EquipamentoGrupoAcesso, EquipamentoParte, HostnameIP, Ocorrencia, Rack, Servidor, ServidorHostnameIP, StorageAreaGrupoTrabalho, Rede, TemplateComando, TemplateVM
 from django.core.exceptions import ValidationError
 
 
@@ -28,11 +28,20 @@ class ServidorForm(forms.ModelForm):
         ("Servidor Físico", "Servidor Físico"),
         ("Servidor Virtual", "Servidor Virtual"),
     )
+
+    STATUS_LDAP = (
+        (0, "Aguardando Definição"),
+        (1, "Servidor configurado no FreeIPA"),
+        (2, "Servidor configurado com conta Local")
+    )
+
     
+    vm_remover = forms.BooleanField(required=False, label="Remover VM ")
     tipo = forms.ChoiceField(choices=TIPOS_SERVIDOR, )
     rack = forms.ModelChoiceField(queryset=Rack.objects.all(), label="Rack", required=False,)
-    nome = HostnameChoiceField(queryset=HostnameIP.objects.filter(reservado=False), label="Hostname", required=True, widget=forms.Select(attrs={"data-live-search": "True"}))
+    nome = HostnameChoiceField(queryset=HostnameIP.objects.filter(reservado=False).order_by('tipo'), label="Hostname", required=True, widget=forms.Select(attrs={"data-live-search": "True"}))
     vinculado = forms.ModelChoiceField(queryset=Equipamento.objects.filter(Q(tipo='storage') | Q(tipo='Supercomputador')), required=False, widget=forms.Select(attrs={"data-live-search": "True"}))
+    ldap = forms.ChoiceField(choices = STATUS_LDAP) 
 
     class Meta:
         model = Servidor
@@ -98,6 +107,20 @@ class StorageAreaGrupoTrabalhoInLineForm(forms.ModelForm):
         widgets = {"storage_area": forms.Select(attrs={"data-live-search": "True"})}
 
 
+
+class TemplateComandoInLineForm(forms.ModelForm):
+    TIPOS_Comando = (
+        ("", ""),
+        (1, "Comando Inicial"),
+        (2, "Comando de Rede"),
+        (3, "Comando Final"),
+    )
+
+    configuracao = forms.ChoiceField(choices = TIPOS_Comando) 
+    class Meta:
+        model = TemplateComando
+        fields = ["comando", "configuracao", "prioridade"]
+        
 class EquipamentoGrupoAcessoForm(forms.ModelForm):
     class Meta:
         model = EquipamentoGrupoAcesso

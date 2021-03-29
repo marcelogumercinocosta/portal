@@ -4,10 +4,21 @@
 
 
 {% block extrajs %}
+    <script src="{% static 'js/jquery.mask.min.js' %}"></script>
     <script>
         {% if add %}
             $("[name='_addanother']").hide()
-            
+        {% else %}
+            $('#id_mac_cabeado').mask('AA:AA:AA:AA:AA:AA', {
+                onKeyPress: function(str, e, obj){ 
+                    $(obj).val(str.toLowerCase());
+                }
+            });
+            $('#id_mac_wifi').mask('AA:AA:AA:AA:AA:AA', {
+                onKeyPress: function(str, e, obj){ 
+                    $(obj).val(str.toLowerCase());
+                }
+            });
         {% endif %}
     </script>
 {% endblock %}

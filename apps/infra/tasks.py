@@ -1,20 +1,50 @@
 from __future__ import absolute_import, unicode_literals
+from django.core.mail import send_mail
 
 from django.shortcuts import get_object_or_404
 from apps.infra.models import Servidor, TemplateVM
 
 from celery import Celery, shared_task, states
 from celery_progress.backend import ProgressRecorder
-from datetime import datetime
 from XenAPI import Session
 from django.conf import settings
+
 import fabric  
 import time
+
+def get_comandos(origem, destino):
+    comandos_final = {'1': [], '2': [], '3': []}
+    template_origem, template_origem_ip = origem.host_principal
+    vm, vm_ip = destino.host_principal
+    template_ips = origem.origens.all()
+    vm_ips = destino.hostname_ip.all()
+    key_ip = 0
+    variaveis = {"{template_origem}": template_origem, 
+                "{template_origem_ip}": template_origem_ip,
+                "{vm}": vm, 
+                "{vm_ip}": vm_ip,
+                "{freeipa_server}": settings.IPA_AUTH_SERVER,
+                "{freeipa_password}": settings.IPA_AUTH_PASSWORD,
+                "{freeipa_admin}": settings.IPA_AUTH_USER,
+                }
+    
+    for comando in origem.template_comandos.all().exclude(configuracao=2):
+        comando_novo = comando.comando
+        for item, valor in variaveis.items():
+            comando_novo = comando_novo.replace(item, valor)
+        comandos_final[str(comando.configuracao)].append(comando_novo)
+    for key_ip in range(len(template_ips)):
+        template_origem_ip = template_ips[key_ip].ip
+        vm_ip = vm_ips[key_ip].ip
+        for comando in origem.template_comandos.filter(configuracao=2):
+            comando_novo = comando.comando
+            comando_novo = comando_novo.replace('{template_origem_ip}', template_origem_ip).replace('{vm_ip}', vm_ip)
+            comandos_final[str(comando.configuracao)].append(comando_novo)
+    return comandos_final
 
 
 @shared_task(bind=True)
 def create_vm_task(self, servidor, vm_id,  template_id, memoria, cpu):
-    server = servidor
     origem = get_object_or_404(TemplateVM, id=template_id)
     destino = get_object_or_404(Servidor, id=vm_id)
     template = origem.nome
@@ -27,65 +57,96 @@ def create_vm_task(self, servidor, vm_id,  template_id, memoria, cpu):
     memoria = str(int(memoria) * 1024 * 1024 * 1024)
     cpu = int(cpu)
     total = 100
-    
     try:
-        progress_recorder.set_progress(5, total, description=f"Conetando no XEN")
-        session = Session(f"http://{server}.cptec.inpe.br")
+        progress_recorder.set_progress(5, total, description="Conetando no XEN")
+        session = Session(f"http://{servidor}.cptec.inpe.br")
         session.xenapi.login_with_password(user, password)
     except OSError as err:
         raise OSError(1, f"OS error: {err}")
     try:
-        progress_recorder.set_progress(10, total, description=f"Carregando Template")
-        template_ref = (session.xenapi.VM.get_by_name_label(template))[0]
-        progress_recorder.set_progress(20, total, description=f"Criando novo Servidor")
+        progress_recorder.set_progress(10, total, description="Carregando Template")
+        template_ref = session.xenapi.VM.get_by_name_label(template)[0]
+        progress_recorder.set_progress(20, total, description="Criando nova VM")
         vm_ref = session.xenapi.VM.clone(template_ref, vm)
-        progress_recorder.set_progress(30, total, description=f"Corrigindo Memória")
+        progress_recorder.set_progress(30, total, description="Corrigindo Memória")
         session.xenapi.VM.set_memory(vm_ref, memoria)
-        progress_recorder.set_progress(35, total, description=f"Corrigindo CPU")
+        progress_recorder.set_progress(35, total, description="Corrigindo CPU")
+        session.xenapi.VM.set_VCPUs_max(vm_ref,16)
         session.xenapi.VM.set_VCPUs_at_startup(vm_ref,cpu)
-        progress_recorder.set_progress(40, total, description=f"Corrigindo Descrição")
+        progress_recorder.set_progress(40, total, description="Corrigindo Descrição")
         session.xenapi.VM.set_name_description(vm_ref,vm_descricao)
-        progress_recorder.set_progress(45, total, description=f"Corrigindo Nome do Disco")
+        progress_recorder.set_progress(45, total, description="Corrigindo Nome do Disco")
         vdbs_ref = session.xenapi.VM.get_VBDs(vm_ref)
         for vdb_ref in vdbs_ref:
             if session.xenapi.VBD.get_device(vdb_ref) == 'xvda':
                 break
         vdi_ref = session.xenapi.VBD.get_VDI(vdb_ref)
         session.xenapi.VDI.set_name_label(vdi_ref,f"DSK_SYS_{vm}".upper())
-        progress_recorder.set_progress(50, total, description=f"Provisionando")
+        progress_recorder.set_progress(50, total, description="Provisionando")
         session.xenapi.VM.provision(vm_ref)
-        progress_recorder.set_progress(60, total, description=f"Iniciando")
+        progress_recorder.set_progress(60, total, description="Iniciando")
         session.xenapi.VM.start(vm_ref, False, False)
-        progress_recorder.set_progress(70, total, description=f"Aguardando Métricas")
+        progress_recorder.set_progress(70, total, description="Aguardando Métricas")
         vgm = session.xenapi.VM.get_guest_metrics(vm_ref)
         while session.xenapi.VM_guest_metrics.get_os_version(vgm) == {}:
             time.sleep(1)
-        progress_recorder.set_progress(75, total, description=f"Executando Comandos de Troca IP")
+        progress_recorder.set_progress(75, total, description="Executando Comandos de Troca IP")
         time.sleep(10)
+        comandos = get_comandos(origem, destino)
         command = fabric.Connection(template_origem_ip, port=22, user="root", connect_kwargs={'password': '!=S@63r#S'})
-        command.run(f"sed -i 's/{template_origem}/{vm}/g' /etc/hostname")
-        command.run(f"sed -i 's/- {template_origem_ip}\/24/- {vm_ip}\/24/g' /etc/netplan/00-installer-config.yaml")
-        command.run(f"sed -i 's/{template_origem}/{vm}/g' /etc/hosts")
-        command.run(f"sed -i 's/{template_origem_ip}/{vm_ip}/g' /etc/hosts")
-        command.run(f"hostnamectl set-hostname {vm}.cptec.inpe.br")
-        command.run(f"sed -i 's/{template_origem_ip}/{vm_ip}/g' /etc/ssh/sshd_config")
-        progress_recorder.set_progress(85, total, description=f"          Reiniciando")
+        for comando in comandos["1"]:
+            command.run(comando)
+        for comando in comandos["2"]:
+            command.run(comando)
+        progress_recorder.set_progress(85, total, description="Reiniciando")
         session.xenapi.VM.clean_reboot(vm_ref)
         vgm = session.xenapi.VM.get_guest_metrics(vm_ref)
         while session.xenapi.VM_guest_metrics.get_os_version(vgm) == {}:
             time.sleep(1)
-        progress_recorder.set_progress(90, total, description=f"          Executando Comandos FreeIPA")
+        progress_recorder.set_progress(90, total, description="Executando Comandos FreeIPA")
         time.sleep(15)
         command = fabric.Connection(vm_ip, port=22, user="root", connect_kwargs={'password': '!=S@63r#S'})
-        command.run("ipa-client-install --domain=cptec.inpe.br --server=viracopos.cptec.inpe.br -f -q -w !=S@63r#S -p admin --force-join --no-ntp --enable-dns-updates --unattended")
-        command.run(f"ipa-client-automount --server=viracopos.cptec.inpe.br --location=mount_{vm} --unattended")
-        progress_recorder.set_progress(95, total, description=f"          Desabilitando ssh root")
-        command.run("sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config")
-        command.run("service sshd restart")
+        for comando in comandos["3"]:
+            command.run(comando)
+        progress_recorder.set_progress(95, total, description="Desabilitando ssh root")
         progress_recorder.set_progress(total, total, description=f"{vm} Criada")
-        return f"{vm} OK"
     except Exception as e:
         self.update_state(state=states.FAILURE, meta={'custom': str(e)})
+        send_mail('ERRO na Criação de VM', f"{vm} - {str(e)}" , "portal.cptec@gmail.com", [settings.EMAIL_SUPORTE, settings.EMAIL_SYSADMIN, ])
         return f"Error: {str(e)}"
+    finally:
+        session.xenapi.session.logout()
+    destino.vm_remover = True
+    destino.vm_ambiente_virtual = origem.ambiente_virtual
+    destino.save()
+    send_mail('Criação de VM OK',f'{vm} criada com sucesso!' , "portal.cptec@gmail.com", [settings.EMAIL_SUPORTE, settings.EMAIL_SYSADMIN, ])
+    return f"{vm} OK"
+
+
+@shared_task(bind=True)
+def delete_vm_task(self, servidor, vm_name):
+    user = settings.XEN_AUTH_USER
+    password = settings.XEN_AUTH_PASSWORD
+    try:
+        session = Session(f"http://{servidor}.cptec.inpe.br")
+        session.xenapi.login_with_password(user, password)
+    except OSError as err:
+        raise OSError(1, f"OS error: {err}")
+    try:
+        vm_ref = session.xenapi.VM.get_by_name_label(vm_name)[0]
+        session.xenapi.VM.hard_shutdown(vm_ref)
+        vdbs_ref = session.xenapi.VM.get_VBDs(vm_ref)
+        for vdb_ref in vdbs_ref:
+            vdi_ref = session.xenapi.VBD.get_VDI(vdb_ref)
+            if vdi_ref != "OpaqueRef:NULL":
+                session.xenapi.VDI.destroy(vdi_ref)
+        session.xenapi.VM.destroy(vm_ref)
+        send_mail('Remoção de VM OK',f'{vm_name} removida com sucesso!' , "portal.cptec@gmail.com", [settings.EMAIL_SUPORTE, settings.EMAIL_SYSADMIN, ])
+        return f"{vm_name} DELETE"
+    except Exception as e:
+        send_mail('ERRO na Remoção de VM', str(e) , "portal.cptec@gmail.com", [settings.EMAIL_SUPORTE, settings.EMAIL_SYSADMIN, ])
+        return f"Error: {str(e)}"
+        
+
     finally:
         session.xenapi.session.logout()

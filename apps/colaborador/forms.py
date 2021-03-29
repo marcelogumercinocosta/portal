@@ -124,8 +124,6 @@ class ColaboradorBaseForm(forms.ModelForm):
     last_name = forms.CharField(max_length=255, label="Sobrenome(s)")
     documento_tipo = forms.ChoiceField(choices=documento_tipo, label="Tipo Documento")
     email = forms.EmailField()
-
-
     class Meta:
         model = Colaborador
         fields = [

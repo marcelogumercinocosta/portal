@@ -1,3 +1,4 @@
+from apps.infra.utils.xen_crud import XenCrud
 from collections import OrderedDict
 from distutils.command import clean
 from distutils.command.clean import clean
@@ -10,13 +11,13 @@ from apps.core.utils.freeipa import FreeIPA
 from apps.infra.forms import (AmbienteVirtualServidorInLineForm,
                               EquipamentoGrupoAcessoForm, EquipamentoParteForm,
                               HostnameIPForm, HostnameIPInLineForm,
-                              OcorrenciaInLineForm, RackForm, ServidorForm,
+                              OcorrenciaInLineForm, RackForm, ServidorForm, TemplateComandoInLineForm,
                               StorageAreaGrupoTrabalhoInLineForm)
 from apps.infra.models import (AmbienteVirtual, 
                                EquipamentoGrupoAcesso, EquipamentoParte,
                                HostnameIP, Ocorrencia, Rack, Rede, Servidor,
                                ServidorHostnameIP, Storage, StorageArea,
-                               StorageAreaGrupoTrabalho, Supercomputador, TemplateHostnameIP, TemplateVM)
+                               StorageAreaGrupoTrabalho, Supercomputador, TemplateComando, TemplateHostnameIP, TemplateVM)
 from apps.infra.utils.freeipa_location import Automount
 from apps.infra.utils.history import HistoryInfra
 from apps.infra.views import DataCenterMap
@@ -35,6 +36,13 @@ class OcorrenciaInLine(admin.TabularInline):
 
     def has_add_permission(self, request, obj=None):
         return False
+
+
+class TemplateComandoInLine(admin.TabularInline):
+    model = TemplateComando
+    fields = ("comando", "configuracao","prioridade")
+    extra = 0
+    form = TemplateComandoInLineForm
 
 
 class StorageAreaGrupoTrabalhoInLine(admin.TabularInline):
@@ -212,7 +220,7 @@ class ServidorAdmin(admin.ModelAdmin):
     search_fields = ["nome", "patrimonio", "marca", "modelo"]
     list_filter = ["tipo_uso","tipo" ]
     list_display = ("nome", "patrimonio", "tipo", "tipo_uso",  "predio",  "descricao", "grupo", "tipo_uso", "status")
-    fields = ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "ldap"]
+    fields = ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "ldap", 'vm_remover']
     readonly_fields = ("status","ldap")
     form = ServidorForm
     inlines = (HostnameIPServidorInLine,)
@@ -245,6 +253,8 @@ class ServidorAdmin(admin.ModelAdmin):
             client_feeipa = FreeIPA(request)
             client_feeipa.automountlocation_del(obj.freeipa_name_mount)
             client_feeipa.host_delete(obj.freeipa_name)
+        if obj.vm_remover and obj.vm_ambiente_virtual:
+            XenCrud(request, obj, obj.vm_ambiente_virtual).delete_vm()
         return super().delete_model(request, obj)
 
     def add_view(self, request, form_url="", extra_context=None):
@@ -256,10 +266,13 @@ class ServidorAdmin(admin.ModelAdmin):
 
     def change_view(self, request, object_id, form_url="", extra_context=None):
         servidor = get_object_or_404(Servidor, id=object_id)
-        if servidor.tipo == 'Servidor Virtual':
+        if servidor.tipo == 'Servidor Virtual' and  servidor.vm_ambiente_virtual:
+            self.fields = ["nome", "tipo", "tipo_uso", "predio", "descricao", "status", "ldap", "vm_remover"]
+        elif servidor.tipo == 'Servidor Virtual':
             self.fields = ["nome", "tipo", "tipo_uso", "predio", "descricao", "status", "ldap"]
         else:
-            self.fields = ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "ldap"]
+            self.fields = ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "ldap", ]
+
         self.readonly_fields = ("nome", "status", "ldap", "tipo", "tipo_uso", "predio")
         self.inlines = (HostnameIPServidorInLine, GrupoAcessoEquipamentoInLine, OcorrenciaInLine)
         return super().change_view(request, object_id, form_url=form_url, extra_context=extra_context)
@@ -290,15 +303,17 @@ class ServidorAdmin(admin.ModelAdmin):
 
 @admin.register(TemplateVM)
 class TemplateVMAdmin(admin.ModelAdmin):
+    change_form_template = "infra/admin/change_form_template.html"
     search_fields = ["nome", "ambiente_virtual"]
     list_filter = ["ambiente_virtual"]
     list_display = ["nome", "configuracao", "ambiente_virtual" ]
-    inlines = (HostnameIPTemplateInLine,)
+    fields = ["nome", "configuracao", "ambiente_virtual"]
+    readonly_fields = []
+    inlines = (HostnameIPTemplateInLine,TemplateComandoInLine)
 
     def save_formset(self, request, form, formset, change):
         instances = formset.save(commit=False)
         for instance in instances:
-            print(instance)
             if isinstance(instance, TemplateHostnameIP):
                 hostnameip = instance.hostnameip
                 hostnameip.reservado = True
@@ -318,6 +333,13 @@ class TemplateVMAdmin(admin.ModelAdmin):
             hostnameip.save()
         return super().delete_model(request, obj)
 
+    def add_view(self, request, form_url="", extra_context=None):
+        self.readonly_fields = []
+        return super().add_view(request, form_url=form_url, extra_context=extra_context)
+
+    def change_view(self, request, object_id, form_url="", extra_context=None):
+        self.readonly_fields = ['ambiente_virtual']
+        return super().change_view(request, object_id, form_url=form_url, extra_context=extra_context)
 
 @admin.register(EquipamentoParte)
 class EquipamentoParteAdmin(admin.ModelAdmin):

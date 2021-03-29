@@ -196,10 +196,13 @@ class Rede(models.Model):
     prioridade_montagem = models.IntegerField(
         "prioridade de montagem", null=True, help_text="A prioridade de montagem é utilizada quando o Portal cria o Automount Locations e o equipamento possui mais de uma rede com NFS de discos, o MAIOR VALOR tem a prioridade"
     )
+    class Meta:
+        ordering = [
+            "rede",
+        ]
 
     def __str__(self):
         return f"{self.rede} | {self.ip}"
-
 
 class StorageGrupoAcessoMontagem(models.Model):
     node = models.CharField(max_length=255, blank=True, null=True)
@@ -244,7 +247,7 @@ class Servidor(Equipamento):
     hostname_ip = models.ManyToManyField("infra.HostnameIP", through="ServidorHostnameIP")
     ldap = models.IntegerField("ldap", default=0)
     vm_remover = models.BooleanField("Remover VM", default=False, blank=True, null=True)
-    vm_template = models.ForeignKey("infra.TemplateVM", verbose_name="Template", related_name="servidor_template", blank=True, null=True, on_delete=models.PROTECT)
+    vm_ambiente_virtual = models.ForeignKey("infra.AmbienteVirtual", related_name="vm_ambiente_virtual", blank=True, null=True, on_delete=models.PROTECT)
 
     class Meta:
         verbose_name = "Servidor"
@@ -265,16 +268,14 @@ class Servidor(Equipamento):
     @property
     def host_principal(self):
         if self.hostname_ip: 
-            host = self.hostname_ip.all()[0]
-            return host.hostname, host.ip
+            host = self.hostname_ip.through.objects.filter(servidor__id=self.id).order_by('hostnameip__id')[0]
+            return host.hostnameip.hostname, host.hostnameip.ip
         return None
 
 
 class TemplateVM(models.Model):
     nome = models.CharField("nome", max_length=255, blank=True, null=True)
     configuracao = models.CharField("Configuração", max_length=255)
-    comando_antes = models.TextField("Configuração Antes do Reboot", blank=True, null=True)
-    comando_depois = models.TextField("Configuração Depois do  Reboot", blank=True, null=True)
     ambiente_virtual =  models.ForeignKey("infra.AmbienteVirtual", verbose_name="Ambiente Virtual", related_name="template_ambiente_virtual", on_delete=models.PROTECT)
     origens = models.ManyToManyField("infra.HostnameIP", through="TemplateHostnameIP")
     class Meta:
@@ -288,17 +289,32 @@ class TemplateVM(models.Model):
     @property
     def host_principal(self):
         if self.origens: 
-            host = self.origens.all()[0]
-            return host.hostname, host.ip
+            host = self.origens.through.objects.filter(template__id=self.id).order_by('hostnameip__id')[0]
+            return host.hostnameip.hostname, host.hostnameip.ip
         return None
 
-    @property
-    def ambiente_virtual_servidores(self):
-        if self.ambiente_virtual: 
-            return self.ambiente_virtual.servidor.all()
-        return None
+class TemplateComando(models.Model):
+    comando = models.CharField(max_length=255, 
+        help_text=' Variáveis dos comandos\n\
+                    {template_origem_ip}: IP da VM de origem do template\n\
+                    {vm_ip}: IP da VM nova\n\
+                    {template_origem}: Hostname da VM de origem do template\n\
+                    {vm}: Hostname da VM nova \n\
+                    {server_freeipa}: Servidor do Freeipa \n\
+                    {admin_freeipa}: Usuário admin do Freeipa \n\
+                    {password_freeipa}: Password do admin do Freeipa'
+                    )
+    configuracao = models.CharField("Configuração", max_length=255)
+    prioridade = models.IntegerField(null=True,)
+    template =  models.ForeignKey("infra.TemplateVM", null=True, related_name="template_comandos", on_delete=models.CASCADE)
 
+    class Meta:
+        verbose_name = "Comando"
+        verbose_name_plural = "Comandos"
+        ordering = ["configuracao","prioridade"]
 
+    def __str__(self):
+        return self.comando
 
 class TemplateHostnameIP(models.Model):
     template = models.ForeignKey("infra.TemplateVM", on_delete=models.CASCADE)
@@ -311,6 +327,7 @@ class TemplateHostnameIP(models.Model):
 
     def __str__(self):
         return self.hostnameip.hostname
+
 
 class ServidorHostnameIP(models.Model):
     servidor = models.ForeignKey("infra.Servidor", on_delete=models.CASCADE)

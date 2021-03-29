@@ -4,3 +4,10 @@
     text-align: center;
     vertical-align: middle!important;
 }
+
+.column-prioridade {
+    width: 90px;
+}
+.column-configuracao {
+    width: 150px;
+}

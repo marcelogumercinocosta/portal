@@ -238,7 +238,7 @@ def set_colaborador():
         divisao.save()
 
 
-def main():
+if __name__ == "__main__":
     sys.path.append(os.path.abspath("./"))
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", os.environ["django_settings_module"])
     django.setup()
@@ -253,7 +253,3 @@ def main():
     print("#### criando colaborador\n")
     print("#### Digite a Senha:")
     set_colaborador()
-
-
-if __name__ == "__main__":
-    main()
