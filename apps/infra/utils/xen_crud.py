@@ -37,12 +37,12 @@ class XenCrud:
     
     def create_vm(self, template,  memoria, cpu):
         origem_hostname, origem_ip = template.host_principal
+        origem_ping = os.system(f"ping -c 1 -W 0.3 -q {origem_hostname}.cptec.inpe.br  > /dev/null")
+        destino_ping = os.system(f"ping -c 1 -W 0.3 -q {self.vm.nome}.cptec.inpe.br  > /dev/null") 
         self.login()
         vm_ref_verificacao_vm = self.session.xenapi.VM.get_by_name_label(self.vm.nome)
-        if ( os.system(f"ping -c 1 -W 0.3 -q {origem_hostname}.cptec.inpe.br") != 0 
-            and len(vm_ref_verificacao_vm) == 0
-            and os.system(f"ping -c 1 -W 0.3 -q {self.vm.nome}.cptec.inpe.br") != 0 
-            and len(template.origens.all()) == len(self.vm.hostname_ip.all())):
+        if ( origem_ping != 0  and len(vm_ref_verificacao_vm) == 0
+            and  destino_ping != 0  and len(template.origens.all()) == len(self.vm.hostname_ip.all())):
             messages.add_message(self.request, messages.SUCCESS, f"XEN: Criando a nova VM")
             return create_vm_task.delay(self.servidor, self.vm.id, template.id, memoria, cpu)
         else:

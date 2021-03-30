@@ -1,0 +1,10 @@
+{% extends "admin/delete_confirmation.html" %}
+
+{% block extra_delete %}
+    {% if object.vm_remover and object.vm_ambiente_virtual %}
+    <br>
+    <p>
+        -  A VM {{object.nome}} ser&aacute; removido do Ambiente Virtual {{object.vm_ambiente_virtual}}
+    </p>
+    {% endif %}
+{% endblock %}

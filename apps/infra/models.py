@@ -245,7 +245,7 @@ class Servidor(Equipamento):
     configuracao = models.TextField("Configuração", blank=True, null=True)
     vinculado = models.ForeignKey("infra.Equipamento", verbose_name="Equipamento Vinculado", blank=True, null=True, related_name="servidor_vinculo", on_delete=models.PROTECT)
     hostname_ip = models.ManyToManyField("infra.HostnameIP", through="ServidorHostnameIP")
-    ldap = models.IntegerField("ldap", default=0)
+    conta = models.CharField("conta", default="Aguardando", max_length=255)
     vm_remover = models.BooleanField("Remover VM", default=False, blank=True, null=True)
     vm_ambiente_virtual = models.ForeignKey("infra.AmbienteVirtual", related_name="vm_ambiente_virtual", blank=True, null=True, on_delete=models.PROTECT)
 

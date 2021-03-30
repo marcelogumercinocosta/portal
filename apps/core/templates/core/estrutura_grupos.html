@@ -114,12 +114,7 @@
                                                                         {{ equipamentogrupoacesso.equipamento.descricao }}
                                                                     </div>
                                                                     <div class="col-1 p-2" >
-                                                                        ldap: 
-                                                                        {% if equipamentogrupoacesso.equipamento.servidor.ldap %}
-                                                                            <img src="{% static "admin/img/icon-yes.svg" %}" >
-                                                                        {% else %}
-                                                                            <img src="{% static "admin/img/icon-no.svg" %}" >
-                                                                        {% endif %}
+                                                                        {{ equipamentogrupoacesso.equipamento.servidor.status }}
                                                                     </div>
                                                                 </div>
                                                             {% endfor %}

@@ -141,7 +141,7 @@ def test_servidor_admin(admin_site, superuser, grupo_trabalho) -> None:
     mixer.blend(StorageGrupoAcessoMontagem, ip='192.168.0.1', parametro='-fstype=nfs4,rw', tipo='OPERACIONAL', montagem="/log/teste", namespace="/oper/log/teste", automount="auto.grupo", rede=rede, grupo_trabalho=grupo_trabalho)
     mixer.blend(StorageGrupoAcessoMontagem, ip='192.168.0.5', parametro='-fstype=nfs4,rw', tipo='OPERACIONAL', montagem="/share/teste", namespace="/share/teste", automount="auto.grupo", rede=rede, grupo_trabalho=grupo_trabalho)
 
-    servidor = mixer.blend(Servidor, nome='server1', descricao="Servidor de TESTE", ldap=True, tipo_uso="OPERACIONAL", predio=predio, tipo="Servidor Físico")
+    servidor = mixer.blend(Servidor, nome='server1', descricao="Servidor de TESTE", conta='FreeIPa', tipo_uso="OPERACIONAL", predio=predio, tipo="Servidor Físico")
     data_form = servidor.__dict__
 
     ServidorHostnameIP.objects.create(servidor=servidor, hostnameip=hostnameip)
@@ -159,21 +159,21 @@ def test_servidor_admin(admin_site, superuser, grupo_trabalho) -> None:
 
     freeipa.set_host(servidor, description=servidor.descricao)
     assert model_admin.inlines == (HostnameIPInLine,) 
-    assert model_admin.readonly_fields == ("status","ldap") 
+    assert model_admin.readonly_fields == ("status","conta") 
 
     model_admin.add_view(request=request)
     assert model_admin.inlines == ()
-    assert model_admin.readonly_fields == ("status","ldap") 
-    assert model_admin.fields == ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "ldap"]
+    assert model_admin.readonly_fields == ("status","conta") 
+    assert model_admin.fields == ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "conta"]
 
     model_admin.change_view(request=request, object_id=str(servidor.pk))
     assert model_admin.inlines == (HostnameIPInLine, GrupoAcessoEquipamentoInLine, OcorrenciaInLine) 
-    assert model_admin.readonly_fields == ("nome", "status", "ldap", "tipo", "tipo_uso", "predio")
-    assert model_admin.fields == ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "ldap"]
+    assert model_admin.readonly_fields == ("nome", "status", "conta", "tipo", "tipo_uso", "predio")
+    assert model_admin.fields == ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "conta"]
     servidor.tipo = "Servidor Virtual"
     servidor.save()
     model_admin.change_view(request=request, object_id=str(servidor.pk))
-    assert model_admin.fields == ["nome", "tipo", "tipo_uso", "predio", "descricao", "status", "ldap"]
+    assert model_admin.fields == ["nome", "tipo", "tipo_uso", "predio", "descricao", "status", "conta"]
 
 
     assert freeipa.host_find_show(fqdn=servidor.freeipa_name)['result']['description'] == ["Servidor de TESTE"]
@@ -281,7 +281,7 @@ def test_servidor_admin_automount_error(admin_site, superuser, grupo_trabalho) -
 
     rede = mixer.blend(Rede, rede="rede", ip='192.168.0', prioridade=1)
     hostnameip = mixer.blend(HostnameIP, hostname='server1', ip='192.168.0.2', tipo=rede, reservado=True)
-    servidor = mixer.blend(Servidor, nome='server1', descricao="Servidor de TESTE", ldap=True, tipo_uso="OPERACIONAL")
+    servidor = mixer.blend(Servidor, nome='server1', descricao="Servidor de TESTE", conta='FreeIPA', tipo_uso="OPERACIONAL")
     ServidorHostnameIP.objects.create(servidor=servidor, hostnameip=hostnameip)
     request = RequestFactory().get(reverse('admin:infra_servidor_change', args=[servidor.pk]))
     request.user = superuser

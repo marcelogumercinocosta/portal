@@ -117,7 +117,7 @@ class GrupoAcesso(models.Model):
     class Meta:
         verbose_name = "Grupo de Acesso"
         verbose_name_plural = "Grupos de Acesso"
-        ordering = [
+        ordering = [ 'grupo_trabalho',
             "grupo_acesso",
         ]
 

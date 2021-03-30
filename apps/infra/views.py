@@ -155,7 +155,7 @@ class CriarServidorLdapView(LoginRequiredMixin, PermissionRequiredMixin, Redirec
     def get_redirect_url(self, *args, **kwargs):
         servidor = get_object_or_404(Servidor, id=kwargs["pk"])
         grupos_acesso = servidor.grupos_acesso.all()
-        if grupos_acesso.exists() and servidor.ldap == 0:
+        if grupos_acesso.exists() and servidor.conta == "Aguardando":
             client_feeipa = FreeIPA(self.request)
             if client_feeipa.set_host(servidor, description=servidor.descricao):
                 automount = Automount(client_feeipa, servidor, self.request)
@@ -164,7 +164,7 @@ class CriarServidorLdapView(LoginRequiredMixin, PermissionRequiredMixin, Redirec
                 automount.adicionar_home()
                 HistoryInfra(self.request).novo_servidor(servidor=servidor)
                 send_email_task.delay("Servidor Criado",f"O Servidor: {servidor.nome} foi criado no FreeIPA, por:{self.request.user.username}",[settings.EMAIL_SYSADMIN])
-                servidor.ldap = 1
+                servidor.conta = "FreeIPA"
                 servidor.save()
                 if servidor.tipo == 'Servidor Virtual':
                     return reverse_lazy("infra:criar_vm", kwargs={"pk": servidor.id, })
@@ -179,10 +179,10 @@ class CriarServidorLocalView(LoginRequiredMixin, PermissionRequiredMixin, Redire
     def get_redirect_url(self, *args, **kwargs):
         servidor = get_object_or_404(Servidor, id=kwargs["pk"])
         grupos_acesso = servidor.grupos_acesso.all()
-        if grupos_acesso.exists() and servidor.ldap == 0:
+        if grupos_acesso.exists() and servidor.conta == "Aguardando":
             HistoryInfra(self.request).novo_servidor(servidor=servidor)
             send_email_task.delay("Servidor Criado",f"O Servidor: {servidor.nome} foi criado com conta Local, por:{self.request.user.username}",[settings.EMAIL_SYSADMIN])
-            servidor.ldap = 2
+            servidor.conta = "Local"
             servidor.save()
             if servidor.tipo == 'Servidor Virtual':
                 return reverse_lazy("infra:criar_vm", kwargs={"pk": servidor.id, })

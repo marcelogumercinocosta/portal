@@ -54,61 +54,75 @@ def create_vm_task(self, servidor, vm_id,  template_id, memoria, cpu):
     progress_recorder = ProgressRecorder(self)
     user = settings.XEN_AUTH_USER
     password = settings.XEN_AUTH_PASSWORD
+    root = settings.SERVERS_ROOT
+    root_password = settings.SERVERS_PASSWORD
     memoria = str(int(memoria) * 1024 * 1024 * 1024)
     cpu = int(cpu)
-    total = 100
+    total = 200
     try:
-        progress_recorder.set_progress(5, total, description="Conetando no XEN")
+        progress_recorder.set_progress(1, total, description="Conetando no XEN")
         session = Session(f"http://{servidor}.cptec.inpe.br")
         session.xenapi.login_with_password(user, password)
     except OSError as err:
         raise OSError(1, f"OS error: {err}")
     try:
-        progress_recorder.set_progress(10, total, description="Carregando Template")
+        progress_recorder.set_progress(4, total, description="Carregando Template")
         template_ref = session.xenapi.VM.get_by_name_label(template)[0]
-        progress_recorder.set_progress(20, total, description="Criando nova VM")
+        progress_recorder.set_progress(6, total, description="Criando nova VM")
         vm_ref = session.xenapi.VM.clone(template_ref, vm)
-        progress_recorder.set_progress(30, total, description="Corrigindo Memória")
+        progress_recorder.set_progress(7, total, description="Corrigindo Memória")
         session.xenapi.VM.set_memory(vm_ref, memoria)
-        progress_recorder.set_progress(35, total, description="Corrigindo CPU")
+        progress_recorder.set_progress(8, total, description="Corrigindo CPU")
         session.xenapi.VM.set_VCPUs_max(vm_ref,16)
         session.xenapi.VM.set_VCPUs_at_startup(vm_ref,cpu)
-        progress_recorder.set_progress(40, total, description="Corrigindo Descrição")
+        progress_recorder.set_progress(9, total, description="Corrigindo Descrição")
         session.xenapi.VM.set_name_description(vm_ref,vm_descricao)
-        progress_recorder.set_progress(45, total, description="Corrigindo Nome do Disco")
+        progress_recorder.set_progress(10, total, description="Corrigindo Nome do Disco")
         vdbs_ref = session.xenapi.VM.get_VBDs(vm_ref)
         for vdb_ref in vdbs_ref:
             if session.xenapi.VBD.get_device(vdb_ref) == 'xvda':
                 break
         vdi_ref = session.xenapi.VBD.get_VDI(vdb_ref)
         session.xenapi.VDI.set_name_label(vdi_ref,f"DSK_SYS_{vm}".upper())
-        progress_recorder.set_progress(50, total, description="Provisionando")
+        progress_recorder.set_progress(11, total, description="Provisionando")
         session.xenapi.VM.provision(vm_ref)
-        progress_recorder.set_progress(60, total, description="Iniciando")
+        progress_recorder.set_progress(12, total, description="Iniciando")
         session.xenapi.VM.start(vm_ref, False, False)
-        progress_recorder.set_progress(70, total, description="Aguardando Métricas")
+        progress_recorder.set_progress(15, total, description="Aguardando Métricas")
         vgm = session.xenapi.VM.get_guest_metrics(vm_ref)
+        contador_progress_temporario = 15
         while session.xenapi.VM_guest_metrics.get_os_version(vgm) == {}:
+            contador_progress_temporario +=1
+            progress_recorder.set_progress(contador_progress_temporario, total, description="Aguardando Métricas")
             time.sleep(1)
-        progress_recorder.set_progress(75, total, description="Executando Comandos de Troca IP")
         time.sleep(10)
+        progress_recorder.set_progress(100, total, description="Executando Comandos Iniciais")
         comandos = get_comandos(origem, destino)
-        command = fabric.Connection(template_origem_ip, port=22, user="root", connect_kwargs={'password': '!=S@63r#S'})
+        command = fabric.Connection(template_origem_ip, port=22, user=root, connect_kwargs={'password': root_password})
+        contador_progress_temporario = 100
         for comando in comandos["1"]:
+            contador_progress_temporario +=1
+            progress_recorder.set_progress(contador_progress_temporario, total, description="Executando Comandos Iniciais")
             command.run(comando)
         for comando in comandos["2"]:
+            contador_progress_temporario +=1
+            progress_recorder.set_progress(contador_progress_temporario, total, description="Executando Comandos de Rede")
             command.run(comando)
-        progress_recorder.set_progress(85, total, description="Reiniciando")
+        progress_recorder.set_progress(contador_progress_temporario, total, description="Reiniciando")
         session.xenapi.VM.clean_reboot(vm_ref)
         vgm = session.xenapi.VM.get_guest_metrics(vm_ref)
         while session.xenapi.VM_guest_metrics.get_os_version(vgm) == {}:
+            progress_recorder.set_progress(contador_progress_temporario, total, description="Reiniciando")
+            contador_progress_temporario +=1
             time.sleep(1)
-        progress_recorder.set_progress(90, total, description="Executando Comandos FreeIPA")
         time.sleep(15)
-        command = fabric.Connection(vm_ip, port=22, user="root", connect_kwargs={'password': '!=S@63r#S'})
+        progress_recorder.set_progress(180, total, description="Executando Comandos Finais")
+        command = fabric.Connection(vm_ip, port=22, user=root, connect_kwargs={'password': root_password})
         for comando in comandos["3"]:
+            contador_progress_temporario +=2
+            progress_recorder.set_progress(contador_progress_temporario, total, description="Executando Comandos Finais")
             command.run(comando)
-        progress_recorder.set_progress(95, total, description="Desabilitando ssh root")
+        progress_recorder.set_progress(99, total, description="Desabilitando ssh root")
         progress_recorder.set_progress(total, total, description=f"{vm} Criada")
     except Exception as e:
         self.update_state(state=states.FAILURE, meta={'custom': str(e)})

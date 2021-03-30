@@ -28,20 +28,12 @@ class ServidorForm(forms.ModelForm):
         ("Servidor Físico", "Servidor Físico"),
         ("Servidor Virtual", "Servidor Virtual"),
     )
-
-    STATUS_LDAP = (
-        (0, "Aguardando Definição"),
-        (1, "Servidor configurado no FreeIPA"),
-        (2, "Servidor configurado com conta Local")
-    )
-
     
     vm_remover = forms.BooleanField(required=False, label="Remover VM ")
     tipo = forms.ChoiceField(choices=TIPOS_SERVIDOR, )
     rack = forms.ModelChoiceField(queryset=Rack.objects.all(), label="Rack", required=False,)
     nome = HostnameChoiceField(queryset=HostnameIP.objects.filter(reservado=False).order_by('tipo'), label="Hostname", required=True, widget=forms.Select(attrs={"data-live-search": "True"}))
     vinculado = forms.ModelChoiceField(queryset=Equipamento.objects.filter(Q(tipo='storage') | Q(tipo='Supercomputador')), required=False, widget=forms.Select(attrs={"data-live-search": "True"}))
-    ldap = forms.ChoiceField(choices = STATUS_LDAP) 
 
     class Meta:
         model = Servidor

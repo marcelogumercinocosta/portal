@@ -6,17 +6,15 @@ import xhtml2pdf.pisa as pisa
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import (LoginRequiredMixin, PermissionRequiredMixin)
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.staticfiles import finders
-from django.core.mail import EmailMessage
-from django.http import Http404, HttpResponse
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import get_template
 from django.urls import reverse_lazy
 from django.utils.encoding import force_text
 from django.views.generic.base import RedirectView, TemplateView, View
 
-from apps.core.models import GrupoAcesso, GrupoPortal, GrupoTrabalho, ColaboradorGrupoAcesso
+from apps.core.models import GrupoTrabalho
 from apps.colaborador.models import Colaborador
 from apps.infra.models import Servidor
 from apps.core.tasks import send_email_task
@@ -119,6 +117,6 @@ class CoreStatusView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["colaborador"] = Colaborador.objects.values("is_active").filter(is_active=1).count()
-        context["grupo"] = GrupoTrabalho.objects.values("grupo").filter(data_criado__isnull=True).count()
+        context["grupo"] = GrupoTrabalho.objects.values("grupo").filter(data_criado__isnull=False).count()
         context["servidor"] = Servidor.objects.values("nome").filter(status="Ativo").count()
         return context

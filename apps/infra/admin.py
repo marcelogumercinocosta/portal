@@ -70,7 +70,7 @@ class GrupoAcessoEquipamentoInLine(admin.TabularInline):
     
     def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
         field = super(GrupoAcessoEquipamentoInLine, self).formfield_for_foreignkey(db_field, request, **kwargs)
-        field.queryset = field.queryset.filter(grupo_acesso__contains=request._obj_.tipo_uso)
+        field.queryset = field.queryset.filter(grupo_acesso__contains=request._obj_.tipo_uso).exclude(equipamento__id=request._obj_.id)
         return field
 
 
@@ -217,11 +217,12 @@ class StorageAdmin(admin.ModelAdmin):
 @admin.register(Servidor)
 class ServidorAdmin(admin.ModelAdmin):
     change_form_template = "infra/admin/change_form_servidor.html"
+    delete_confirmation_template = "infra/admin/delete_confirmation_servidor.html"
     search_fields = ["nome", "patrimonio", "marca", "modelo"]
     list_filter = ["tipo_uso","tipo" ]
     list_display = ("nome", "patrimonio", "tipo", "tipo_uso",  "predio",  "descricao", "grupo", "tipo_uso", "status")
-    fields = ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "ldap", 'vm_remover']
-    readonly_fields = ("status","ldap")
+    fields = ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "conta", 'vm_remover']
+    readonly_fields = ("status","conta")
     form = ServidorForm
     inlines = (HostnameIPServidorInLine,)
 
@@ -234,7 +235,7 @@ class ServidorAdmin(admin.ModelAdmin):
         obj.nome = hostname_str[0]
         hostname = HostnameIP.objects.get(hostname=obj.nome)
         if change:
-            if "descricao" in form.changed_data and obj.ldap == 1:
+            if "descricao" in form.changed_data and obj.conta == "FreeIPA":
                 FreeIPA(request).host_mod(obj.freeipa_name, description=obj.descricao)
             super().save_model(request, obj, form, change)
         else:
@@ -249,7 +250,7 @@ class ServidorAdmin(admin.ModelAdmin):
             hostnameip.reservado = False
             hostnameip.save()
             HistoryInfra(request).delete_servidor(servidor=obj, hostnameip=hostnameip)
-        if obj.ldap == 1:
+        if obj.conta == "FreeIPA":
             client_feeipa = FreeIPA(request)
             client_feeipa.automountlocation_del(obj.freeipa_name_mount)
             client_feeipa.host_delete(obj.freeipa_name)
@@ -259,28 +260,28 @@ class ServidorAdmin(admin.ModelAdmin):
 
     def add_view(self, request, form_url="", extra_context=None):
         extra_context = dict( show_save=False, show_save_and_continue=True)
-        self.readonly_fields = ("status","ldap")
-        self.fields = ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "ldap"]
+        self.readonly_fields = ("status","conta")
+        self.fields = ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "conta"]
         self.inlines = ()
         return super().add_view(request, form_url=form_url, extra_context=extra_context)
 
     def change_view(self, request, object_id, form_url="", extra_context=None):
         servidor = get_object_or_404(Servidor, id=object_id)
         if servidor.tipo == 'Servidor Virtual' and  servidor.vm_ambiente_virtual:
-            self.fields = ["nome", "tipo", "tipo_uso", "predio", "descricao", "status", "ldap", "vm_remover"]
+            self.fields = ["nome", "tipo", "tipo_uso", "predio", "descricao", "status", "conta", "vm_remover"]
         elif servidor.tipo == 'Servidor Virtual':
-            self.fields = ["nome", "tipo", "tipo_uso", "predio", "descricao", "status", "ldap"]
+            self.fields = ["nome", "tipo", "tipo_uso", "predio", "descricao", "status", "conta"]
         else:
-            self.fields = ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "ldap", ]
+            self.fields = ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "conta", ]
 
-        self.readonly_fields = ("nome", "status", "ldap", "tipo", "tipo_uso", "predio")
+        self.readonly_fields = ("nome", "status", "conta", "tipo", "tipo_uso", "predio")
         self.inlines = (HostnameIPServidorInLine, GrupoAcessoEquipamentoInLine, OcorrenciaInLine)
         return super().change_view(request, object_id, form_url=form_url, extra_context=extra_context)
 
     def save_formset(self, request, form, formset, change):
         instances = formset.save(commit=False)
         for instance in instances:
-            if isinstance(instance, EquipamentoGrupoAcesso) and formset.instance.ldap == 1:
+            if isinstance(instance, EquipamentoGrupoAcesso) and formset.instance.conta == "FreeIPA":
                 Automount(FreeIPA(request), formset.instance, request).adicionar_grupos([instance.grupo_acesso])
             if isinstance(instance, ServidorHostnameIP):
                 hostnameip = instance.hostnameip
@@ -288,7 +289,7 @@ class ServidorAdmin(admin.ModelAdmin):
                 hostnameip.save()
                 instance.save
         for obj in formset.deleted_objects:
-            if isinstance(obj, EquipamentoGrupoAcesso) and formset.instance.ldap == 1:
+            if isinstance(obj, EquipamentoGrupoAcesso) and formset.instance.conta == "FreeIPA":
                 Automount(FreeIPA(request), formset.instance, request).remover_grupos([obj.grupo_acesso])
             if isinstance(obj, ServidorHostnameIP):
                 hostnameip = obj.hostnameip

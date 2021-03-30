@@ -11,3 +11,15 @@
 .column-configuracao {
     width: 150px;
 }
+
+.column-descricao {
+    min-width: 200px;
+}
+
+.column-tipo {
+    min-width: 120px;
+}
+
+.column-nome {
+    min-width: 100px;
+}
