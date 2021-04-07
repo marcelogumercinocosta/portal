@@ -175,16 +175,26 @@ class ColaboradorForm(ColaboradorBaseForm, GarbModelForm):
 class VPNForm(forms.ModelForm):
     JUSTIFICATIVA_CHOICES =( 
         ("",""),
-        ("Novo acesso de Colaborador Externo", "Novo acesso de Colaborador Externo"), 
-        ("Novo acesso de Colaborador Interno", "Novo acesso de Colaborador Interno"), 
-        ("Novo Equipamento com VPN ativa", "Novo Equipamento com VPN ativa"), 
-        ("Troca de Equipamento com VPN ativa", "Troca de Equipamento com VPN ativa"), 
-        ("Renovação da VPN", "Renovação da VPN"), 
+        ("SOLICITAÇÃO de Conta VPN Colaborador/Externo", "SOLICITAÇÃO de Conta VPN Colaborador/Externo"), 
+        ("SOLICITAÇÃO de Conta VPN Colaborador/Interno", "SOLICITAÇÃO de Conta VPN Colaborador/Interno"), 
+        ("REVALIDAÇÃO de Conta VPN", "REVALIDAÇÃO de Conta VPN"), 
+        ("REMOÇÃO de Conta VPN", "REMOÇÃO de Conta VPN"), 
+        ("ADIÇÃO de equipamento com VPN ativa", "ADIÇÃO de equipamento com VPN ativa"), 
+        ("TROCA de equipamento com VPN ativa", "TROCA de equipamento com VPN ativa"), 
+        ("TROCA de equipamento com VPN ativa", "TROCA de equipamento com VPN ativa"), 
+        ("REMOÇÃO de Equipamento com VPN ativa", "REMOÇÃO de Equipamento com VPN ativa"), 
+
     ) 
     RECURSO_CHOICES = (
         ("",""),
-        ("VPN-CPTEC", "VPN-CPTEC"),
-        ("VPN-HPC", "VPN-HPC"),
+        ("VPN-CPTEC/Rede OPERACIONAL – 147", "VPN-CPTEC/Rede OPERACIONAL – 147"),
+        ("VPN-CPTEC/Rede PESQUISA/DESENVOLVIMENTO – 149", "VPN-CPTEC/Rede PESQUISA/DESENVOLVIMENTO – 149"),
+        ("VPN-HPC/Super – TUPA", "VPN-HPC/Super – TUPA"),
+        ("VPN-HPC/Super – XC-50", "VPN-HPC/Super – XC-50"),
+        ("VPN-HPC/Kerana", "VPN-HPC/Kerana"),
+        ("VPN-HPC/Argos", "VPN-HPC/Argos"),
+        ("VPN-HPC/Jaguar", "VPN-HPC/Jaguar"),
+        ("VPN-HPC/Laquibrido", "VPN-HPC/Laquibrido"),
     )
 
     colaborador = forms.ModelChoiceField(Colaborador.objects.filter(is_active=1), widget=forms.Select(attrs={"data-live-search": "True"}))

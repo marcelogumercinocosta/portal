@@ -16,6 +16,7 @@ def gerar_password():
     for ay in list(range(3)):
         i = random.choice(string.ascii_lowercase)
         password += i
+    password += random.choice(string.punctuation )
     for ay in list(range(2)):
         o = random.choice(string.digits)
         password += o
@@ -23,7 +24,6 @@ def gerar_password():
     for ay in list(range(3)):
         u = random.choice(string.ascii_uppercase)
         password += u
-    password += random.choice(string.punctuation )
     return password
 
 

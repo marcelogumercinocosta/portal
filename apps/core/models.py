@@ -30,7 +30,7 @@ class Predio(models.Model):
 
 
 class Divisao(models.Model):
-    divisao = models.CharField("divisão", max_length=255)
+    divisao = models.CharField("Divisão|Coordenação", max_length=255)
     divisao_completo = models.CharField("Nome Completo", max_length=255, null=True, blank=False)
     email = models.EmailField(null=True, max_length=255)
     coordenacao = models.CharField("Coordenação", max_length=255, null=True, blank=False)
@@ -43,8 +43,8 @@ class Divisao(models.Model):
 
     class Meta:
         ordering = ["divisao"]
-        verbose_name = "Divisão"
-        verbose_name_plural = "Divisões"
+        verbose_name = "Divisão | Coordenação"
+        verbose_name_plural = "Divisões | Coordenações"
 
     def __str__(self):
         return self.divisao
@@ -78,7 +78,7 @@ class GrupoTrabalho(models.Model):
     documento = models.BooleanField("Documento", default=False, blank=True, null=True)
     data_criado = models.DateField("Data de Criação", null=True)
     confirmacao = models.BooleanField("Confirmação de Assinatura", default=False, null=True)
-    divisao = models.ForeignKey("core.Divisao", verbose_name="Divisão", on_delete=models.PROTECT)
+    divisao = models.ForeignKey("core.Divisao", verbose_name="Divisão|Coordenação", on_delete=models.PROTECT)
     responsavel = models.ManyToManyField("colaborador.Colaborador", verbose_name="Responsável", through="ResponsavelGrupoTrabalho")
     objects = GrupoTrabalhoManager()
 

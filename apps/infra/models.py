@@ -300,9 +300,9 @@ class TemplateComando(models.Model):
                     {vm_ip}: IP da VM nova\n\
                     {template_origem}: Hostname da VM de origem do template\n\
                     {vm}: Hostname da VM nova \n\
-                    {server_freeipa}: Servidor do Freeipa \n\
-                    {admin_freeipa}: Usuário admin do Freeipa \n\
-                    {password_freeipa}: Password do admin do Freeipa'
+                    {freeipa_server}: Servidor do Freeipa \n\
+                    {freeipa_admin}: Usuário admin do Freeipa \n\
+                    {freeipa_password}: Password do admin do Freeipa'
                     )
     configuracao = models.CharField("Configuração", max_length=255)
     prioridade = models.IntegerField(null=True,)

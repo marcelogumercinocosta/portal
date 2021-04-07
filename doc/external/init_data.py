@@ -52,7 +52,7 @@ def set_divisao():
 
     organograma = (
         {
-            "divisao": "CG",
+            "divisao": "CGCT",
             "divisao_completo": "Coordenação Geral de Ciências da Terra",
             "coordenacao": "CGCT - Coordenação Geral de Ciências da Terra",
         },
@@ -89,6 +89,11 @@ def set_divisao():
         {
             "divisao": "COPDT",
             "divisao_completo": "Coordenação de Pesquisa Aplicada e Desenvolvimento Tecnológico",
+            "coordenacao": "COPDT - Coordenação de Pesquisa Aplicada e Desenvolvimento Tecnológico",
+        },
+        {
+            "divisao": "COPDT",
+            "divisao_completo": "Divisão de Observação da Terra e Geoinformática",
             "coordenacao": "COPDT - Coordenação de Pesquisa Aplicada e Desenvolvimento Tecnológico",
         },
     )
@@ -174,10 +179,14 @@ def set_permissoes():
                 "delete_storageareagrupotrabalho",
                 "view_storageareagrupotrabalho",
             ]
+        
+    permission_servicedesk = permission_suporte.copy()
+    permission_servicedesk.extend(["view_vpn","add_vpn","change_vpn","delete_vpn"])
+    permission_suporte.extend(["add_templatevm","change_templatevm","delete_templatevm","view_templatevm","add_templatehostnameip", "change_templatehostnameip", "delete_templatehostnameip","view_templatehostnameip","add_templatecomando", "change_templatecomando","delete_templatecomando","view_templatecomando"])
 
     permission_default = (
         {"grupo": "Secretaria", "permission": ["change_divisao", "view_divisao", "view_colaborador", "change_colaborador", "secretaria_colaborador"]},
-        {"grupo": "Servicedesk", "permission": permission_suporte, },
+        {"grupo": "Servicedesk", "permission": permission_servicedesk, },
         {"grupo": "Colaborador", "permission": []},
         {"grupo": "Responsável", "permission": ["responsavel_colaborador"]},
         {"grupo": "NOC", "permission": []},

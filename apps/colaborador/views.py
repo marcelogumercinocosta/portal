@@ -167,8 +167,8 @@ class TermoCompromissoView(ViewContextMixin, LoginRequiredMixin, PermissionRequi
     def get(self, request, *args, **kwargs):
         colaborador = get_object_or_404(Colaborador, id=kwargs["pk"])
         vpn = VPN()
-        vpn.justificativa = "Novo acesso de Colaborador Externo"
-        vpn.recurso = "VPN-CPTEC"
+        vpn.justificativa = "SOLICITAÇÃO de Conta VPN Colaborador/Externo"
+        vpn.recurso = "VPN-CPTEC/Rede OPERACIONAL – 147"
         context = {"logo": finders.find("image/logo.png"), "colaborador": colaborador, "vpn": vpn}
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = f"attachment; filename=\"Termo_de_Compromisso_{colaborador.full_name.replace(' ', '_')}\""
@@ -312,7 +312,7 @@ class ColaboradorContaView(ViewContextMixin, LoginRequiredMixin, DetailView ):
 
 class VPNFormularioView(ViewContextMixin, LoginRequiredMixin, PermissionRequiredMixin, View):
     template_name = "colaborador/pdf/VPN.html"
-    permission_required = "colaborador.secretaria_suporte"
+    permission_required = "view_vpn"
     title = "VPN"
 
     def get(self, request, *args, **kwargs):

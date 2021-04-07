@@ -34,7 +34,7 @@ class Colaborador(AbstractUser):
     uid = models.IntegerField("UID", default=0)
     is_active = models.BooleanField('ativo', default=False)
     vinculo = models.ForeignKey("colaborador.Vinculo", verbose_name="vínculo", on_delete=models.PROTECT)
-    divisao = models.ForeignKey('core.Divisao', verbose_name="Divisão", on_delete=models.PROTECT)
+    divisao = models.ForeignKey('core.Divisao', verbose_name="Divisão|Coordenação", on_delete=models.PROTECT)
     responsavel = models.ForeignKey("self", null=True, blank=True, verbose_name="Responsavel", related_name="responsavel_user", on_delete=models.PROTECT)
     
     class Meta:
