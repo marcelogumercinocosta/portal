@@ -8,7 +8,6 @@ services:
         --default-authentication-plugin=mysql_native_password
         --performance-schema --secure-file-priv=""
     environment:
-      MYSQL_USER: root
       MYSQL_DATABASE: 'portal'
       MYSQL_ROOT_PASSWORD: 'password'
     networks:

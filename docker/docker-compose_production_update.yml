@@ -1,0 +1,31 @@
+version: '3.3'
+
+services:
+  django-celery:
+    build:
+      context: .
+      dockerfile: ./docker/django_prod/Dockerfile
+    container_name: prod_django-celery
+    environment:
+      django_settings_module: 'portal.settings.production'
+    command: 
+      - /bin/bash
+      - -c
+      - |
+        celery -A portal worker -l info -E
+    volumes:
+      - .:/app
+  gunicorn:
+    restart: always
+    container_name: prod_gunicorn
+    build:
+      context: .
+      dockerfile: ./docker/django_prod/Dockerfile
+    expose:
+      - "8000"
+    volumes:
+      - .:/app
+      - ./staticfiles:/app/staticfiles
+    environment:
+      django_settings_module: 'portal.settings.production'
+    command: bash -c "python manage.py collectstatic --noinput && python manage.py migrate && gunicorn portal.wsgi:application -b 0.0.0.0:8000 --workers 3"

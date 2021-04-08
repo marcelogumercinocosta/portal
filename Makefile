@@ -101,3 +101,12 @@ init:
 	docker exec -it $$(docker ps --format "{{.Names}}" | grep django-celery) python3 /app/doc/external/init_data.py
 	if test -e ./doc/external/dump_private.json; then docker exec -it $$(docker ps --format "{{.Names}}" | grep django-celery) /app/manage.py loaddata ./doc/external/dump_private.json; fi
 
+# update-prod: reload gunircon and celery
+update-prod:
+	export django_settings_module=portal.settings.production
+	docker rm -f prod_django-celery
+	docker rm -f prod_gunicorn
+	docker image rm docker images prod_portal_django-celery --format "{{.ID}}"
+	docker image rm docker images prod_portal_gunicorn --format "{{.ID}}"
+	docker-compose -f ./docker/docker-compose_production_update -p prod_portal --project-directory $(shell pwd) up -d
+	docker exec -it $$(docker ps --format "{{.Names}}" | grep django-celery) /app/manage.py migrate
