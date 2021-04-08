@@ -311,7 +311,7 @@ class ColaboradorContaView(ViewContextMixin, LoginRequiredMixin, DetailView ):
 
 
 class VPNFormularioView(ViewContextMixin, LoginRequiredMixin, PermissionRequiredMixin, View):
-    template_name = "colaborador/pdf/VPN.html"
+    template_name = "colaborador/pdf/vpn.html"
     permission_required = "colaborador.view_vpn"
     title = "VPN"
 

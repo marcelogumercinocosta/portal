@@ -95,8 +95,8 @@ dumpdata:
 
 # target: init - insert admin user + permissions
 init:
-	if ! test -d ./apps/core/migrations/; then ./manage.py makemigrations core colaborador infra monitoramento; fi
 	@[ ${django_settings_module} ] || ( echo ">> django_settings_module is not set"; exit 1 )
+	if ! test -d ./apps/core/migrations/; then docker exec -it $$(docker ps --format "{{.Names}}" | grep django-celery) /app/manage.py makemigrations core colaborador infra monitoramento; fi
 	docker exec -it $$(docker ps --format "{{.Names}}" | grep django-celery) /app/manage.py migrate
 	docker exec -it $$(docker ps --format "{{.Names}}" | grep django-celery) python3 /app/doc/external/init_data.py
 	if test -e ./doc/external/dump_private.json; then docker exec -it $$(docker ps --format "{{.Names}}" | grep django-celery) /app/manage.py loaddata ./doc/external/dump_private.json; fi
