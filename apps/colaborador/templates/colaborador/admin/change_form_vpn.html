@@ -23,14 +23,16 @@
 {% endblock %}
 
 {% block submit_buttons_bottom %}
-    {% if original.status != "Inativa" %}
-        {{ block.super }}
-    {% else %}
+    {% if original.status == "Inativa" or original.status == "Ativa" or original.status == "Vencida"  %}
         <a href="{% url opts|admin_urlname:'changelist' %}" class="btn btn-light">{% trans 'Back' %}</a>
+        {% if perms.colaborador.delete_vpn %}
             {% url opts|admin_urlname:'delete' original.pk|admin_urlquote as delete_url %}
             <a href="{% add_preserved_filters delete_url %}" class="text-error deletelink btn btn-danger">{% trans "Delete" %}</a>
+        {% endif %}
         {% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}
         <a href="{% add_preserved_filters history_url %}" class="btn btn-secondary">{% trans "History" %}</a>
+    {% else %}
+        {{ block.super }}
     {% endif %} 
 {% endblock %}
 

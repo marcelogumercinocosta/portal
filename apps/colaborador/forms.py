@@ -179,7 +179,7 @@ class VPNForm(forms.ModelForm):
         ("REMOÇÃO de Conta VPN", "REMOÇÃO de Conta VPN"), 
         ("ADIÇÃO de equipamento com VPN ativa", "ADIÇÃO de equipamento com VPN ativa"), 
         ("TROCA de equipamento com VPN ativa", "TROCA de equipamento com VPN ativa"), 
-        ("TROCA de equipamento com VPN ativa", "TROCA de equipamento com VPN ativa"), 
+        ("REMOÇÃO de equipamento com VPN ativa", "REMOÇÃO de equipamento com VPN ativa"), 
 
     ) 
     RECURSO_CHOICES = (

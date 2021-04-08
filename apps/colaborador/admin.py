@@ -90,6 +90,7 @@ class ColaboradorAdmin(admin.ModelAdmin):
 @admin.register(VPN)
 class VPNAdmin(admin.ModelAdmin):
     change_form_template = "colaborador/admin/change_form_vpn.html"
+    delete_confirmation_template = "colaborador/admin/delete_confirmation_vpn.html"
     extra_context = dict( show_save=False, show_save_and_continue=True)
     search_fields = ["colaborador"]
     list_filter = ["status"]
@@ -105,7 +106,11 @@ class VPNAdmin(admin.ModelAdmin):
         return super().add_view(request, form_url=form_url, extra_context=extra_context)
 
     def change_view(self, request, object_id, form_url="", extra_context=None):
-        self.readonly_fields = ["colaborador", "recurso", "justificativa", 'status', "data_solicitacao"]
+        vpn = VPN.objects.get(pk=object_id)
+        if vpn.status == 'Ativa' or vpn.status == "Inativa" or  vpn.status == "Vencida": 
+            self.readonly_fields = ["colaborador", "recurso", "justificativa", 'status', "data_solicitacao","data_abertura", "data_validade", "mac_cabeado", "mac_wifi"]
+        else:
+            self.readonly_fields = ["colaborador", "recurso", "justificativa", 'status', "data_solicitacao"]
         self.fields = ["colaborador", "recurso", "justificativa", "data_solicitacao", "data_abertura", "data_validade",  "mac_cabeado", "mac_wifi", "status"]
         return super().change_view(request, object_id, form_url=form_url, extra_context=extra_context)
 
@@ -117,7 +122,7 @@ class VPNAdmin(admin.ModelAdmin):
         return super().save_model(request, obj, form, change)
 
     def delete_model(self, request, obj):
-        if obj.status == "Inativa":
+        if obj.status == "Inativa" or obj.status == "Vencida" :
             return super().delete_model(request, obj)
         obj.status = "Inativa"
         obj.save()

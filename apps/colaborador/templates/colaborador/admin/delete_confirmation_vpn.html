@@ -1,0 +1,11 @@
+{% extends "admin//delete_confirmation.html" %}
+{% load i18n static %}
+
+{% block message_delete %}
+        {% if object.status == "Inativa" %}
+                {% blocktrans with escaped_object=object %}Are you sure you want to delete the {{ object_name }} "{{ escaped_object }}"?
+                All of the following related items will be deleted:{% endblocktrans %}
+        {% else %}
+                {% blocktrans with escaped_object=object %} INATIVAR a {{ object_name }} '{{ escaped_object }}':{% endblocktrans %}
+        {% endif %}
+{% endblock %}
