@@ -34,7 +34,7 @@ class Colaborador(AbstractUser):
     uid = models.IntegerField("UID", default=0)
     is_active = models.BooleanField('ativo', default=False)
     vinculo = models.ForeignKey("colaborador.Vinculo", verbose_name="vínculo", on_delete=models.PROTECT)
-    divisao = models.ForeignKey('core.Divisao', verbose_name="Divisão|Coordenação", on_delete=models.PROTECT)
+    divisao = models.ForeignKey('core.Divisao', verbose_name="Divisão | Coordenação", on_delete=models.PROTECT)
     responsavel = models.ForeignKey("self", null=True, blank=True, verbose_name="Responsavel", related_name="responsavel_user", on_delete=models.PROTECT)
     
     class Meta:
@@ -98,7 +98,7 @@ class Colaborador(AbstractUser):
 
 class VPN(models.Model):
     recurso = models.CharField('Recurso a ser acessado', max_length=255 )
-    data_solicitacao = models.DateField('Data da solicitação', auto_now_add=True)
+    data_solicitacao = models.DateField('Data da solicitação', auto_now_add=True, null=True, blank=True)
     data_abertura = models.DateField('Data da Abertura', null=True, blank=True)
     data_validade = models.DateField('Data Validade', null=True, blank=True)
     mac_cabeado = models.CharField('MAC Address Cabeado', max_length=255 ,null=True, blank=True)
@@ -112,7 +112,8 @@ class VPN(models.Model):
         verbose_name_plural = "VPNs"
 
     def __str__(self):
-        return f"{self.recurso} | {self.colaborador.username}"
+        recurso = self.recurso.split(" | ")
+        return f"{self.colaborador.username} | {recurso[0]}"
 
     @property
     def data_fim_vpn(self):

@@ -77,7 +77,8 @@ def colaborador_solicitacao() -> Colaborador:
 def grupo_acesso() -> GrupoAcesso:
     grupo_trabalho = mixer.blend(GrupoTrabalho, grupo="Grupo dados", grupo_sistema="dados")
     grupo_trabalho.save()
-    grupo_acesso = GrupoAcesso(tipo="Desenvolvimento", grupo_trabalho=grupo_trabalho)
+    grupo_acesso = GrupoAcesso()
+    grupo_acesso.make(tipo="Desenvolvimento", grupo_trabalho=grupo_trabalho)
     grupo_acesso.save()
     return grupo_acesso
 

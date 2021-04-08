@@ -77,7 +77,8 @@ def test_create_vinculo() -> None:
 def test_create_colaborador_grupoacesso() -> None:
     colaborador = mixer.blend(Colaborador)
     grupo = mixer.blend(GrupoTrabalho, grupo="Grupo dados", grupo_sistema="dados")
-    grupo_acesso = GrupoAcesso(tipo="Desenvolvimento", grupo_trabalho=grupo)
+    grupo_acesso = GrupoAcesso()
+    grupo_acesso.make(tipo="Desenvolvimento", grupo_trabalho=grupo)
     grupo_acesso.save()
     colaborador_grupoacesso = colaborador.colaboradorgrupoacesso_set.create(grupo_acesso=grupo_acesso)
     assert str(colaborador_grupoacesso).upper() == str(grupo_acesso)

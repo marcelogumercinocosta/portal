@@ -13,7 +13,6 @@ from apps.core.models import ColaboradorGrupoAcesso, Divisao
 from apps.core.tasks import send_email_template_task
 from garb.forms import GarbModelForm
 
-
 class EmailLowerField(forms.EmailField):
     def to_python(self, value):
         return value.lower()
@@ -175,33 +174,31 @@ class ColaboradorForm(ColaboradorBaseForm, GarbModelForm):
 class VPNForm(forms.ModelForm):
     JUSTIFICATIVA_CHOICES =( 
         ("",""),
-        ("SOLICITAÇÃO de Conta VPN Colaborador/Externo", "SOLICITAÇÃO de Conta VPN Colaborador/Externo"), 
-        ("SOLICITAÇÃO de Conta VPN Colaborador/Interno", "SOLICITAÇÃO de Conta VPN Colaborador/Interno"), 
+        ("SOLICITAÇÃO de Conta VPN Colaborador | Interno", "SOLICITAÇÃO de Conta VPN Colaborador | Interno"), 
         ("REVALIDAÇÃO de Conta VPN", "REVALIDAÇÃO de Conta VPN"), 
         ("REMOÇÃO de Conta VPN", "REMOÇÃO de Conta VPN"), 
         ("ADIÇÃO de equipamento com VPN ativa", "ADIÇÃO de equipamento com VPN ativa"), 
         ("TROCA de equipamento com VPN ativa", "TROCA de equipamento com VPN ativa"), 
         ("TROCA de equipamento com VPN ativa", "TROCA de equipamento com VPN ativa"), 
-        ("REMOÇÃO de Equipamento com VPN ativa", "REMOÇÃO de Equipamento com VPN ativa"), 
 
     ) 
     RECURSO_CHOICES = (
         ("",""),
-        ("VPN-CPTEC/Rede OPERACIONAL – 147", "VPN-CPTEC/Rede OPERACIONAL – 147"),
-        ("VPN-CPTEC/Rede PESQUISA/DESENVOLVIMENTO – 149", "VPN-CPTEC/Rede PESQUISA/DESENVOLVIMENTO – 149"),
-        ("VPN-HPC/Super – TUPA", "VPN-HPC/Super – TUPA"),
-        ("VPN-HPC/Super – XC-50", "VPN-HPC/Super – XC-50"),
-        ("VPN-HPC/Kerana", "VPN-HPC/Kerana"),
-        ("VPN-HPC/Argos", "VPN-HPC/Argos"),
-        ("VPN-HPC/Jaguar", "VPN-HPC/Jaguar"),
-        ("VPN-HPC/Laquibrido", "VPN-HPC/Laquibrido"),
+        ("VPN-CPTEC | Rede OPERACIONAL – 147", "VPN-CPTEC | Rede OPERACIONAL – 147"),
+        ("VPN-CPTEC | Rede PESQUISA | DESENVOLVIMENTO – 149", "VPN-CPTEC | Rede PESQUISA | DESENVOLVIMENTO – 149"),
+        ("VPN-HPC | Super – TUPA", "VPN-HPC | Super – TUPA"),
+        ("VPN-HPC | Super – XC-50", "VPN-HPC | Super – XC-50"),
+        ("VPN-HPC | Kerana", "VPN-HPC | Kerana"),
+        ("VPN-HPC | Argos", "VPN-HPC | Argos"),
+        ("VPN-HPC | Jaguar", "VPN-HPC | Jaguar"),
+        ("VPN-HPC | Laquibrido", "VPN-HPC | Laquibrido"),
     )
 
-    colaborador = forms.ModelChoiceField(Colaborador.objects.filter(is_active=1), widget=forms.Select(attrs={"data-live-search": "True"}))
     justificativa = forms.ChoiceField(choices = JUSTIFICATIVA_CHOICES) 
     recurso = forms.ChoiceField(choices = RECURSO_CHOICES) 
 
     class Meta:
         model = VPN
         fields = "__all__"
+        widgets = {"colaborador": forms.Select(attrs={"data-live-search": "True"})}
     

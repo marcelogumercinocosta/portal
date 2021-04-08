@@ -121,7 +121,8 @@ def responsavel_grupo() -> Colaborador:
     grupo_trabalho = mixer.blend(GrupoTrabalho, grupo="Grupo de teste", grupo_sistema="teste", gid=10)
     grupo_trabalho.save_confirm()
     
-    grupo_acesso = GrupoAcesso(tipo="Desenvolvimento", grupo_trabalho=grupo_trabalho)
+    grupo_acesso = GrupoAcesso()
+    grupo_acesso.make(tipo="Desenvolvimento", grupo_trabalho=grupo_trabalho)
     grupo_acesso.save()
     
     responsavel = mixer.blend(Colaborador, first_name="Responsavel", last_name="Fulano de tal", externo=False, email="teste.reponsavel@inpe.br", uid=876598)

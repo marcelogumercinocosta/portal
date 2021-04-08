@@ -125,7 +125,8 @@ def test_servidor_hostnameip() -> None:
 
 def test_equipamento_grupo_acesso() -> None:
     grupo = mixer.blend(GrupoTrabalho, grupo="Grupo dados", grupo_sistema="dados")
-    grupo_acesso = GrupoAcesso(tipo="Desenvolvimento", grupo_trabalho=grupo)
+    grupo_acesso = GrupoAcesso()
+    grupo_acesso.make(tipo="Desenvolvimento", grupo_trabalho=grupo)
     grupo_acesso.save()
     servidor = mixer.blend(Servidor, nome='server1', descricao="TESTE DO EQUIPAMENTO", tipo="Servidor Virtual", tipo_uso='DESENVOLVIMENTO')
     assert servidor.nome_completo() == "[ SERVER1 - DESENVOLVIMENTO ] TESTE DO EQUIPAMENTO"

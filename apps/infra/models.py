@@ -437,7 +437,7 @@ class EquipamentoGrupoAcesso(models.Model):
 class Ocorrencia(models.Model):
     ocorrencia = models.CharField("Ocorrência", max_length=255, blank=True, null=True)
     descricao = models.CharField("Descrição", max_length=255, blank=True, null=True)
-    data = models.DateTimeField("data", default=datetime.now)
+    data = models.DateTimeField("data", auto_now=True, blank=True, null=True)
     equipamento = models.ForeignKey(
         "infra.Equipamento",
         verbose_name="Equipamento",

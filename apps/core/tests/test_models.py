@@ -62,7 +62,8 @@ def test_create_grupo_trabalho() -> None:
 
 def test_create_grupo_acesso() -> None:
     grupo = mixer.blend(GrupoTrabalho, grupo="Grupo dados", grupo_sistema="dados")
-    grupo_acesso = GrupoAcesso(tipo="Desenvolvimento", grupo_trabalho=grupo)
+    grupo_acesso = GrupoAcesso()
+    grupo_acesso.make(tipo="Desenvolvimento", grupo_trabalho=grupo)
     assert str(grupo_acesso) == "DADOS | DESENVOLVIMENTO" 
     assert grupo_acesso.description == "HBAC Rule de DESENVOLVIMENTO do Grupo DADOS"
     assert grupo_acesso.hbac_freeipa == "hbac_dados_dev"

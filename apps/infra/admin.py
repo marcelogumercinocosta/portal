@@ -284,6 +284,7 @@ class ServidorAdmin(admin.ModelAdmin):
         for instance in instances:
             if isinstance(instance, EquipamentoGrupoAcesso) and formset.instance.conta == "FreeIPA":
                 Automount(FreeIPA(request), formset.instance, request).adicionar_grupos([instance.grupo_acesso])
+                messages.add_message(request, messages.WARNING, "Precisa reiniciar o serviço de AUTOFS no Servidor!")
             if isinstance(instance, ServidorHostnameIP):
                 hostnameip = instance.hostnameip
                 hostnameip.reservado = True
@@ -292,6 +293,7 @@ class ServidorAdmin(admin.ModelAdmin):
         for obj in formset.deleted_objects:
             if isinstance(obj, EquipamentoGrupoAcesso) and formset.instance.conta == "FreeIPA":
                 Automount(FreeIPA(request), formset.instance, request).remover_grupos([obj.grupo_acesso])
+                messages.add_message(request, messages.WARNING, "Precisa reiniciar o serviço de AUTOFS no Servidor!")
             if isinstance(obj, ServidorHostnameIP):
                 hostnameip = obj.hostnameip
                 hostnameip.reservado = False

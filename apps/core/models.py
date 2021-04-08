@@ -123,14 +123,13 @@ class GrupoAcesso(models.Model):
 
     def __str__(self):
         return self.grupo_acesso
+    
+    def make(self, tipo, grupo_trabalho):
+        self.tipo = tipo.upper()
+        self.grupo_trabalho = grupo_trabalho
+        self.grupo_acesso = f"{grupo_trabalho.grupo_sistema.upper()} | {self.tipo}"
+        self.hbac_freeipa = f"hbac_{grupo_trabalho.grupo_sistema}_{self.tipos[self.tipo]}"
 
-    def __init__(self, id=None, grupo_acesso=None, hbac_freeipa=None, tipo=None, grupo_trabalho_id=None, data=None, grupo_trabalho=None):
-        super().__init__(id, grupo_acesso, hbac_freeipa, tipo, grupo_trabalho_id, data)
-        if grupo_trabalho:
-            self.tipo = tipo.upper()
-            self.grupo_trabalho = grupo_trabalho
-            self.grupo_acesso = f"{grupo_trabalho.grupo_sistema.upper()} | {self.tipo}"
-            self.hbac_freeipa = f"hbac_{grupo_trabalho.grupo_sistema}_{self.tipos[self.tipo]}"
 
     @property
     def description(self):
@@ -167,7 +166,7 @@ class ColaboradorGrupoAcesso(models.Model):
     colaborador = models.ForeignKey("colaborador.Colaborador", on_delete=models.CASCADE)
     grupo_acesso = models.ForeignKey("core.GrupoAcesso", on_delete=models.CASCADE)
     aprovacao = models.IntegerField("status", default=0)
-    atualizacao = models.DateTimeField("Data de Atualização", auto_now=True)
+    atualizacao = models.DateTimeField("Data de Atualização", auto_now=True, null=True)
     objects = ColaboradorGrupoAcessoManager()
 
     class Meta:

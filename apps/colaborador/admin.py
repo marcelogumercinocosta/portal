@@ -110,7 +110,9 @@ class VPNAdmin(admin.ModelAdmin):
         return super().change_view(request, object_id, form_url=form_url, extra_context=extra_context)
 
     def save_model(self, request, obj, form, change):
-        if obj.data_abertura and obj.data_validade and (obj.mac_cabeado or obj.mac_wifi):
+        if obj.status=="Aguardando assinaturas" and (obj.mac_cabeado or obj.mac_wifi):
+            obj.status = "Atendimento"
+        if (obj.status=="Aguardando assinaturas" or obj.status == "Atendimento") and obj.data_abertura and obj.data_validade and (obj.mac_cabeado or obj.mac_wifi):
             obj.status = "Ativa"
         return super().save_model(request, obj, form, change)
 
@@ -119,4 +121,24 @@ class VPNAdmin(admin.ModelAdmin):
             return super().delete_model(request, obj)
         obj.status = "Inativa"
         obj.save()
+
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "colaborador" and request.user.has_perm("colaborador.secretaria_colaborador") and not request.user.is_superuser:
+            try:
+                kwargs["queryset"] = Colaborador.objects.filter(divisao_id=request.user.divisao_id)
+            except IndexError:
+                pass
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        if not obj:
+            form.base_fields['colaborador'].label_from_instance = lambda obj: f"{obj.first_name} {obj.last_name} ({obj.username})"
+        return form
     
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        if request.user.has_perm("colaborador.secretaria_colaborador") and not request.user.is_superuser:
+            return queryset.filter(colaborador__divisao_id=request.user.divisao_id)
+        return queryset

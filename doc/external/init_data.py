@@ -92,7 +92,7 @@ def set_divisao():
             "coordenacao": "COPDT - Coordenação de Pesquisa Aplicada e Desenvolvimento Tecnológico",
         },
         {
-            "divisao": "COPDT",
+            "divisao": "DIOTG",
             "divisao_completo": "Divisão de Observação da Terra e Geoinformática",
             "coordenacao": "COPDT - Coordenação de Pesquisa Aplicada e Desenvolvimento Tecnológico",
         },
@@ -185,7 +185,7 @@ def set_permissoes():
     permission_suporte.extend(["add_templatevm","change_templatevm","delete_templatevm","view_templatevm","add_templatehostnameip", "change_templatehostnameip", "delete_templatehostnameip","view_templatehostnameip","add_templatecomando", "change_templatecomando","delete_templatecomando","view_templatecomando"])
 
     permission_default = (
-        {"grupo": "Secretaria", "permission": ["change_divisao", "view_divisao", "view_colaborador", "change_colaborador", "secretaria_colaborador"]},
+        {"grupo": "Secretaria", "permission": ["change_divisao", "view_divisao", "view_colaborador", "change_colaborador", "secretaria_colaborador","view_vpn","add_vpn"]},
         {"grupo": "Servicedesk", "permission": permission_servicedesk, },
         {"grupo": "Colaborador", "permission": []},
         {"grupo": "Responsável", "permission": ["responsavel_colaborador"]},

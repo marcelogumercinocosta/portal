@@ -312,7 +312,7 @@ class ColaboradorContaView(ViewContextMixin, LoginRequiredMixin, DetailView ):
 
 class VPNFormularioView(ViewContextMixin, LoginRequiredMixin, PermissionRequiredMixin, View):
     template_name = "colaborador/pdf/VPN.html"
-    permission_required = "view_vpn"
+    permission_required = "colaborador.view_vpn"
     title = "VPN"
 
     def get(self, request, *args, **kwargs):

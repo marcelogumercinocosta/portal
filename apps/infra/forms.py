@@ -123,7 +123,7 @@ class EquipamentoGrupoAcessoForm(forms.ModelForm):
 class OcorrenciaInLineForm(forms.ModelForm):
     class Meta:
         model = Ocorrencia
-        fields = ["ocorrencia", "descricao", "data"]
+        fields = ["ocorrencia", "descricao"]
 
     def __init__(self, *args, **kwargs):
         super(OcorrenciaInLineForm, self).__init__(*args, **kwargs)

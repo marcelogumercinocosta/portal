@@ -1,9 +1,7 @@
 import datetime
 from django.shortcuts import get_object_or_404
-from apps.core.models import GrupoAcesso, GrupoPortal, GrupoTrabalho, ColaboradorGrupoAcesso
-from apps.colaborador.models import Colaborador
-from apps.core.utils.freeipa import FreeIPA
-from apps.core.utils.history import HistoryCore
+from apps.core.models import GrupoAcesso, ColaboradorGrupoAcesso
+
 
 class UpdateGrupoAcesso:
     
@@ -14,7 +12,8 @@ class UpdateGrupoAcesso:
     def update_acesso(self, grupo_trabalho):
         tipos = ["pesquisa", "desenvolvimento", "operacional", "documento"]
         for tipo  in tipos:
-            grupo_acesso = GrupoAcesso(tipo=tipo, grupo_trabalho=grupo_trabalho)
+            grupo_acesso = GrupoAcesso()
+            grupo_acesso.make(tipo, grupo_trabalho)
             if getattr(grupo_trabalho, tipo):
                 if self.client_feeipa.hbacrule_find_count(cn=grupo_acesso.hbac_freeipa) == 0:
                     self.client_feeipa.set_hbac_group(grupo_acesso)

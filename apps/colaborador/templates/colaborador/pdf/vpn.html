@@ -113,7 +113,7 @@
 </div>
 <div class="informacoes_left">
     Email: <b>{{ colaborador.email|safe }}</b>&nbsp;&nbsp;&nbsp;Telefone: <b>{{ colaborador.telefone|safe }}</b><br> 
-    Divis&atilde;o:|Coordena&ccedil;&atilde;o  <b>{{ colaborador.divisao.full_name }}</b><br>
+    Divis&atilde;o | Coordena&ccedil;&atilde;o: <b>{{ colaborador.divisao.full_name }}</b><br>
     {% if colaborador.externo %}
         Colaborador Externo: <b>SIM</b>
     {% else %}
@@ -141,7 +141,7 @@
 </div>
 <h6>Justificativa</h6>
 <div class='informacoes_borda'>
-    {% get_verbose_name_field vpn 'justificativa' %}: <b>{{vpn.justificativa}}</b>
+    <b>{{vpn.justificativa}}</b>
 </div>
 <br><br>
     Cachoeira Paulista, {% now "d/m/Y" %}
