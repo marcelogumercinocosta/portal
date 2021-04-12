@@ -1,9 +1,5 @@
-import datetime
 import pytest
-import numpy as np 
-import pandas as pd 
 from apps.monitoramento.utils.echarts import  AxisData, AxisBase, Legend, Tooltip, Toolbox, Grid, Echarts, LineArea, Line
-from pandas._libs.index import Timestamp
 
 
 def test_echarts_line_area() -> None:

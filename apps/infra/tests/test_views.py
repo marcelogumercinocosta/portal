@@ -19,7 +19,7 @@ from apps.infra.models import ( Equipamento,
                                HostnameIP, Rack, Rede, Servidor,
                                ServidorHostnameIP,
                                StorageGrupoAcessoMontagem)
-from apps.infra.views import (CriarServidorView, DataCenterJSONView,
+from apps.infra.views import (CriarServidorLdapView, DataCenterJSONView,
                               DataCenterMapView, DataCenterRackDetailView, DataCenterMapEditView,
                               DataCenterView, RackDetailView, RackQRCodeView, DataCenterPredioView,
                               RackServerDetailView, OcorrenciaNewView)
@@ -63,7 +63,7 @@ def test_criar_servidor_error_view(superuser, grupo_trabalho, responsavel_grupo)
     request = RequestFactory().get(reverse("infra:criar_servidor", kwargs={"pk": servidor.pk}))
     request = message_middleware(request)
     request.user = superuser
-    response = CriarServidorView.as_view()(request, pk=servidor.pk)
+    response = CriarServidorLdapView.as_view()(request, pk=servidor.pk)
     assert response.status_code == 302
     assert FreeIPA(request).host_find_count(fqdn=servidor.freeipa_name) == 0
 
@@ -114,7 +114,7 @@ def test_criar_servidor_view(superuser, grupo_trabalho, responsavel_grupo):
     equipamento_grupo_acesso = mixer.blend(EquipamentoGrupoAcesso, equipamento=servidor.equipamento_ptr, grupo_acesso=grupo_acesso_oper[0])
     equipamento_grupo_acesso.save()
 
-    response = CriarServidorView.as_view()(request, pk=servidor.pk)
+    response = CriarServidorLdapView.as_view()(request, pk=servidor.pk)
     assert response.status_code == 302
 
     assert freeipa.host_find_count(fqdn=servidor.freeipa_name) == 1

@@ -51,8 +51,7 @@ class Divisao(models.Model):
 
     @property
     def color(self):
-        cor = ["green", "red", "blue", "orange", "lime", "teal", "brown"]
-        return cor[self.id - 1]
+        return "blue"
     
     @property
     def full_name(self):

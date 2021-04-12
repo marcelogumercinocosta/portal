@@ -109,4 +109,3 @@ update-prod:
 	docker image rm docker images prod_portal_django-celery --format "{{.ID}}"
 	docker image rm docker images prod_portal_gunicorn --format "{{.ID}}"
 	docker-compose -f ./docker/docker-compose_production_update -p prod_portal --project-directory $(shell pwd) up -d
-	docker exec -it $$(docker ps --format "{{.Names}}" | grep django-celery) /app/manage.py migrate

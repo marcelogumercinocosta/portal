@@ -12,9 +12,7 @@ from django.test import RequestFactory
 from django.urls import reverse
 from mixer.backend.django import mixer
 
-from apps.colaborador.models import Colaborador
-from apps.core.models import (Divisao, GrupoAcesso, GrupoTrabalho, Predio, 
-                              ResponsavelGrupoTrabalho)
+from apps.core.models import ( GrupoAcesso, Predio)
 from apps.core.utils.freeipa import FreeIPA
 from apps.core.utils.history import HistoryCore
 from apps.core.views import UpdateGrupoAcesso
@@ -22,15 +20,13 @@ from apps.infra.admin import (EquipamentoParteRackInLine,
                               EquipamentoRackInLine,
                               GrupoAcessoEquipamentoInLine,
                               GrupoAcessoEquipamentoInLineRead,
-                              HostnameIPInLine, OcorrenciaInLine, RackAdmin,
+                              HostnameIPServidorInLine, HostnameIPServidorInLine, OcorrenciaInLine, RackAdmin,
                               ServidorAdmin)
 from apps.infra.forms import EquipamentoGrupoAcessoForm, ServidorForm, HostnameIPInLineForm
-from apps.infra.models import (AmbienteVirtual, Equipamento,
+from apps.infra.models import ( Equipamento,
                                EquipamentoGrupoAcesso, EquipamentoParte,
                                HostnameIP, Ocorrencia, Rack, Rede, Servidor,
-                               ServidorHostnameIP, Storage, StorageArea,
-                               StorageAreaGrupoTrabalho,
-                               StorageGrupoAcessoMontagem, Supercomputador)
+                               ServidorHostnameIP, StorageGrupoAcessoMontagem,)
 from apps.infra.utils.freeipa_location import Automount
 from apps.core.tests.base import *
 
@@ -158,7 +154,7 @@ def test_servidor_admin(admin_site, superuser, grupo_trabalho) -> None:
     UpdateGrupoAcesso(client_feeipa=freeipa, history_core=history_core).update_acesso(grupo_trabalho)
 
     freeipa.set_host(servidor, description=servidor.descricao)
-    assert model_admin.inlines == (HostnameIPInLine,) 
+    assert model_admin.inlines == (HostnameIPServidorInLine,) 
     assert model_admin.readonly_fields == ("status","conta") 
 
     model_admin.add_view(request=request)
@@ -167,7 +163,7 @@ def test_servidor_admin(admin_site, superuser, grupo_trabalho) -> None:
     assert model_admin.fields == ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "conta"]
 
     model_admin.change_view(request=request, object_id=str(servidor.pk))
-    assert model_admin.inlines == (HostnameIPInLine, GrupoAcessoEquipamentoInLine, OcorrenciaInLine) 
+    assert model_admin.inlines == (HostnameIPServidorInLine, GrupoAcessoEquipamentoInLine, OcorrenciaInLine) 
     assert model_admin.readonly_fields == ("nome", "status", "conta", "tipo", "tipo_uso", "predio")
     assert model_admin.fields == ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "conta"]
     servidor.tipo = "Servidor Virtual"

@@ -2,4 +2,5 @@ from django.apps import AppConfig
 
 
 class ColaboradorConfig(AppConfig):
-    name = "colaborador"
+    default_auto_field = 'django.db.models.AutoField'
+    name = "apps.colaborador"

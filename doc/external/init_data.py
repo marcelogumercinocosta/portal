@@ -96,6 +96,11 @@ def set_divisao():
             "divisao_completo": "Divisão de Observação da Terra e Geoinformática",
             "coordenacao": "COPDT - Coordenação de Pesquisa Aplicada e Desenvolvimento Tecnológico",
         },
+        {
+            "divisao": "DIPE2",
+            "divisao_completo": "Divisão de Projeto Estratégico 2",
+            "coordenacao": "COGPI - Coordenação de Gestão de Projetos e Inovação Tecnológica",
+        },
     )
     for divisao in organograma:
         obj_divisao = Divisao()

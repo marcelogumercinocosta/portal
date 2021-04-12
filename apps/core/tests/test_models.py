@@ -38,7 +38,6 @@ def test_create_divisao(chefia_1, chefia_2) -> None:
     divisao = mixer.blend(Divisao, divisao="DIV", divisao_completo="divisao", chefe=chefia_1, chefe_substituto=chefia_2, email="divisao@inpe.br")
     divisao.chefe_ativo = True
     divisao.save()
-    assert divisao.color == "blue"
     assert divisao.full_name == "DIV - divisao"
     assert str(divisao) == "DIV"
     divisao.chefe_substituto_ativo = True
