@@ -52,7 +52,7 @@
                                 </div>
                                 <div class="col-3 p-1">
                                     IP: <b>{{host.address}}</b><br>
-                                    id: {{ host.uid }}<br>
+                                    uptime: <b> {{ host.get_uptime }} dias </b> <br>
                                 </div>
                                 <div class="col-3 p-1">
                                     {{ host.system_manufacturer }} {{ host.system_product_name }}<br>
@@ -93,7 +93,7 @@
                             </div>
                             <div class="col-3 p-1">
                                 SO: <b>{{ vm.software_version|truncatechars:35 }}</b><br>
-                                id: {{ vm.uid }} <br>
+                                uptime:<b> {{ vm.get_uptime }} dias </b><br>
                             </div>
                             {% for vdi in vm.vdis %}
                             <div class="col-2 p-1 pt-3 pl-4"></div>
