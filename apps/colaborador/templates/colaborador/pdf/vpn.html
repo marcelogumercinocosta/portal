@@ -136,6 +136,7 @@
 <div class='informacoes_borda'>
     {% get_verbose_name_field vpn 'recurso' %}: <b>{{vpn.recurso}}</b><br>
     {% get_verbose_name_field vpn 'data_validade' %}: <b>{{vpn.data_fim_vpn|date:"SHORT_DATE_FORMAT"}}</b><br>
+    {% get_verbose_name_field vpn 'local' %}: <b>{{vpn.get_local}}</b><br>
     {% get_verbose_name_field vpn 'mac_cabeado' %}:  <b>{{vpn.get_mac_cabeado}}</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     {% get_verbose_name_field vpn 'mac_wifi' %}: <b>{{vpn.get_mac_cabeado}}</b><br>
 </div>

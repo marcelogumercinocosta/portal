@@ -105,6 +105,7 @@ class VPN(models.Model):
     mac_wifi = models.CharField('MAC Address Wireless', max_length=255, null=True, blank=True)
     justificativa = models.CharField('Justificativa', max_length=255 )
     status = models.CharField('Status', default='Solicitada', max_length=255, null=True, blank=True)
+    local =  models.CharField('Local de trabalho',  max_length=255, null=True, blank=True)
     colaborador = models.ForeignKey("colaborador.Colaborador", verbose_name="Colaborador", on_delete=models.PROTECT)
     class Meta :
         ordering = ['-data_validade']
@@ -131,11 +132,18 @@ class VPN(models.Model):
             return  "___:___:___:___:___"
 
     @property
-    def get_mmac_wifi(self):
+    def get_mac_wifi(self):
         if self.mac_wifi: 
             return self.mac_wifi
         else:
             return  "___:___:___:___:___"
+
+    @property
+    def get_local(self):
+        if self.local: 
+            return self.local
+        else:
+            return  "____________________"
 
     @property
     def status_atualizado(self):

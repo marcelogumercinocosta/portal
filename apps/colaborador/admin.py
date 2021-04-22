@@ -108,10 +108,10 @@ class VPNAdmin(admin.ModelAdmin):
     def change_view(self, request, object_id, form_url="", extra_context=None):
         vpn = VPN.objects.get(pk=object_id)
         if vpn.status == 'Ativa' or vpn.status == "Inativa" or  vpn.status == "Vencida": 
-            self.readonly_fields = ["colaborador", "recurso", "justificativa", 'status', "data_solicitacao","data_abertura", "data_validade", "mac_cabeado", "mac_wifi"]
+            self.readonly_fields = ["colaborador", "recurso", "justificativa", 'status', "local", "data_solicitacao","data_abertura", "data_validade", "mac_cabeado", "mac_wifi"]
         else:
             self.readonly_fields = ["colaborador", "recurso", "justificativa", 'status', "data_solicitacao"]
-        self.fields = ["colaborador", "recurso", "justificativa", "data_solicitacao", "data_abertura", "data_validade",  "mac_cabeado", "mac_wifi", "status"]
+        self.fields = ["colaborador", "recurso", "justificativa", "data_solicitacao", "local", "data_abertura", "data_validade",  "mac_cabeado", "mac_wifi", "status"]
         return super().change_view(request, object_id, form_url=form_url, extra_context=extra_context)
 
     def save_model(self, request, obj, form, change):
