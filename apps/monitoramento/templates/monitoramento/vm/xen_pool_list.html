@@ -19,7 +19,7 @@
         </div>
         <div class="col-2 p-1">
             <div class="card shadow-menu  grey lighten-3">
-                <p class="p-2 m-0">Data: <b class="float-right">{{ pool.fim|date:"d/m/Y H:i:s" }}</b></p>
+                <p class="p-2 m-0">Data: <b class="float-right">{{ pool.update|date:"d/m/Y H:i" }}</b></p>
             </div>
         </div>
         <div class="col-4 p-1">
@@ -70,7 +70,7 @@
                                     </div>
                                 </div>
                                 <div class="col-2 p-1 pl-5">
-                                    CPU: {{ host.cpus }} core(s)<br>
+                                    CPU:  <b>{{ host.cpus }} core(s)</b><br>
                                 </div>
                             </div>
                         </a>
@@ -98,16 +98,16 @@
                             {% for vdi in vm.vdis %}
                             <div class="col-2 p-1 pt-3 pl-4"></div>
                             <div class="col-2 pb-1 pl-1">
-                                Disco: {{ vdi.nome}}
+                                Disco: <b>{{ vdi.nome}}</b>
                             </div>
                             <div class="col-2 pb-1">
                                 Tamanho: <b> {{ vdi.virtual_size|get_size_human }} </b>
                             </div>
                             <div class="col-2 pb-1">
-                                Tipo: {{ vdi.type }}
+                                Tipo: <b>{{ vdi.type }}</b>
                             </div>
                             <div class="col-4 pb-1">
-                                LUN: {{ vdi.sr_nome }}
+                                LUN: <b>{{ vdi.sr_nome }}</b>
                             </div>
                             {% endfor %}
                         </div>

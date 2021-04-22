@@ -3,7 +3,6 @@ import time
 from datetime import datetime
 from django.conf import settings
 from XenAPI import Failure, Session
-import errno
 
 
 class Pool:
@@ -14,6 +13,7 @@ class Pool:
         self.hosts = []
         self.name = name
         self.inicio = time.time()
+        self.update = datetime.now()
 
     def add_host(self, host):
         self.total_vms += host.count_vms()
@@ -42,11 +42,12 @@ class Host:
         self.software_version = object_host["software_version"]
         self.cpu_count = object_host["cpu_info"]["cpu_count"]
         self.modelname = object_host["cpu_info"]["modelname"]
-        self.last_updated = datetime.strptime(metric["last_updated"].value, "%Y%m%dT%H:%M:%SZ")
+        self.start_time = datetime.fromtimestamp(int(object_host["other_config"]["boot_time"].replace('.', '')))
         self.memory_total = int(metric["memory_total"])
         self.memory_free = int(metric["memory_free"])
         self.load = 0
         self.cpus = 0
+
 
     def get_memory(self):
         return int(100 - (self.memory_free * 100) / self.memory_total)
@@ -67,7 +68,7 @@ class Host:
         return len(self.vms)
     
     def get_uptime(self):
-        return (datetime.now() - self.last_updated).days
+        return (datetime.now() - self.start_time).days
 
 
 class Vm:
@@ -80,7 +81,7 @@ class Vm:
         self.name_description = object_data["name_description"]
         self.VCPUs_number = metrics["VCPUs_number"]
         self.memory_total = float(metrics["memory_actual"])
-        self.last_updated = None
+        self.start_time = datetime.strptime(metrics["start_time"].value, "%Y%m%dT%H:%M:%SZ")
         self.networks = ""
         self.software_version = None
         self.memory_free = 0
@@ -91,7 +92,6 @@ class Vm:
         self.vmRead = 0
 
     def set_guest_metric(self, guest_metric):
-        self.last_updated = datetime.strptime(guest_metric["last_updated"].value, "%Y%m%dT%H:%M:%SZ")
         if guest_metric["os_version"]:
             self.software_version = guest_metric["os_version"]["name"]
         else:
@@ -105,7 +105,7 @@ class Vm:
                     self.networks = self.networks + " / " + guest_metric["networks"][key]
     
     def get_uptime(self):
-        return (datetime.now() - self.last_updated).days
+        return (datetime.now() - self.start_time).days
 
     def add_vdis(self, vdi):
         self.vdis.append(vdi)
