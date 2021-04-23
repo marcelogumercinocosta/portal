@@ -195,7 +195,7 @@ def set_permissoes():
         {"grupo": "Colaborador", "permission": []},
         {"grupo": "Responsável", "permission": ["responsavel_colaborador"]},
         {"grupo": "NOC", "permission": []},
-        {"grupo": "Chefia da Divisão", "permission": []},
+        {"grupo": "Chefia da Divisão", "permission": ["chefia_colaborador"]},
         {"grupo": "Supercomputação", "permission": permission_suporte},
     )
 
