@@ -91,7 +91,7 @@ test-dev:
 
 # target: dumpdata - dump data for database
 dumpdata:
-	../env/bin/python ./manage.py dumpdata core.grupotrabalho core.grupoacesso infra.rede infra.hostnameip infra.rack infra.equipamento infra.equipamentogrupoacesso infra.storage infra.storagearea infra.storageareagrupotrabalho infra.supercomputador infra.servidor infra.servidorhostnameip infra.ambientevirtual infra.templatevm infra.templatehostnameip infra.templatecomando  monitoramento.tipomonitoramento  monitoramento.monitoramento monitoramento.prometheus colaborador.colaborador core.colaboradorgrupoacesso core.responsavelgrupotrabalho --indent 2 > ./doc/external/dump_private.json 
+	../env/bin/python ./manage.py dumpdata core.grupotrabalho core.grupoacesso infra.rede infra.hostnameip infra.rack infra.equipamento infra.equipamentogrupoacesso infra.storage infra.storagearea infra.storageareagrupotrabalho infra.supercomputador infra.servidor infra.servidorhostnameip infra.ambientevirtual infra.templatevm infra.templatehostnameip infra.templatecomando  monitoramento.tipomonitoramento  monitoramento.monitoramento monitoramento.prometheus colaborador.colaborador core.colaboradorgrupoacesso core.responsavelgrupotrabalho colaborador.vpn --indent 2 > ./doc/external/dump_private.json 
 
 # target: init - insert admin user + permissions
 init:

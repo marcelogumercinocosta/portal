@@ -68,7 +68,7 @@ class Host:
         return len(self.vms)
     
     def get_uptime(self):
-        return (datetime.now() - self.start_time).days
+        return (datetime.utcnow() - self.start_time).days
 
 
 class Vm:
@@ -105,7 +105,7 @@ class Vm:
                     self.networks = self.networks + " / " + guest_metric["networks"][key]
     
     def get_uptime(self):
-        return (datetime.now() - self.start_time).days
+        return (datetime.utcnow() - self.start_time).days
 
     def add_vdis(self, vdi):
         self.vdis.append(vdi)
