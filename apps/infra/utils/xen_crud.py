@@ -17,6 +17,7 @@ class XenCrud:
         self.vm = vm
         self.servidores = [servidor.nome for servidor in ambiente_virtual.servidor.all()]
         self.servidor = self.servidores[0]
+        
 
     # Login
     def login(self):
@@ -37,8 +38,8 @@ class XenCrud:
     
     def create_vm(self, template,  memoria, cpu):
         origem_hostname, origem_ip = template.host_principal
-        origem_ping = os.system(f"ping -c 1 -W 0.3 -q {origem_hostname}.cptec.inpe.br  > /dev/null")
-        destino_ping = os.system(f"ping -c 1 -W 0.3 -q {self.vm.nome}.cptec.inpe.br  > /dev/null") 
+        origem_ping = os.system(f"ping -c 1 -W 1 -q {origem_hostname}.cptec.inpe.br  > /dev/null")
+        destino_ping = os.system(f"ping -c 1 -W 1 -q {self.vm.nome}.cptec.inpe.br  > /dev/null") 
         self.login()
         vm_ref_verificacao_vm = self.session.xenapi.VM.get_by_name_label(self.vm.nome)
         if ( origem_ping != 0  and len(vm_ref_verificacao_vm) == 0

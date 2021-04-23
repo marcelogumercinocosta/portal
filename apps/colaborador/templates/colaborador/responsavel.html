@@ -54,9 +54,11 @@
 												<div class="form-group">
 													<p><b>V&iacute;nculo: </b>{{ solicitacao.colaborador.vinculo }}</p>
 												</div>
-												<div class="form-group">
-													<p><b>Ramal: </b>{{ solicitacao.colaborador.ramal }}</p>
-												</div>
+												{% if not colaborador.externo %}
+													<div class="form-group">
+														<p><b>Ramal: </b>{{ solicitacao.colaborador.ramal }}</p>
+													</div>
+												{% endif %}
 												<div class="form-group">
 													<p><b>Data de In&iacute;cio: </b>{{ solicitacao.colaborador.data_inicio }}</p>
 												</div>
@@ -71,9 +73,11 @@
 												{% endif %}
 											</div>
 											<div class="col-sm-5">
-												<div class="form-group">
-													<p><b>Pr&eacute;dio: </b>{{ solicitacao.colaborador.predio }}</p>
-												</div>
+												{% if not colaborador.externo %}
+													<div class="form-group">
+														<p><b>Pr&eacute;dio: </b>{{ solicitacao.colaborador.predio }}</p>
+													</div>
+												{% endif %}
 												<div class="form-group">
 													<p><b>Divis&atilde;o | Coordena&ccedil;&atilde;o: </b> {{ solicitacao.colaborador.divisao }}</p>
 												</div>

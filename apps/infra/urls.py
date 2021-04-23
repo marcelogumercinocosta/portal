@@ -18,5 +18,5 @@ urlpatterns = [
     path("servidor/<int:pk>/criarservidorldap/", login_required(CriarServidorLdapView.as_view()), name="criar_servidor_ldap"),
     path("servidor/<int:pk>/criarservidorlocal/", login_required(CriarServidorLocalView.as_view()), name="criar_servidor_local"),
     path("servidor/<int:pk>/criarVM/", login_required(CriarVmView.as_view()), name="criar_vm"),
-    path("servidor/<int:pk>/<task_id>/criarVM/progress", login_required(CriarVmProgressView.as_view()), name="criar_vm_progress"),
+    path("servidor/<int:pk>/<template_id>/<task_id>/criarVM/progress", login_required(CriarVmProgressView.as_view()), name="criar_vm_progress"),
 ]

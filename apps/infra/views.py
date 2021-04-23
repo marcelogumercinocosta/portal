@@ -22,7 +22,7 @@ from apps.core.tasks import send_email_task
 from apps.core.utils.freeipa import FreeIPA
 from apps.infra.forms import OcorrenciaForm, ServidorVMForm
 from apps.core.models import Predio
-from apps.infra.models import ( LINHAS, Equipamento, EquipamentoParte, Ocorrencia, Rack, Servidor)
+from apps.infra.models import ( LINHAS, Equipamento, EquipamentoParte, Ocorrencia, Rack, Servidor, TemplateVM)
 from apps.infra.utils.freeipa_location import Automount
 from apps.infra.utils.datacenter import ( DataCenterMap, RackMap)
 from apps.infra.utils.history import HistoryInfra
@@ -201,21 +201,21 @@ class CriarVmView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
         context["form"] = ServidorVMForm(initial={'servidor': self.kwargs['pk'] })
         context["opts"] = Servidor._meta
         context["original"] = get_object_or_404(Servidor, id=self.kwargs['pk'])
+        context["template"] = 0
         return context
     
     def form_valid(self, form):
         vm = get_object_or_404(Servidor, id=form.cleaned_data['servidor'])
-        template = form.cleaned_data['template']
+        self.template = form.cleaned_data['template']
         memoria = form.cleaned_data['memoria']
         cpu = form.cleaned_data['cpu']
-        
-        self.task = XenCrud(self.request, vm, template.ambiente_virtual).create_vm(template, memoria, cpu)
+        self.task = XenCrud(self.request, vm, self.template.ambiente_virtual).create_vm(self.template, memoria, cpu)
         if not self.task:
             return super().form_invalid(form)
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy("infra:criar_vm_progress", kwargs={"pk": self.kwargs['pk'], "task_id": self.task.id })
+        return reverse_lazy("infra:criar_vm_progress", kwargs={"pk": self.kwargs['pk'], "task_id": self.task.id, "template_id": self.template.id  })
 
 class CriarVmProgressView(LoginRequiredMixin, TemplateView):
     template_name = "infra/servidor/vm.html"
@@ -224,5 +224,6 @@ class CriarVmProgressView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context["opts"] = Servidor._meta
         context["original"] = get_object_or_404(Servidor, id=self.kwargs['pk'])
+        context["template"] = get_object_or_404(TemplateVM, id=self.kwargs['template_id'])
         context["task_id"] = self.kwargs['task_id'] 
         return context

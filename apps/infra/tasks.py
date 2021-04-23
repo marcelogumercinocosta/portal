@@ -116,13 +116,13 @@ def create_vm_task(self, servidor, vm_id,  template_id, memoria, cpu):
             contador_progress_temporario +=1
             time.sleep(1)
         time.sleep(15)
-        progress_recorder.set_progress(180, total, description="Executando Comandos Finais")
+        progress_recorder.set_progress(contador_progress_temporario, total, description="Executando Comandos Finais")
         command = fabric.Connection(vm_ip, port=22, user=root, connect_kwargs={'password': root_password})
         for comando in comandos["3"]:
             contador_progress_temporario +=2
             progress_recorder.set_progress(contador_progress_temporario, total, description="Executando Comandos Finais")
             command.run(comando)
-        progress_recorder.set_progress(99, total, description="Desabilitando ssh root")
+        progress_recorder.set_progress(199, total, description="Desabilitando ssh root")
         progress_recorder.set_progress(total, total, description=f"{vm} Criada")
     except Exception as e:
         self.update_state(state=states.FAILURE, meta={'custom': str(e)})

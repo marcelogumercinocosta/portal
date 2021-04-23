@@ -20,6 +20,16 @@
                         </div>
                         <div class="panel-collapse">
                             <div class="panel-body">
+                                {% if template %}
+                                    <div class="row">
+                                        <div class="col-sm-9 offset-1">
+                                            <div class="row p-1 pt-3">
+                                                <div class="col-sm-3 text-right pr-0"><b>Template:</b></div>
+                                                <div class="col-sm-9">{{ template }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
                                 <div class="row">
                                     <div class="col-sm-9 offset-1">
                                         <div class="row p-1 pt-3">
