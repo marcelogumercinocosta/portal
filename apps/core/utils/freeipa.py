@@ -98,6 +98,7 @@ class FreeIPA(Client):
                     self.sudorule_add_option(grupo.get_sudo(), "env_keep-=HOME")
                     self.sudorule_add_option(grupo.get_sudo(), "umask=0002")
                     self.sudorule_add_option(grupo.get_sudo(), "logfile=/var/log/sudo.log")
+                    self.sudorule_mod(grupo.get_sudo())
                     # self.sudorule_add_allow_command(grupo.get_sudo())
                     return True
         if self.request: messages.add_message(self.request, messages.ERROR, "Erro na criação do sudo")
@@ -214,6 +215,9 @@ class FreeIPA(Client):
         params = {"ipasudoopt": option}
         return self.__execute_freeipa(f"sudorule {sudorule} add option {option}", "sudorule_add_option", sudorule, params)
 
+    def sudorule_mod(self, sudorule):
+        params = {"cmdcategory": 'all'}
+        return self.__execute_freeipa(f"sudorule_mod {sudorule} modify", "sudorule_mod", sudorule, params)
     def sudorule_add_members_group(self, sudorule, group):
         params = {"group": group}
         return self.__execute_freeipa(f"added {group} on sudorule {sudorule}", "sudorule_add_user", sudorule, params)
@@ -233,10 +237,6 @@ class FreeIPA(Client):
     def sudorule_add_runasuser(self, sudorule, user):
         params = {"user": user}
         return self.__execute_freeipa(f"added {user} on sudorule {sudorule}", "sudorule_add_runasuser", sudorule, params)
-
-    # def sudorule_add_allow_command(self, sudorule):
-    #     params = {"sudocmdgroup": "sudo_cmd_default_usuarios"}
-    #     return self.__execute_freeipa(f"added sudocmdgroup sudo_cmd_default_usuarios on sudorule {sudorule}", "sudorule_add_allow_command", sudorule, params)
 
     def sudorule_delete(self, sudorule):
         return self.__execute_freeipa(f"sudorule {sudorule} deleted", "sudorule_del", sudorule)
