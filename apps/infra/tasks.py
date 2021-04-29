@@ -126,14 +126,14 @@ def create_vm_task(self, servidor, vm_id,  template_id, memoria, cpu):
         progress_recorder.set_progress(total, total, description=f"{vm} Criada")
     except Exception as e:
         self.update_state(state=states.FAILURE, meta={'custom': str(e)})
-        send_mail('ERRO na Criação de VM', f"{vm} - {str(e)}" , "portal.cptec@gmail.com", [settings.EMAIL_SUPORTE, settings.EMAIL_SYSADMIN, ])
+        send_mail('ERRO na Criação de VM', f"{vm} - {str(e)}" , settings.EMAIL_HOST_USER, [settings.EMAIL_SUPORTE, settings.EMAIL_SYSADMIN, ])
         return f"Error: {str(e)}"
     finally:
         session.xenapi.session.logout()
     destino.vm_remover = True
     destino.vm_ambiente_virtual = origem.ambiente_virtual
     destino.save()
-    send_mail('Criação de VM OK',f'{vm} criada com sucesso!' , "portal.cptec@gmail.com", [settings.EMAIL_SUPORTE, settings.EMAIL_SYSADMIN, ])
+    send_mail('Criação de VM OK',f'{vm} criada com sucesso!' , settings.EMAIL_HOST_USER, [settings.EMAIL_SUPORTE, settings.EMAIL_SYSADMIN, ])
     return f"{vm} OK"
 
 
@@ -155,10 +155,10 @@ def delete_vm_task(self, servidor, vm_name):
             if vdi_ref != "OpaqueRef:NULL":
                 session.xenapi.VDI.destroy(vdi_ref)
         session.xenapi.VM.destroy(vm_ref)
-        send_mail('Remoção de VM OK',f'{vm_name} removida com sucesso!' , "portal.cptec@gmail.com", [settings.EMAIL_SUPORTE, settings.EMAIL_SYSADMIN, ])
+        send_mail('Remoção de VM OK',f'{vm_name} removida com sucesso!' , settings.EMAIL_HOST_USER, [settings.EMAIL_SUPORTE, settings.EMAIL_SYSADMIN, ])
         return f"{vm_name} DELETE"
     except Exception as e:
-        send_mail('ERRO na Remoção de VM', str(e) , "portal.cptec@gmail.com", [settings.EMAIL_SUPORTE, settings.EMAIL_SYSADMIN, ])
+        send_mail('ERRO na Remoção de VM', str(e) , settings.EMAIL_HOST_USER, [settings.EMAIL_SUPORTE, settings.EMAIL_SYSADMIN, ])
         return f"Error: {str(e)}"
         
 

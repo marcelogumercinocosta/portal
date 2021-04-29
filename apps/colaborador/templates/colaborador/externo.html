@@ -1,0 +1,19 @@
+{% extends "admin/base.html" %}
+{% load static %}
+{% load garb_form %}
+
+{% block content %}
+    <form method="post" id="formValidate" action="{% url 'colaborador:externo' %}">
+        {% csrf_token %}
+        {{ form|render }}
+        <div id="content-main">
+            <div class="change-columns">
+                <div class="main-column">
+                    <div class="box-garb module aligned {{ fieldset.classes }} text-right pr-5">
+                        <button type="submit" class="btn btn-primary width-btn-min ">Enviar Email</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}

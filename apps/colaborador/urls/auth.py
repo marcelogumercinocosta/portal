@@ -17,6 +17,7 @@ from apps.colaborador.views import (
     ChefiaAprovarView,
     ColaboradorHistoricoView,
     ColaboradorContaView, VPNFormularioView,
+    ColaboradorExternoView
 )
 
 app_name = "colaborador"
@@ -39,5 +40,7 @@ urlpatterns = [
     path("history", login_required(ColaboradorHistoricoView.as_view()), name="conta_historico"),
     path("sua", login_required(ColaboradorContaView.as_view()), name="conta"),
     path("vpn/<int:pk>/formulario/", login_required(VPNFormularioView.as_view()), name="vpn_formulario"),
+    path("externo/", login_required(ColaboradorExternoView.as_view()), name="externo"),
+    
     
 ]

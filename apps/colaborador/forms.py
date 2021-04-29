@@ -1,17 +1,19 @@
 import re
 from datetime import datetime
 from unicodedata import normalize
-from django.db.models.query import QuerySet
-from django.forms.models import ModelChoiceField
+
 from django import forms
 from django.conf import settings
 from django.contrib import messages
 from django.db.models import Q
+from django.db.models.query import QuerySet
+from django.forms.models import ModelChoiceField
 
-from apps.colaborador.models import Colaborador, VPN, Vinculo
+from apps.colaborador.models import VPN, Colaborador, Vinculo
 from apps.core.models import ColaboradorGrupoAcesso, Divisao
 from apps.core.tasks import send_email_template_task
-from garb.forms import GarbModelForm
+from garb.forms import GarbForm, GarbModelForm
+
 
 class EmailLowerField(forms.EmailField):
     def to_python(self, value):
@@ -118,7 +120,7 @@ class ColaboradorBaseForm(forms.ModelForm):
     )
 
 
-    divisao = DivisaoChoiceField(queryset=Divisao.objects.all(), label="Divisão")
+    divisao = DivisaoChoiceField(queryset=Divisao.objects.all(), label="Divisão | Coordenação")
     responsavel = forms.ModelChoiceField(queryset=Colaborador.objects.filter(Q(groups__name="Responsavel")).distinct(), label="Responsável", widget=forms.Select(attrs={"data-live-search": "True"}),required=False,)
     last_name = forms.CharField(max_length=255, label="Sobrenome(s)")
     documento_tipo = forms.ChoiceField(choices=documento_tipo, label="Tipo Documento")
@@ -148,9 +150,9 @@ class ColaboradorBaseForm(forms.ModelForm):
 
 
 class ColaboradorForm(ColaboradorBaseForm, GarbModelForm): 
-    check_me_out1 = forms.BooleanField(required=True, label="<a href='#' target='_blank'>Eu li e concordo com a RE/DIR-518 Normas de uso aceit&aacute;vel dos recursos computacionais do INPE</a>")
-    check_me_out2 = forms.BooleanField(required=True, label="<a href='#' target='_blank'>Eu li e concordo com a Pol&iacute;tica de distribui&ccedil;&atilde;o de dados da COIDS</a>")
-    check_me_out3 = forms.BooleanField(required=True, label="<a href='#' target='_blank'>Eu li e concordo com a Pol&iacute;tica de acesso aos Dados e Servidores da COIDS</a>")
+    check_me_out1 = forms.BooleanField(required=True, label="<a href='http://s0.cptec.inpe.br/sysadmin/documentos/re518.pdf' target='_blank'>Eu li e concordo com a RE/DIR-518 Normas de uso aceit&aacute;vel dos recursos computacionais do INPE</a>")
+    check_me_out2 = forms.BooleanField(required=True, label="<a href='http://s0.cptec.inpe.br/sysadmin/documentos/politica_transferencia.pdf' target='_blank'>Eu li e concordo com a Pol&iacute;tica para uso dos servi&ccedil;os de transfer&ecirc;ncia de dados da da COIDS</a>")
+    check_me_out3 = forms.BooleanField(required=True, label="<a href='http://s0.cptec.inpe.br/sysadmin/documentos/politica_acesso.pdf' target='_blank'>Eu li e concordo com a Pol&iacute;tica de acesso aos Dados e Servidores da COIDS</a>")
     vinculo = forms.ModelChoiceField(queryset=Vinculo.objects.filter(Q(id__gte=2)), label="Vínculo")
     class Meta:
         model = Colaborador
@@ -202,3 +204,11 @@ class VPNForm(forms.ModelForm):
         fields = "__all__"
         widgets = {"colaborador": forms.Select(attrs={"data-live-search": "True"})}
     
+
+
+class ColaboradorExternoForm(GarbForm):
+    email = forms.EmailField(required=True)
+    class Meta:
+        fieldsets = [
+            ("Solicitar Informações do Colaborador Externo", {"fields": ("email",)}),
+        ]

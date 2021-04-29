@@ -18,7 +18,7 @@ from django.views.generic.base import RedirectView, TemplateView, View
 from django.views.generic.edit import CreateView, FormView, UpdateView
 from xhtml2pdf import pisa
 
-from apps.colaborador.forms import  ColaboradorForm, ResponsavelNegarForm, SecretariaNegarForm, SuporteForm
+from apps.colaborador.forms import  ColaboradorExternoForm, ColaboradorForm, ResponsavelNegarForm, SecretariaNegarForm, SuporteForm
 from apps.colaborador.models import Colaborador, VPN
 from apps.colaborador.utils import HistoryColaborador, gerar_password, get_user
 from apps.core.models import ColaboradorGrupoAcesso, Divisao, GrupoAcesso, GrupoTrabalho
@@ -328,3 +328,23 @@ class VPNFormularioView(ViewContextMixin, LoginRequiredMixin, PermissionRequired
         pisa.CreatePDF(html.encode("utf8"), dest=response)
         messages.add_message(self.request, messages.SUCCESS, "Por favor, Envie o formulário para o Colaborador")
         return response
+
+class ColaboradorExternoView(ViewContextMixin, LoginRequiredMixin, PermissionRequiredMixin, FormView):
+    form_class = ColaboradorExternoForm
+    template_name = "colaborador/externo.html"
+    permission_required = ["colaborador.secretaria_colaborador", "colaborador.suporte_colaborador"]
+    title = "Colaborador Externo"
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context["form"] = ColaboradorExternoForm()
+    #     return context
+    
+    def form_valid(self, form):
+        self.email = form.cleaned_data['email']
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        send_email_template_task.delay(f"Instruções para preenchimento dos formulários","colaborador/email/colaborador_externo.html", [self.email], {})
+        messages.add_message(self.request, messages.SUCCESS, "Email com instruções para preenchimento de abertura de conta foi enviado!!")
+        return reverse_lazy("home")
