@@ -326,7 +326,6 @@ class VPNFormularioView(ViewContextMixin, LoginRequiredMixin, PermissionRequired
         template = get_template(self.template_name)
         html = template.render(context)
         pisa.CreatePDF(html.encode("utf8"), dest=response)
-        messages.add_message(self.request, messages.SUCCESS, "Por favor, Envie o formulário para o Colaborador")
         return response
 
 class ColaboradorExternoView(ViewContextMixin, LoginRequiredMixin, PermissionRequiredMixin, FormView):
@@ -335,11 +334,6 @@ class ColaboradorExternoView(ViewContextMixin, LoginRequiredMixin, PermissionReq
     permission_required = ["colaborador.secretaria_colaborador", "colaborador.suporte_colaborador"]
     title = "Colaborador Externo"
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context["form"] = ColaboradorExternoForm()
-    #     return context
-    
     def form_valid(self, form):
         self.email = form.cleaned_data['email']
         return super().form_valid(form)

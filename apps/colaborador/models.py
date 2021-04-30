@@ -143,7 +143,7 @@ class VPN(models.Model):
         if self.local: 
             return self.local
         else:
-            return  "____________________"
+            return  "________________________________"
 
     @property
     def status_atualizado(self):
