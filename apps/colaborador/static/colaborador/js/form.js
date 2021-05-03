@@ -1,5 +1,5 @@
 
-///// funcao para corrigir os casmpos que somem do vinculo
+///// função para corrigir os campos que somem do vinculo
 function combo_vinculo() {
     if ($('#id_vinculo').length)  {
         $(".field-data_fim").hide();
@@ -31,7 +31,7 @@ $(document).ready(function () {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
 
-    // Validacao do email
+    // Validação do email
     $.validator.addMethod("email_inpe", function (value, element) {
         if (urlParams.get('motivo') != "atualizar")
             return true;
@@ -53,7 +53,7 @@ $(document).ready(function () {
         $('#id_externo').prop('checked', true);
     });
     
-    //Validacao do formulario
+    //Validação do Formulário
     $("#_form").validate({
         rules: {
             first_name: { required: true, minlength: 3 },
@@ -66,12 +66,10 @@ $(document).ready(function () {
             cpf: { required: true },
             predio: { required: true },
             data_inicio: { required: true },
-            data_nascimento: { required: true },
             vinculo: { required: true, min: 2 },
             ramal: { required: true },
             password: { required: true, minlength: 10, pwcheck: true, },
             confirm_password: { required: true, equalTo: "#id_password" },
-            data_inicio: { required: true },
         },
         messages: {
             confirm_password: "As senhas devem ser iguais",
@@ -94,7 +92,6 @@ $(document).ready(function () {
             $(element).removeClass('is-invalid');
         },
         submitHandler: function (form) {
-            // # TODO Veriricar isso
             neou_cms.remove_error_messages(); 
         },
     });
