@@ -15,12 +15,7 @@
                             {% for no in rack.nos %}
                                 <div class="rack node {{no.get_classe_html}} {{no.usuario|to_replace_dot}} "
                                     {% if  no.usuario  %} 
-                                        data-toggle="tooltip" data-html="true" title="<p> User: <b>{{no.usuario}}</b><br>
-                                                                                        Number of Nodes: <b>{{no.size}}</b><br>
-                                                                                        Running for: <b>{{no.tempo}}</b><br>
-                                                                                        Script: <b>{{no.comando}}</b><br>
-                                                                                        Position: <b>{{no}}</b>
-                                                                                    </p>" 
+                                        data-toggle="tooltip" data-html="true" title="User: <b>{{no.usuario}}</b><br>Number of Nodes: <b>{{no.size}}</b><br>Running for: <b>{{no.tempo}}</b><br>Script: <b>{{no.comando}}</b><br>Position: <b>{{no}}" 
                                     {% else %}
                                         {% if no.get_classe_html != 'noexist' %}
                                             data-toggle="tooltip" data-html="true" title="<p> Position: <b>{{no}}</b></p>" 
