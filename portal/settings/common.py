@@ -29,10 +29,12 @@ INSTALLED_APPS = [
     "freeipa",
     "celery",
     "celery_progress",
+    "django_cleanup.apps.CleanupConfig",
     "apps.core",
     "apps.colaborador",
     "apps.infra",
     "apps.monitoramento",
+    "apps.biblioteca",
 ]
 
 MIDDLEWARE = [
@@ -52,7 +54,7 @@ TEMPLATES = [
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": ["templates"],
         "APP_DIRS": True,
-        "OPTIONS": {"context_processors": ["django.template.context_processors.debug", "django.template.context_processors.request", "django.contrib.auth.context_processors.auth", "django.contrib.messages.context_processors.messages",],},
+        "OPTIONS": {"context_processors": ["django.template.context_processors.debug", "django.template.context_processors.request", "django.contrib.auth.context_processors.auth", "django.contrib.messages.context_processors.messages",'django.template.context_processors.media',],},
     },
 ]
 
@@ -150,6 +152,14 @@ GARB_CONFIG = {
                 {"label": "Ferramentas", "route": "monitoramento:ferramentas", "auth": "all"},
                 {"label": "RNP", "route": "monitoramento:rnp_home", "auth": "all"},
                 {"model": "monitoramento.tipomonitoramento"},
+            ],
+        },
+        {
+            "label": "Biblioteca",
+            "icon": "fa-book",
+            "sub_itens": [
+                {"model": "biblioteca.documento"},
+                {"label": "Listar Documentos", "route": "biblioteca:documentos", "auth": "all"},
             ],
         },
     ],

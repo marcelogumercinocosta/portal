@@ -1,0 +1,97 @@
+{% extends "admin/base.html" %}
+{% load static %}
+{% load i18n %}
+{% load templatetags %}
+
+{% block content %}
+<div id="content-main ">
+    <div class="main-column-center ">
+        <div class="box-garb">
+            <div class="module-header">
+                <div class="legend">Documentos da COIDS</div>
+            </div>
+            <br>
+            <div class="toolbar-content">
+                <div id="toolbar">
+                    <div class="search-container">
+                        <div class="input-group">
+                            <input type="search" size="40" id="search" placeholder="Procurar Documento">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1"><i class="fas fa-search"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% for documento in object_list %}
+                <div id="accordion" class='box-garb'>
+                    <div class="panel panel-default" id="heading{{ documento.id }}">
+                        <div class="panel-heading" role="tab">
+                            <div class="row p-2">
+                                <div class="col-3 ">
+                                    
+                                    <h5><a class=".btn" href="{{MEDIA_URL}}{{documento.upload}}" target="_blank">
+                                        <i class="fas fa-download "></i><b class="pl-2 txt_cor_primaria">{{ documento }}</b></a></h5>
+                                </div>
+                                <div class="col-5 pl-0 ml-0 pt-2">
+                                    {{ documento.descricao }}
+                                </div>
+                                <div class="col-2 pl-0 ml-0 pt-2">
+                                    <b>Postagem: </b> {{ documento.criado|date:"d/m H:i" }}
+                                </div>
+                                <div class="col-2 pl-0 ml-0 pt-2">
+                                    <b>Atualiza&ccedil;&atilde;o: </b> {{ documento.modificado|date:"d/m H:i"}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        {% empty %}
+        <div class="box-garb">
+            <p>N&atilde;o existe Documento.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+
+{% block extrajs %}
+<script>
+    function collapsibleclose() {
+        $('.panel-collapse.in').collapse('hide');
+    }
+
+    function filter(element) {
+        searchTerm = $(element).val();
+        console.log(searchTerm)
+        $('#accordion > .panel ').each(function () {
+            panelContainerId = '#' + $(this).attr('id');
+            console.log(panelContainerId)
+
+            // Makes search to be case insesitive
+            $.extend($.expr[':'], {
+                'contains': function (elem, i, match, array) {
+                    return (elem.textContent || elem.innerText || '').toLowerCase()
+                        .indexOf((match[3] || "").toLowerCase()) >= 0;
+                }
+            });
+            // Show and Hide Triggers
+            $(panelContainerId + ':not(:contains(' + searchTerm + '))').parent().hide();
+            $(panelContainerId + ':contains(' + searchTerm + ')').parent().show();
+        });
+    }
+    $('#search').on("keyup", function (e) {
+        if (((e.keyCode == 8) || (e.keyCode === 27) || (e.keyCode === 46)) && ($(this).val() == '')) {
+            filter(this);
+            $('.panel-collapse.in').collapse('hide');
+            return;
+        } else if (e.keyCode === 13) {
+            filter(this);
+            $('.panel-collapse.in').collapse('show');
+            return;
+        }
+    });
+</script>
+{% endblock %}%      
