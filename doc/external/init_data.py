@@ -183,6 +183,10 @@ def set_permissoes():
                 "change_storageareagrupotrabalho",
                 "delete_storageareagrupotrabalho",
                 "view_storageareagrupotrabalho",
+                "add_documento",
+                "change_documento",
+                "delete_documento",
+                "view_documento",
             ]
         
     permission_servicedesk = permission_suporte.copy()
@@ -190,7 +194,7 @@ def set_permissoes():
     permission_suporte.extend(["add_templatevm","change_templatevm","delete_templatevm","view_templatevm","add_templatehostnameip", "change_templatehostnameip", "delete_templatehostnameip","view_templatehostnameip","add_templatecomando", "change_templatecomando","delete_templatecomando","view_templatecomando"])
 
     permission_default = (
-        {"grupo": "Secretaria", "permission": ["change_divisao", "view_divisao", "view_colaborador", "change_colaborador", "secretaria_colaborador","view_vpn","add_vpn"]},
+        {"grupo": "Secretaria", "permission": ["change_divisao", "view_divisao", "view_colaborador", "change_colaborador", "secretaria_colaborador","view_vpn","add_vpn","add_documento",  "change_documento", "delete_documento", "view_documento", ]},
         {"grupo": "Servicedesk", "permission": permission_servicedesk, },
         {"grupo": "Colaborador", "permission": []},
         {"grupo": "Responsável", "permission": ["responsavel_colaborador"]},
