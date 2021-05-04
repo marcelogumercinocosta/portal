@@ -177,6 +177,7 @@ class VPNForm(forms.ModelForm):
     JUSTIFICATIVA_CHOICES =( 
         ("",""),
         ("SOLICITAÇÃO de Conta VPN Colaborador | Interno", "SOLICITAÇÃO de Conta VPN Colaborador | Interno"), 
+        ("SOLICITAÇÃO de Conta VPN Colaborador | Interno", "SOLICITAÇÃO de Conta VPN Colaborador | Externo"), 
         ("REVALIDAÇÃO de Conta VPN", "REVALIDAÇÃO de Conta VPN"), 
         ("REMOÇÃO de Conta VPN", "REMOÇÃO de Conta VPN"), 
         ("ADIÇÃO de equipamento com VPN ativa", "ADIÇÃO de equipamento com VPN ativa"), 
@@ -198,6 +199,7 @@ class VPNForm(forms.ModelForm):
 
     justificativa = forms.ChoiceField(choices = JUSTIFICATIVA_CHOICES) 
     recurso = forms.ChoiceField(choices = RECURSO_CHOICES) 
+    
 
     class Meta:
         model = VPN

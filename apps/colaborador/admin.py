@@ -115,7 +115,7 @@ class VPNAdmin(admin.ModelAdmin):
         return super().change_view(request, object_id, form_url=form_url, extra_context=extra_context)
 
     def save_model(self, request, obj, form, change):
-        if obj.status=="Aguardando assinaturas" and (obj.mac_cabeado or obj.mac_wifi):
+        if obj.status=="Aguardando assinaturas" and obj.data_abertura and (obj.data_abertura or obj.mac_wifi):
             obj.status = "Atendimento"
         if (obj.status=="Aguardando assinaturas" or obj.status == "Atendimento") and obj.data_abertura and obj.data_validade and (obj.mac_cabeado or obj.mac_wifi):
             obj.status = "Ativa"

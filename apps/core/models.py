@@ -146,6 +146,8 @@ class GrupoPortal(Group):
         verbose_name = "Grupo no Portal"
         verbose_name_plural = "Grupos no Portal"
 
+    def __str__(self):
+        return f"{self.group}"
 
 class ResponsavelGrupoTrabalho(models.Model):
     responsavel = models.ForeignKey("colaborador.Colaborador", verbose_name="Responsável", on_delete=models.CASCADE)

@@ -107,11 +107,6 @@
             {% include "./responsavel.html" %}
         </pdf:nextpage>
     {% endif %} 
-    {% if colaborador.externo   %}
-    <pdf:nextpage>
-        {% include "./vpn.html" %}
-    </pdf:nextpage>
-    {% endif %}
     <pdf:nextpage>
         {% include "./politicas.html" %}
     </pdf:nextpage>
