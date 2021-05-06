@@ -321,7 +321,6 @@ class TemplateHostnameIP(models.Model):
     hostnameip = models.ForeignKey("infra.HostnameIP", verbose_name="Hostname", on_delete=models.PROTECT)
 
     class Meta:
-        unique_together = (("hostnameip"),)
         verbose_name = "Hostname"
         verbose_name_plural = "Hostnames"
 
