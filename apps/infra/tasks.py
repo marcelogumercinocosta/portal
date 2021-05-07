@@ -24,6 +24,7 @@ def get_comandos(origem, destino):
                 "{vm}": vm, 
                 "{vm_ip}": vm_ip,
                 "{freeipa_server}": settings.IPA_AUTH_SERVER,
+                "{freeipa_server_replica}": settings.IPA_AUTH_SERVER_REPLICA,
                 "{freeipa_password}": settings.IPA_AUTH_PASSWORD,
                 "{freeipa_admin}": settings.IPA_AUTH_USER,
                 }
@@ -59,6 +60,7 @@ def create_vm_task(self, servidor, vm_id,  template_id, memoria, cpu):
     memoria = str(int(memoria) * 1024 * 1024 * 1024)
     cpu = int(cpu)
     total = 200
+    print(template)
     try:
         progress_recorder.set_progress(1, total, description="Conetando no XEN")
         session = Session(f"http://{servidor}.cptec.inpe.br")
@@ -126,7 +128,7 @@ def create_vm_task(self, servidor, vm_id,  template_id, memoria, cpu):
         progress_recorder.set_progress(total, total, description=f"{vm} Criada")
     except Exception as e:
         self.update_state(state=states.FAILURE, meta={'custom': str(e)})
-        send_mail('ERRO na Criação de VM', f"{vm} - {str(e)}" , settings.EMAIL_HOST_USER, [settings.EMAIL_SUPORTE, settings.EMAIL_SYSADMIN, ])
+        send_mail('ERRO na Criação de VM', f"{vm} - {str(e)}" , settings.EMAIL_HOST_USER, [settings.EMAIL_SYSADMIN, ])
         return f"Error: {str(e)}"
     finally:
         session.xenapi.session.logout()
