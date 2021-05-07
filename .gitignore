@@ -29,6 +29,7 @@ MANIFEST
 .DS_Store 
 celerybeat-schedule.db
 .freeipa_chave*crt
+.freeipa_chave*pem
 env.sh
 staticfiles/
 

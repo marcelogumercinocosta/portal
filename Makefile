@@ -30,7 +30,7 @@ install-test:
 	rsync -auv ./doc/environment/_test.env test.env
 	@echo -e "\n\n#####################################################"
 	@echo "Adicione configurações em test.env"
-	@echo "Adicione o arquivo .freeipa_chave.crt para acesso ao FreeIPA"
+	@echo "Adicione o arquivo .freeipa_chave.pem para acesso ao FreeIPA"
 	@echo "#####################################################"
 
 
@@ -45,7 +45,7 @@ install-dev:
 	
 	@echo -e "\n\n#####################################################"
 	@echo "Adicione configurações em dev.env"
-	@echo "Adicione o arquivo .freeipa_chave.crt para acesso ao FreeIPA"
+	@echo "Adicione o arquivo .freeipa_chave.pem para acesso ao FreeIPA"
 	@echo -e "\n#####################################################"
 	@echo "make start-dev -> Para criar os serviços"
 	@echo "make mysql-migrate -> Para Criar o Banco de dados"
@@ -59,7 +59,7 @@ install-prod:
 	rsync -auv ./doc/environment/_prod.env prod.env
 	@echo -e "\n\n#####################################################"
 	@echo "Adicione configurações em prod.env"
-	@echo "Adicione o arquivo .freeipa_chave.crt para acesso ao FreeIPA"
+	@echo "Adicione o arquivo .freeipa_chave.pem para acesso ao FreeIPA"
 	@echo "Adicione a variável no ambiente - django_settings_module=portal.settings.development
 	@echo "#####################################################"
 
