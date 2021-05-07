@@ -91,6 +91,7 @@ class ColaboradorAdmin(admin.ModelAdmin):
 class VPNAdmin(admin.ModelAdmin):
     change_form_template = "colaborador/admin/change_form_vpn.html"
     delete_confirmation_template = "colaborador/admin/delete_confirmation_vpn.html"
+    change_list_template = "colaborador/admin/change_list_vpn.html"
     extra_context = dict( show_save=False, show_save_and_continue=True)
     search_fields = ["colaborador"]
     list_filter = ["status"]

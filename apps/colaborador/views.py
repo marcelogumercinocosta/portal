@@ -338,4 +338,4 @@ class ColaboradorExternoView(ViewContextMixin, LoginRequiredMixin, PermissionReq
     def get_success_url(self):
         send_email_template_task.delay(f"Instruções para preenchimento dos formulários","colaborador/email/colaborador_externo.html", [self.email], {})
         messages.add_message(self.request, messages.SUCCESS, "Email com instruções para preenchimento de abertura de conta foi enviado!!")
-        return reverse_lazy("home")
+        return reverse_lazy("admin:colaborador_vpn_changelist")

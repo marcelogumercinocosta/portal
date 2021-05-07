@@ -101,6 +101,11 @@ def set_divisao():
             "divisao_completo": "Divisão de Projeto Estratégico 2",
             "coordenacao": "COGPI - Coordenação de Gestão de Projetos e Inovação Tecnológica",
         },
+        {
+            "divisao": "COIDS",
+            "divisao_completo": "Coordenação de Infraestrutura de Dados e Supercomputação",
+            "coordenacao": "COIDS - Coordenação de Infraestrutura de Dados e Supercomputação",
+        },
     )
     for divisao in organograma:
         obj_divisao = Divisao()
