@@ -7,7 +7,7 @@
     <script>
         {% if add %}
             $("[name='_addanother']").hide()
-        {% else %}
+        {% endif %}
             $('#id_mac_cabeado').mask('AA:AA:AA:AA:AA:AA', {
                 onKeyPress: function(str, e, obj){ 
                     $(obj).val(str.toLowerCase());
@@ -18,7 +18,7 @@
                     $(obj).val(str.toLowerCase());
                 }
             });
-        {% endif %}
+
     </script>
 {% endblock %}
 

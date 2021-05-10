@@ -102,8 +102,8 @@ class VPNAdmin(admin.ModelAdmin):
 
     def add_view(self, request, form_url="", extra_context=None):
         extra_context = dict( show_save=False, show_save_and_continue=True)
-        self.fields = ['colaborador', 'recurso', 'justificativa']
-        self.readonly_fields = ["status", "data_validade", "data_abertura", "mac_cabeado", "mac_wifi", 'data_solicitacao', 'status']
+        self.fields = ['colaborador', 'recurso', 'justificativa',"mac_cabeado", "mac_wifi"]
+        self.readonly_fields = ["status", "data_validade", "data_abertura", 'data_solicitacao', 'status']
         return super().add_view(request, form_url=form_url, extra_context=extra_context)
 
     def change_view(self, request, object_id, form_url="", extra_context=None):
