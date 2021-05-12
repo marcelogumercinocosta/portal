@@ -166,6 +166,7 @@ class CriarServidorLdapView(LoginRequiredMixin, PermissionRequiredMixin, Redirec
                 send_email_task.delay("Servidor Criado",f"O Servidor: {servidor.nome} foi criado no FreeIPA, por:{self.request.user.username}",[settings.EMAIL_SYSADMIN])
                 servidor.conta = "FreeIPA"
                 servidor.save()
+                messages.add_message(self.request, messages.WARNING, "Verifique as regras de export do storage!")
                 if servidor.tipo == 'Servidor Virtual':
                     return reverse_lazy("infra:criar_vm", kwargs={"pk": servidor.id, })
         else:

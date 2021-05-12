@@ -50,8 +50,10 @@ class DivisaoForm(forms.ModelForm):
         fields = ['divisao', 'divisao_completo', 'email', 'coordenacao', 'chefe', 'chefe_ativo','chefe_substituto', 'chefe_substituto_ativo']
 
     def clean_chefe_ativo(self):
+        chefe_substituto_ativo = False
         chefe_ativo = self.cleaned_data.get("chefe_ativo")
-        chefe_substituto_ativo = self.cleaned_data.get("chefe_substituto_ativo")
+        if 'chefe_substituto_ativo' in self.data.keys():
+            chefe_substituto_ativo = self.data['chefe_substituto_ativo']
         if ( not chefe_ativo and not chefe_substituto_ativo):
             raise ValidationError("Precisa ter um chefe ativo")
         return chefe_ativo

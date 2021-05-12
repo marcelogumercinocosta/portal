@@ -221,7 +221,7 @@ class ServidorAdmin(admin.ModelAdmin):
     change_list_template  = "infra/admin/change_list_servidor.html"
     search_fields = ["nome", "patrimonio", "marca", "modelo"]
     list_filter = ["tipo_uso","tipo" ]
-    list_display = ("nome", "patrimonio", "tipo", "tipo_uso",  "predio",  "descricao", "grupo", "tipo_uso", "status")
+    list_display = ("nome", "tipo", "tipo_uso",  "predio",  "descricao", "grupo", "tipo_uso", "status")
     fields = ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "conta", 'vm_remover']
     readonly_fields = ("status","conta")
     form = ServidorForm

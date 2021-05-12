@@ -79,6 +79,7 @@ class CriarContaGrupoTrabalhoView(LoginRequiredMixin, PermissionRequiredMixin, R
                     history_core.update_grupo_acesso(grupo=grupo_trabalho, assunto="Nova conta de Grupo de Trabalho")
                     UpdateGrupoAcesso(client_feeipa=client_feeipa, history_core=history_core).update_acesso(grupo_trabalho)
                     UpdateColaboradorGrupo(client_feeipa=client_feeipa, history_core=history_core).update_user(grupo_trabalho)
+                    messages.add_message(self.request, messages.WARNING, "Os volumes do Storage devem ser criados comforme o cadastro!")
             else:
                 messages.add_message(self.request, messages.ERROR, "O grupo já existe!")
         else:
