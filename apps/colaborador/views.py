@@ -116,8 +116,7 @@ class ChefiaAprovarView(ViewContextMixin, LoginRequiredMixin, PermissionRequired
             context["colaborador"] = colaborador
             HistoryColaborador(self.request).chefia(colaborador)
             send_email_template_task.delay((f"Agora é com o suporte"), "colaborador/email/chefia_aprovado.html", [colaborador.email], [["name", colaborador.full_name]])
-            if not "@inpe.br" in colaborador.email:
-                send_email_template_task.delay((f"Novo Colaborador"), "colaborador/email/suporte_username.html", [settings.EMAIL_SUPORTE], [["name", colaborador.full_name],["username", colaborador.username]])
+            send_email_template_task.delay((f"Novo Colaborador"), "colaborador/email/suporte_username.html", [settings.EMAIL_SUPORTE], [["name", colaborador.full_name],["username", colaborador.username]])
             messages.add_message(self.request, messages.SUCCESS, "Colaborador Aprovado com Sucesso")
         return context
 
