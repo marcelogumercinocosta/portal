@@ -327,7 +327,7 @@ class VPNFormularioView(ViewContextMixin, LoginRequiredMixin, PermissionRequired
 class ColaboradorExternoView(ViewContextMixin, LoginRequiredMixin, PermissionRequiredMixin, FormView):
     form_class = ColaboradorExternoForm
     template_name = "colaborador/externo.html"
-    permission_required = ("colaborador.add_vpn")
+    permission_required = ("colaborador.add_vpn",)
     title = "Colaborador Externo"
 
     def form_valid(self, form):
