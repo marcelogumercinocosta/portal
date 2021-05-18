@@ -54,7 +54,7 @@
 												<div class="form-group">
 													<p><b>V&iacute;nculo: </b>{{ solicitacao.colaborador.vinculo }}</p>
 												</div>
-												{% if not colaborador.externo %}
+												{% if not solicitacao.colaborador.externo %}
 													<div class="form-group">
 														<p><b>Ramal: </b>{{ solicitacao.colaborador.ramal }}</p>
 													</div>
@@ -73,7 +73,7 @@
 												{% endif %}
 											</div>
 											<div class="col-sm-5">
-												{% if not colaborador.externo %}
+												{% if not solicitacao.colaborador.externo %}
 													<div class="form-group">
 														<p><b>Pr&eacute;dio: </b>{{ solicitacao.colaborador.predio }}</p>
 													</div>
