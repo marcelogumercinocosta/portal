@@ -5,3 +5,15 @@
 .grupo_acesso_categoria {
     min-height: 85px;
 }
+
+.rotate {
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+}
+
+.rotate b {
+    margin: 0px 0px 0px -40px;
+}

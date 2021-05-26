@@ -13,13 +13,12 @@ class ResponsavelGrupoTrabalhoManager(models.Manager):
 
 class GrupoAcessoManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().prefetch_related("grupo_trabalho")
+        return super().get_queryset().prefetch_related("grupo_trabalho","equipamentogrupoacesso_set")
 
 
 class DivisaoManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset()
-
 
 class ColaboradorGrupoAcessoManager(models.Manager):
     def get_queryset(self):

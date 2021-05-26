@@ -71,12 +71,12 @@
                                         </div>
                                         {% for grupo_acesso in grupo.grupoacesso_set.all %}
                                             <div class="row align-items-center  border-top border-left m-0 mt-1 grupo_acesso" >
-                                                <div class="col-2 text-center align-middle">
+                                                <div class="col-1 text-center align-middle rotate">
                                                     <b>{{ grupo_acesso.tipo }} </b>
                                                 </div>
-                                                <div class="col-10">
+                                                <div class="col-11">
                                                     <div class="row p-0 m-0 grupo_acesso_categoria  border-bottom">
-                                                        <div class="col-11 pl-0 ml-0">
+                                                        <div class="col-12 pl-0 ml-0">
                                                             {% for colaboradorgrupoacesso in grupo_acesso.colaboradorgrupoacesso_set.all %}
                                                                 {% if colaboradorgrupoacesso.aprovacao == 1 %}
                                                                     <div class="row m-0 p-0  ">
@@ -96,31 +96,26 @@
                                                                 {% endif %}
                                                             {% endfor %}
                                                         </div>
-                                                        <div class="col-1  text-center  align-self-center ">
-                                                            <i class="fas fa-user-friends txt_cor_primaria fa-w-12 fa-3x"></i>
-                                                        </div>
                                                     </div>
                                                     <div class="row p-0 m-0 grupo_acesso_categoria  ">
-                                                        <div class="col-11 pl-0 ml-0">
+                                                        <div class="col-12 pl-0 ml-0">
                                                             {% for equipamentogrupoacesso in grupo_acesso.equipamentogrupoacesso_set.all %}
                                                                 <div class="row m-0 p-0 ">
-                                                                    <div class="col-3 p-2" >
+                                                                    <div class="col-2 p-2" >
                                                                         <strong class="text-primary">{{ equipamentogrupoacesso.equipamento.nome }}</strong>
                                                                     </div>
                                                                     <div class="col-2 p-2" >
                                                                         {{ equipamentogrupoacesso.equipamento.tipo }}
                                                                     </div>
-                                                                    <div class="col-6 p-2" >
+                                                                    <div class="col-7 p-2" >
                                                                         {{ equipamentogrupoacesso.equipamento.descricao }}
                                                                     </div>
                                                                     <div class="col-1 p-2" >
-                                                                        {{ equipamentogrupoacesso.equipamento.servidor.status }}
+                                                                        {{ equipamentogrupoacesso.equipamento.servidor.status }} <br>
+                                                                        {{ equipamentogrupoacesso.equipamento.servidor.conta }}
                                                                     </div>
                                                                 </div>
                                                             {% endfor %}
-                                                        </div>
-                                                        <div class="col-1  pr-0 mr-0 text-center align-self-center">
-                                                            <i class="fas fa-server fa-w-12 fa-3x txt_cor_primaria "></i>
                                                         </div>
                                                     </div>
                                                 </div>

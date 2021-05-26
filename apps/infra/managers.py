@@ -23,4 +23,14 @@ class StorageAreaGrupoTrabalhoManager(models.Manager):
 
 class EquipamentoManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().prefetch_related("grupos_acesso").all()
+        return super().get_queryset().prefetch_related("grupos_acesso")
+
+
+class EquipamentoGrupoAcessoManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().select_related("equipamento","equipamento__servidor")
+
+
+class ServidorManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related("equipamento_ptr_id")
