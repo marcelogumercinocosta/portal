@@ -196,14 +196,15 @@ def set_permissoes():
         
     permission_servicedesk = permission_suporte.copy()
     permission_servicedesk.extend(["view_vpn","add_vpn","change_vpn","delete_vpn"])
-    permission_suporte.extend(["add_templatevm","change_templatevm","delete_templatevm","view_templatevm","add_templatehostnameip", "change_templatehostnameip", "delete_templatehostnameip","view_templatehostnameip","add_templatecomando", "change_templatecomando","delete_templatecomando","view_templatecomando"])
+    permission_suporte.extend(["add_templatevm","change_templatevm","delete_templatevm","view_templatevm","add_templatehostnameip", "change_templatehostnameip", "delete_templatehostnameip","view_templatehostnameip","add_templatecomando", "change_templatecomando","delete_templatecomando","view_templatecomando",])
 
     permission_default = (
         {"grupo": "Secretaria", "permission": ["change_divisao", "view_divisao", "view_colaborador", "change_colaborador", "secretaria_colaborador","view_vpn","add_vpn","add_documento",  "change_documento", "delete_documento", "view_documento", ]},
         {"grupo": "Servicedesk", "permission": permission_servicedesk, },
         {"grupo": "Colaborador", "permission": []},
         {"grupo": "Responsável", "permission": ["responsavel_colaborador"]},
-        {"grupo": "NOC", "permission": []},
+        {"grupo": "NOC", "permission": ["view_colaborador", "view_servidor","view_supercomputador","view_storageareagrupotrabalho","view_equipamentogrupoacesso","view_storagearea","view_servidorhostnameip","view_hostnameip", "view_rack", "add_ocorrencia",
+        "change_ocorrencia", "delete_ocorrencia", "view_ocorrencia","view_servidorhostnameip","view_storagearea","view_equipamentoparte",]},
         {"grupo": "Chefia da Divisão", "permission": ["chefia_colaborador"]},
         {"grupo": "Supercomputação", "permission": permission_suporte},
     )

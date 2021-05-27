@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from django.core.exceptions import NON_FIELD_ERRORS, EmptyResultSet, ObjectDoesNotExist
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from apps.infra.managers import EquipamentoGrupoAcessoManager, EquipamentoManager, ServidorManager, StorageAreaGrupoTrabalhoManager, StorageAreaManager
+from apps.infra.managers import EquipamentoGrupoAcessoManager, EquipamentoManager, StorageAreaGrupoTrabalhoManager, StorageAreaManager
 
 LINHAS = [ "-", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM", 
             "AN", "AO", "AP", "AQ", "AR", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ", "BA", 
@@ -248,7 +248,6 @@ class Servidor(Equipamento):
     conta = models.CharField("conta", default="Aguardando", max_length=255)
     vm_remover = models.BooleanField("Remover VM", default=False, blank=True, null=True)
     vm_ambiente_virtual = models.ForeignKey("infra.AmbienteVirtual", related_name="vm_ambiente_virtual", blank=True, null=True, on_delete=models.PROTECT)
-    objects = ServidorManager()
 
     class Meta:
         verbose_name = "Servidor"

@@ -29,8 +29,3 @@ class EquipamentoManager(models.Manager):
 class EquipamentoGrupoAcessoManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().select_related("equipamento","equipamento__servidor")
-
-
-class ServidorManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().prefetch_related("equipamento_ptr_id")
