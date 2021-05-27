@@ -123,6 +123,17 @@ class FreeIPA(Client):
                 return True
         return False
 
+    def remove_user_group_hhac(self, user, hbac_freeipa, grupo_sistema):
+        if (self.hbacrule_find_count(hbac_freeipa) == 1) and (self.hbacrule_remove_members_user(hbac_freeipa, user)):
+            if self.group_remove_member_group(grupo_sistema, user):
+                return True
+        return False
+
+    def remove_user_hhac(self, user, hbac_freeipa):
+        if (self.hbacrule_find_count(hbac_freeipa) == 1) and (self.hbacrule_remove_members_user(hbac_freeipa, user)):
+            return True
+        return False
+
     def remove_hbac_group_rule(self, grupo_acesso):
         return self.hbacrule_delete(grupo_acesso.hbac_freeipa)
 
@@ -206,6 +217,11 @@ class FreeIPA(Client):
         params = { "all": True, "raw": True, "user": users, "group": groups }
         params.update(kwargs)
         return self.__execute_freeipa(f"added {users} on group {group}", "group_add_member", group, params)
+
+    def group_remove_member_group(self, group, users=None, groups=None, **kwargs):
+        params = { "all": True, "raw": True, "user": users, "group": groups }
+        params.update(kwargs)
+        return self.__execute_freeipa(f"removed from {users} on group {group}", "group_remove_member", group, params)
 
     def sudorule_create(self, sudorule, description):
         params = {"description": description}
@@ -305,6 +321,10 @@ class FreeIPA(Client):
     def hbacrule_add_members_user(self, hbac, user):
         params = {"user": user}
         return  self.__execute_freeipa(f"{user} added in the hbacrule {hbac} ", "hbacrule_add_user", hbac, params)
+    
+    def hbacrule_remove_members_user(self, hbac, user):
+        params = {"user": user}
+        return  self.__execute_freeipa(f"{user} removed from hbacrule {hbac} ", "hbacrule_remove_user", hbac, params)
 
     def automountlocation_add(self, automountlocation):
         return  self.__execute_freeipa(f"automountlocation {automountlocation} add ", "automountlocation_add", automountlocation)

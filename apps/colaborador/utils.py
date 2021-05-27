@@ -52,6 +52,32 @@ class HistoryColaborador:
             object_repr=force_str(colaborador_grupoacesso.grupo_acesso), action_flag=ADDITION,
             change_message=(f"Solicitação do Colaborador {colaborador_grupoacesso.colaborador.full_name} - {status}"),
         )
+    
+    def responsavel_remover_grupo_acesso(self, colaborador_grupoacesso):
+        LogEntry.objects.log_action( user_id=self.request.user.pk,
+            content_type_id=ContentType.objects.get_for_model(colaborador_grupoacesso.colaborador).pk, object_id=colaborador_grupoacesso.colaborador.pk,
+            object_repr=force_str(colaborador_grupoacesso.colaborador), action_flag=ADDITION,
+            change_message=(f"O acesso aos recursos do Grupo de Trabalho {colaborador_grupoacesso.grupo_acesso.grupo_acesso} foram removidos")
+        )
+        LogEntry.objects.log_action( user_id=self.request.user.pk,
+            content_type_id=ContentType.objects.get_for_model(colaborador_grupoacesso.grupo_acesso).pk,
+            object_id=colaborador_grupoacesso.grupo_acesso.pk,
+            object_repr=force_str(colaborador_grupoacesso.grupo_acesso), action_flag=ADDITION,
+            change_message=(f"O acesso do Colaborador {colaborador_grupoacesso.colaborador} foi removido")
+        )
+    
+    def responsavel_remover_grupo(self, colaborador_grupoacesso):
+        LogEntry.objects.log_action( user_id=self.request.user.pk,
+            content_type_id=ContentType.objects.get_for_model(colaborador_grupoacesso.colaborador).pk, object_id=colaborador_grupoacesso.colaborador.pk,
+            object_repr=force_str(colaborador_grupoacesso.colaborador), action_flag=ADDITION,
+            change_message=(f"O acesso ao Grupo de Trabalho {colaborador_grupoacesso.grupo_acesso.grupo_acesso} foi removido")
+        )
+        LogEntry.objects.log_action( user_id=self.request.user.pk,
+            content_type_id=ContentType.objects.get_for_model(colaborador_grupoacesso.grupo_acesso.grupo_trabalho).pk,
+            object_id=colaborador_grupoacesso.grupo_acesso.grupo_trabalho.pk,
+            object_repr=force_str(colaborador_grupoacesso.grupo_acesso.grupo_trabalho), action_flag=ADDITION,
+            change_message=(f"O acesso do Colaborador {colaborador_grupoacesso.colaborador} foi removido")
+        )
 
     def novo(self, colaborador):
         LogEntry.objects.log_action( user_id=colaborador.pk, 

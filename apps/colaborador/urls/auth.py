@@ -4,6 +4,7 @@ from django.urls import path
 from apps.colaborador.views import (
     ResponsavelAprovarView,
     ResponsavelNegarView,
+    ResponsavelRemoverView,
     ResponsavelView,
     SecretariaRevisarView,
     SecretariaNegarView,
@@ -27,6 +28,7 @@ urlpatterns = [
     path("chefia/<uidb64>/<token>", login_required(ChefiaAprovarView.as_view()), name="chefia_aprovar"),
     path("responsavel/", login_required(ResponsavelView.as_view()), name="responsavel"),
     path("responsavel/<int:pk>/aprovar", login_required(ResponsavelAprovarView.as_view()), name="responsavel_aprovar"),
+    path("responsavel/<int:pk>/remover", login_required(ResponsavelRemoverView.as_view()), name="responsavel_remover"),
     path("responsavel/negar/", login_required(ResponsavelNegarView.as_view()), name="responsavel_negar"),
     path("secretaria/", login_required(SecretariaView.as_view()), name="secretaria"),
     path("secretaria/negar", login_required(SecretariaNegarView.as_view()), name="secretaria_negar"),

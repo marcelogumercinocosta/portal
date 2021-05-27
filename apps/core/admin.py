@@ -31,6 +31,7 @@ class GroupInLine(admin.TabularInline):
             request.db_field_cache[db_field.name] = formfield.choices
         return formfield
 
+
 class ResponsavelGrupoTrabalhoInLine(admin.TabularInline):
     model = ResponsavelGrupoTrabalho
     fields = ("responsavel",)
@@ -123,6 +124,7 @@ class DivisaoAdmin(admin.ModelAdmin):
 class PredioAdmin(admin.ModelAdmin):
     search_fields = ["predio"]
     list_display = ("predio", "predio_sistema", "linhas","colunas", "sensores")
+
 
 @admin.register(GrupoAcesso)
 class GrupoAcessoAdmin(admin.ModelAdmin):

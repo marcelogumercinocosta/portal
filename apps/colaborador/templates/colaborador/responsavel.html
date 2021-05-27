@@ -108,6 +108,51 @@
 						<p>N&atilde;o existe solicita&ccedil;&atilde;o para ser avaliada.</p>
 					</div>
 				{% endfor %}
+				<div class="box-garb">
+					<div id="accordion" role="tablist" aria-multiselectable="true">
+						<div class="panel panel-default">
+							<div class="panel-heading" role="tab" id="headingAutorizado">
+								<div class="module-header">
+									<a role="button" class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseAutorizado" aria-expanded="false" aria-controls="collapseAutorizado">
+										<div class="legend">Colaboradores Autorizados a acessar recursos do Grupo de Trabalho</div>
+									</a>
+								</div>
+							</div>
+							<div id="collapseAutorizado" class="panel-collapse collapse in " role="tabpanel" aria-labelledby="headinAutorizado">
+								{% for aprovado in aprovados %}
+										<div div class="row p-0 m-0 grupo_acesso_categoria  border-bottom">
+											<div class="col-12 pl-0 ml-0">
+												<div class="row m-0 p-2  ">
+													<div class="col-3  p-0  p-1 " >
+														<b>{{ aprovado.colaborador.username }}</b> <br> {{ aprovado.colaborador.full_name }}
+													</div>
+													<div class="col-3 p-0 pt-3" >
+														<b>{{aprovado.grupo_acesso}}</b>
+													</div>
+													<div class="col-3  p-0 pt-3"  >
+														{{ aprovado.colaborador.email }}
+													</div>
+													<div class="col-1 p-0 pt-3" >
+														{{ aprovado.colaborador.ramal|default:"--"}}
+													</div>
+													<div class="col-2 p-1" >
+														{% if not aprovado.colaborador in aprovado.grupo_acesso.grupo_trabalho.responsavel.all %}
+															<a href="{% url 'colaborador:responsavel_remover' aprovado.id %}" class="btn btn-danger text-white ">Remover Acesso</a>
+														{% endif %}
+													</div>
+												</div>
+											</div>
+									</div>
+								{% empty %}
+									<div class="p-2">
+										<p>N&atilde;o existe colaboradores no(s) seu(s) grupo(s).</p>
+									</div>
+								{% endfor %}
+								<small>* Os responsáveis do Grupo de Trabalho não podem ser removidos, precisam ser removidos no cadastro do Grupo de Trablaho antes.</small>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 			<div class="box-column box-garb">
 					<div class="module-header">

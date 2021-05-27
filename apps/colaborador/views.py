@@ -238,9 +238,11 @@ class ResponsavelView(ViewContextMixin, LoginRequiredMixin, PermissionRequiredMi
     def get_context_data(self, **kwargs):
         responsavel = self.request.user
         responsavel_grupos_acesso = [GrupoAcesso.id for GrupoAcesso in GrupoAcesso.objects.filter(grupo_trabalho__responsavelgrupotrabalho__responsavel_id=responsavel.id, grupo_trabalho__confirmacao=1)]
-        colaborador_grupo_acesso = ColaboradorGrupoAcesso.objects.filter(grupo_acesso_id__in=responsavel_grupos_acesso, aprovacao=0).order_by("colaborador__name")
+        colaborador_grupo_acesso_solicitacoes = ColaboradorGrupoAcesso.objects.filter(grupo_acesso_id__in=responsavel_grupos_acesso, aprovacao=0).order_by("colaborador__name")
+        colaborador_grupo_acesso_aprovados =  ColaboradorGrupoAcesso.objects.filter(grupo_acesso_id__in=responsavel_grupos_acesso, aprovacao=1).order_by("colaborador__name")
         context = super(ResponsavelView, self).get_context_data(**kwargs)
-        context["solicitacoes"] = colaborador_grupo_acesso
+        context["solicitacoes"] = colaborador_grupo_acesso_solicitacoes
+        context["aprovados"] = colaborador_grupo_acesso_aprovados
         context["form_negar"] = ResponsavelNegarForm
         return context
 
@@ -276,6 +278,33 @@ class ResponsavelNegarView(LoginRequiredMixin, PermissionRequiredMixin, FormView
         messages.add_message(self.request, messages.SUCCESS, "Colaborador Negado com Sucesso")
         return super().form_valid(form)
 
+
+class ResponsavelRemoverView(LoginRequiredMixin, PermissionRequiredMixin, RedirectView):
+    permission_required = "colaborador.responsavel_colaborador"
+
+    def get_redirect_url(self, *args, **kwargs):
+        responsavel = self.request.user
+        colaborador_grupo_acesso = get_object_or_404(ColaboradorGrupoAcesso, id=kwargs["pk"])
+        responsavel_grupos_acesso = [GrupoAcesso.id for GrupoAcesso in GrupoAcesso.objects.filter(grupo_trabalho__responsavelgrupotrabalho__responsavel_id=responsavel.id, grupo_trabalho__confirmacao=1)]
+        if colaborador_grupo_acesso.grupo_acesso.id in responsavel_grupos_acesso:
+            if not colaborador_grupo_acesso.colaborador in colaborador_grupo_acesso.grupo_acesso.grupo_trabalho.responsavel.all():
+                grupo_acesso_user = ColaboradorGrupoAcesso.objects.filter(colaborador=colaborador_grupo_acesso.colaborador, grupo_acesso__grupo_trabalho = colaborador_grupo_acesso.grupo_acesso.grupo_trabalho )
+                if len(grupo_acesso_user) == 1:
+                    if FreeIPA(self.request).remove_user_group_hhac(colaborador_grupo_acesso.colaborador.username, colaborador_grupo_acesso.grupo_acesso.hbac_freeipa, colaborador_grupo_acesso.grupo_acesso.grupo_trabalho.grupo_sistema):
+                        messages.add_message(self.request, messages.SUCCESS, f"Os acessos {colaborador_grupo_acesso.grupo_acesso} e {colaborador_grupo_acesso.grupo_acesso.grupo_trabalho} do colaborador {colaborador_grupo_acesso.colaborador} foram Removidos com Sucesso")
+                        HistoryColaborador(self.request).responsavel_remover_grupo_acesso(colaborador_grupo_acesso)
+                        HistoryColaborador(self.request).responsavel_remover_grupo(colaborador_grupo_acesso)
+                        colaborador_grupo_acesso.delete()
+                else:
+                    if FreeIPA(self.request).remove_user_hhac(colaborador_grupo_acesso.colaborador.username, colaborador_grupo_acesso.grupo_acesso.hbac_freeipa):
+                        messages.add_message(self.request, messages.SUCCESS, f"Acesso {colaborador_grupo_acesso.grupo_acesso} do colaborador {colaborador_grupo_acesso.colaborador} foi Removido com Sucesso")
+                        HistoryColaborador(self.request).responsavel_remover_grupo_acesso(colaborador_grupo_acesso)
+                        colaborador_grupo_acesso.delete()
+            else:
+                messages.add_message(self.request, messages.WARNING, "O responsavel do grupo não pode ser removido")
+        else:
+            messages.add_message(self.request, messages.ERROR, "Erro na remoção de acesso")
+        return reverse_lazy("colaborador:responsavel")
 
 class ColaboradorStatusView(LoginRequiredMixin, TemplateView):
     template_name = "colaborador/status.html"
