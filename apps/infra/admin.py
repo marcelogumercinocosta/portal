@@ -54,7 +54,7 @@ class StorageAreaGrupoTrabalhoInLine(admin.TabularInline):
 
 class StorageAreaInLine(admin.TabularInline):
     model = StorageArea
-    fields = ("area", "tipo",)
+    fields = ("area", "tipo","capacidade")
     extra = 0
 
 
@@ -72,7 +72,6 @@ class GrupoAcessoEquipamentoInLine(admin.TabularInline):
         field = super(GrupoAcessoEquipamentoInLine, self).formfield_for_foreignkey(db_field, request, **kwargs)
         field.queryset = field.queryset.filter(grupo_acesso__contains=request._obj_.tipo_uso).exclude(equipamento__id=request._obj_.id)
         return field
-
 
 
 class GrupoAcessoEquipamentoInLineRead(admin.TabularInline):
@@ -110,6 +109,7 @@ class HostnameIPServidorInLine(admin.TabularInline):
     def has_change_permission(self, request, obj=None):
         return False
 
+
 class HostnameIPTemplateInLine(admin.TabularInline):
     model = TemplateHostnameIP
     extra = 0
@@ -117,6 +117,7 @@ class HostnameIPTemplateInLine(admin.TabularInline):
     
     def has_change_permission(self, request, obj=None):
         return False
+
 
 class EquipamentoRackInLine(admin.TabularInline):
     model = Servidor

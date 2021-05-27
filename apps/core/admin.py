@@ -67,6 +67,7 @@ class ColaboradorGrupoAcessoInLineRead(admin.TabularInline):
     def has_add_permission(self, request, obj=None):
         return False
 
+
 class GrupoAcessoColaboradorInLineRead(admin.TabularInline):
     model = ColaboradorGrupoAcesso
     fields = ("nome", "username", "ramal", "email", "status")
@@ -117,7 +118,6 @@ class DivisaoAdmin(admin.ModelAdmin):
         else:
             self.readonly_fields = ["divisao", 'divisao_completo','coordenacao']
         return super(DivisaoAdmin, self).change_view(request, object_id, form_url, extra_context)
-
 
 
 @admin.register(Predio)
@@ -197,8 +197,6 @@ class GrupoTrabalhoAdmin(admin.ModelAdmin):
     def add_view(self, request, form_url="", extra_context=None):
         self.readonly_fields = ["data_criado","confirmacao"]
         return super(GrupoTrabalhoAdmin, self).add_view(request, form_url, extra_context)
-
-
 
 @admin.register(GrupoPortal)
 class GrupoPortalAdmin(admin.ModelAdmin):
