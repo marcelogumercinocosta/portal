@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from django.core.exceptions import NON_FIELD_ERRORS, EmptyResultSet, ObjectDoesNotExist
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from apps.infra.managers import EquipamentoGrupoAcessoManager, EquipamentoManager, StorageAreaGrupoTrabalhoManager, StorageAreaManager
+from apps.infra.managers import EquipamentoGrupoAcessoManager, EquipamentoManager, StorageAreaGrupoTrabalhoManager, StorageAreaManager, StorageManager
 
 LINHAS = [ "-", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM", 
             "AN", "AO", "AP", "AQ", "AR", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ", "BA", 
@@ -169,7 +169,7 @@ class Storage(Equipamento):
     protocolo = models.CharField("Protocolo", max_length=255, blank=True, null=True)
     controladora = models.IntegerField("Número de controladoras", blank=True, null=True)
     atualizacao = models.DateTimeField("atualizacao", blank=True, null=True)
-
+    objects = StorageManager()
     class Meta:
         verbose_name = "Storage"
         verbose_name_plural = "Storages"

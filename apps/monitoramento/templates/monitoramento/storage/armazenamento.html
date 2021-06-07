@@ -1,0 +1,48 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div id="content-main">
+    <div class="change-columns">
+        <div class="main-column">
+            <div class="main-column-item">
+                <br>
+                <div class="box-garb p-0 box-garb-hover">
+                    <div class="panel panel-default ">
+                        <div class="panel-heading" role="tab">
+                            <h4 class="panel-title panel-title-xen m-0 ">
+                                <a role="button" class="d-block w-100 p-4" href="{% url 'monitoramento:storage_total_grupo' %}">
+                                    Armazenamento Total por Grupo de Trabalho
+                                </a>
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-garb p-0 box-garb-hover">
+                    <div class="panel panel-default ">
+                        <div class="panel-heading" role="tab">
+                            <h4 class="panel-title panel-title-xen m-0 ">
+                                <a role="button" class="d-block w-100 p-4" href="{% url 'monitoramento:storage_total_storage' %}">
+                                    Armazenamento Total por Storage
+                                </a>
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+                {% for storage in storages %}
+                <div class="box-garb p-0 box-garb-hover">
+                    <div class="panel panel-default ">
+                        <div class="panel-heading" role="tab">
+                            <h4 class="panel-title panel-title-xen m-0 ">
+                                <a role="button" class="d-block w-100 p-4" href="{% url 'monitoramento:storage_netapp_model' storage.id %}">
+                                    Armazenamento Corporativo: {{storage.marca}} {{storage.modelo}} 
+                                </a>
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                
+            </div>
+        </div>
+    </div>
+    {% endblock %}

@@ -10,3 +10,5 @@ class FerramentaView(ViewContextMixin, TemplateView):
         context = super(FerramentaView, self).get_context_data(**kwargs)
         context["tipos_monitoramento"] = TipoMonitoramento.objects.all()
         return context
+
+

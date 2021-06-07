@@ -1,7 +1,7 @@
 from django.urls import path
 from django.views.generic import TemplateView
 from apps.monitoramento.views.monitoramento import FerramentaView
-from apps.monitoramento.views.storage import NetappLisView, NetappView, NetappModelView, XE6QuotaListView, XE6QuotaView
+from apps.monitoramento.views.storage import ArmazenamentoView, NetappLisView, NetappModelView, TotalGrupoView, TotalStorageView, XE6QuotaListView, XE6QuotaView
 from apps.monitoramento.views.uso import SupercomputadorHistView, SupercomputadorNodesView, SupercomputadorView
 from apps.monitoramento.views.vm import XenPoolListView, XenPoolView, XenView
 
@@ -15,7 +15,10 @@ urlpatterns = [
     path("xen/pool/<int:pk>", XenPoolView.as_view(), name="vms_xen_pool"),
     path("xen/pool/<int:pk>/list/", XenPoolListView.as_view(), name="vms_xen_pool_list"),
 
-    path("netapp/", NetappView.as_view(), name="storage_netapp"),
+    path("armazenamento/total/grupo/", TotalGrupoView.as_view(), name="storage_total_grupo"),
+    path("armazenamento/total/storage/", TotalStorageView.as_view(), name="storage_total_storage"),
+
+    path("armazenamento/", ArmazenamentoView.as_view(), name="storage"),
     path("netapp/<int:pk>/model/", NetappModelView.as_view(), name="storage_netapp_model"),
     path("netapp/<int:pk>/list/", NetappLisView.as_view(), name="storage_netapp_list"),
 

@@ -19,4 +19,5 @@ django-environ
 redis
 django_cleanup
 paho-mqtt==1.5.1
+wiki
 git+https://github.com/marcelogumercinocosta/django-garb.git

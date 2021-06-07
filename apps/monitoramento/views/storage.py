@@ -14,9 +14,30 @@ from apps.monitoramento.models import (Area, QuotaUtilizada, StorageHistorico)
 from garb.views import ViewContextMixin
 
 
-class NetappView(ViewContextMixin, TemplateView):
-    template_name = "monitoramento/storage/netapp.html"
-    title = "ARMAZENAMENTO CORPORATIVO"
+
+class TotalStorageView(ViewContextMixin, TemplateView):
+    template_name = "monitoramento/storage/total_storage.html"
+    title = "Total de Armazenamento por Storage"
+
+    def get_context_data(self, **kwargs):
+        storages = Storage.objects.all()
+        context = super(TotalStorageView, self).get_context_data(**kwargs)
+        context["storages"] = storages
+        return context
+
+class TotalGrupoView(ViewContextMixin, TemplateView):
+    template_name = "monitoramento/storage/total_grupo.html"
+    title = "Total de Armazenamento por Grupo de Trabalho"
+
+    def get_context_data(self, **kwargs):
+        grupos = GrupoTrabalho.objects.all()
+        context = super(TotalGrupoView, self).get_context_data(**kwargs)
+        context["grupos"] = grupos
+        return context
+
+class ArmazenamentoView(ViewContextMixin, TemplateView):
+    template_name = "monitoramento/storage/armazenamento.html"
+    title = "ARMAZENAMENTO"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

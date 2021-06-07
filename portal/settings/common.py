@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
+    
     "freeipa",
     "celery",
     "celery_progress",
@@ -35,6 +36,16 @@ INSTALLED_APPS = [
     "apps.infra",
     "apps.monitoramento",
     "apps.biblioteca",
+    'django.contrib.sites.apps.SitesConfig',
+    'django_nyt.apps.DjangoNytConfig',
+    'mptt',
+    'sekizai',
+    'sorl.thumbnail',
+    'wiki.apps.WikiConfig',
+    'wiki.plugins.attachments.apps.AttachmentsConfig',
+    'wiki.plugins.images.apps.ImagesConfig',
+    'wiki.plugins.help.apps.HelpConfig',
+    'wiki.plugins.macros.apps.MacrosConfig',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +65,17 @@ TEMPLATES = [
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": ["templates"],
         "APP_DIRS": True,
-        "OPTIONS": {"context_processors": ["django.template.context_processors.debug", "django.template.context_processors.request", "django.contrib.auth.context_processors.auth", "django.contrib.messages.context_processors.messages",'django.template.context_processors.media',],},
+        "OPTIONS": {"context_processors": [
+            "django.template.context_processors.debug", 
+            "django.template.context_processors.request", 
+            "django.contrib.auth.context_processors.auth", 
+            "django.contrib.messages.context_processors.messages",
+            'django.template.context_processors.media',
+            'django.template.context_processors.i18n',
+            'django.template.context_processors.static',
+            'django.template.context_processors.tz',
+            "sekizai.context_processors.sekizai"
+        ]},
     },
 ]
 
@@ -147,7 +168,7 @@ GARB_CONFIG = {
             "icon": "fa-chart-line",
             "sub_itens": [
                 {"label": "Supercomputador Jobs e Nodes", "route": "monitoramento:uso_supercomputador", "auth": "all"},
-                {"label": "Armazenamento", "route": "monitoramento:storage_netapp", "auth": "all"},
+                {"label": "Armazenamento", "route": "monitoramento:storage", "auth": "all"},
                 {"label": "Ambiente Virtual", "route": "monitoramento:vms_xen", "auth": "all"},
                 {"label": "Ferramentas", "route": "monitoramento:ferramentas", "auth": "all"},
                 {"label": "RNP", "route": "monitoramento:rnp_home", "auth": "all"},
@@ -155,17 +176,19 @@ GARB_CONFIG = {
             ],
         },
         {
-            "label": "Biblioteca",
+            "label": "Conhecimento",
             "icon": "fa-book",
             "sub_itens": [
                 {"model": "biblioteca.documento"},
                 {"label": "Listar Documentos", "route": "biblioteca:documentos", "auth": "all"},
+                {"label": "3SWiki", "route": "wiki:root", "auth": "yes"},
             ],
         },
     ],
 }
 
 LOGIN_URL = '/conta/login/'
+LOGOUT_URL = '/admin/logout'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
@@ -226,3 +249,7 @@ XEN_AUTH_PASSWORD = env('XEN_AUTH_PASSWORD')
 # MQTT
 MOSQUITTO_SERVER = env('MOSQUITTO_SERVER') 
 MOSQUITTO_PORT = env('MOSQUITTO_PORT') 
+
+WIKI_ACCOUNT_HANDLING = False
+WIKI_ACCOUNT_SIGNUP_ALLOWED = False
+SITE_ID = 1
