@@ -1,0 +1,57 @@
+{% extends "wiki/base.html" %}
+{% load wiki_tags i18n sekizai_tags %}
+
+
+{% block wiki_pagetitle %}{{ article.current_revision.title }}{% endblock %}
+
+{% block wiki_breadcrumbs %}
+{% include "wiki/includes/breadcrumbs.html" %}
+{% endblock %}
+
+{% block wiki_contents %}
+
+<div id="article-container">
+    
+    <nav id="article-menu" class="navbar nav-pills">
+        <ul class="navbar-nav w-100">
+            <li class="float-left nav-item" id="article-title-li">
+                <h1 id="article-title">
+                    {{ article.current_revision.title }}
+                    <div class="row p-1 pl-4">
+                        <small style="font-size: 14px;" >
+                            {% if urlpath.parent %}
+                            <a href="{% url 'wiki:get' path=urlpath.path %}" >
+                                <span class="fa fa-bookmark"></span> {{ urlpath.slug }}
+                            </a>
+                            {% endif %}
+                            {% if article.current_revision.locked %}
+                                <span class="fa fa-lock"></span> 
+                            {% endif %}
+                        </small>
+                    </div>
+                </h1>
+            </li>
+        </ul>
+    </nav>
+    {% if user.is_authenticated and perms.wiki.add_article  %}
+        {% if article|can_write:user and not article.current_revision.locked %}
+            <nav id="article-menu-btn"  class="navbar navbar-expand-md nav-pills pt-0">
+                <ul class="nav navbar-nav ml-auto w-100 justify-content-end">
+                    {% include "wiki/includes/article_menu.html" %}
+                </ul>
+            </nav>
+        {% endif  %}
+    {% endif  %}
+
+    <div>
+        {% block wiki_contents_tab %}
+        {% endblock %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block wiki_footer_prepend %}
+<p style="margin-bottom: 10px;"><em>{% trans "This article was last modified:" %}
+        {{ article.current_revision.modified }}, criado por {{ article.owner}}</em></p>
+{% endblock %}

@@ -21,6 +21,8 @@ urlpatterns = [
     path("conta/reset/<uidb64>/<token>/", PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
     path('conta/', include('django.contrib.auth.urls')),
     path('celery-progress/', include('celery_progress.urls')),
+    path('notifications/', include('django_nyt.urls')),
+    path('wiki/', include('wiki.urls')),
     path("admin/", admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

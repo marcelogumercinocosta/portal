@@ -4,7 +4,7 @@ from django.db.models import Sum
 
 class StorageAreaManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().select_related("storage")
+        return super().get_queryset().select_related("storage").prefetch_related("storageareagrupotrabalho_set")
 
     def aggregate_storage_sum(self):
         return super().get_queryset().values("storage_id").annotate(Sum("capacidade"))
@@ -12,7 +12,7 @@ class StorageAreaManager(models.Manager):
 
 class StorageAreaGrupoTrabalhoManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().select_related("grupo", "storage_area")
+        return super().get_queryset().select_related("grupo", "storage_area", "storage_area__storage","grupo__divisao")
 
     def aggregate_divisao_quota_sum(self):
         return super().get_queryset().values("grupo__divisao_id", "storage_area__storage_id").annotate(Sum("quota"))
@@ -29,3 +29,8 @@ class EquipamentoManager(models.Manager):
 class EquipamentoGrupoAcessoManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().select_related("equipamento","equipamento__servidor")
+
+
+class StorageManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related("storagearea_set")

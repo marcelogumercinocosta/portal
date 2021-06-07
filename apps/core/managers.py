@@ -3,7 +3,7 @@ from django.db import models
 
 class GrupoTrabalhoManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().select_related("divisao").prefetch_related("responsavelgrupotrabalho_set", "grupoacesso_set")
+        return super().get_queryset().select_related("divisao").prefetch_related("responsavelgrupotrabalho_set", "grupoacesso_set","storageareagrupotrabalho_set")
 
 
 class ResponsavelGrupoTrabalhoManager(models.Manager):

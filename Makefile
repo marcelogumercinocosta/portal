@@ -93,7 +93,16 @@ test-dev:
 dumpdata:
 	../env/bin/python ./manage.py dumpdata core.grupotrabalho core.grupoacesso infra.rede infra.hostnameip infra.rack infra.equipamento infra.equipamentogrupoacesso infra.storage infra.storagearea infra.storageareagrupotrabalho infra.supercomputador infra.servidor infra.servidorhostnameip infra.ambientevirtual infra.templatevm infra.templatehostnameip infra.templatecomando  monitoramento.tipomonitoramento  monitoramento.monitoramento monitoramento.prometheus colaborador.colaborador core.colaboradorgrupoacesso core.responsavelgrupotrabalho colaborador.vpn --indent 2 > ./doc/external/dump_private.json 
 
-# target: init - insert admin user + permissions
+# target: init-zero - insert admin user + permissions
+init-zero:
+	@[ ${django_settings_module} ] || ( echo ">> django_settings_module is not set"; exit 1 )
+	if ! test -d ./apps/core/migrations/; then docker exec -it $$(docker ps --format "{{.Names}}" | grep django-celery) /app/manage.py makemigrations core colaborador infra monitoramento biblioteca; fi
+	docker exec -it $$(docker ps --format "{{.Names}}" | grep django-celery) /app/manage.py migrate
+	docker exec -it $$(docker ps --format "{{.Names}}" | grep django-celery) python3 /app/doc/external/init_data.py
+	if test -e ./doc/external/dump_private.json; then docker exec -it $$(docker ps --format "{{.Names}}" | grep django-celery) /app/manage.py loaddata ./doc/external/dump_private.json; fi
+
+
+# target: init - restore backup
 init:
 	@[ ${django_settings_module} ] || ( echo ">> django_settings_module is not set"; exit 1 )
 	if ! test -d ./apps/core/migrations/; then docker exec -it $$(docker ps --format "{{.Names}}" | grep django-celery) /app/manage.py makemigrations core colaborador infra monitoramento biblioteca; fi

@@ -145,3 +145,5 @@ docker/data/*
 RoleCommon/*
 .dccache
 media/documento/*
+media/cache/*
+media/wiki/*

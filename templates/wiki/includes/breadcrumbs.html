@@ -1,0 +1,68 @@
+{% load sekizai_tags i18n wiki_tags static %}
+{% if urlpath %}
+<div id="article-breadcrumbs" class="row">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb my-0">
+            {% for ancestor in urlpath.cached_ancestors %}
+            <li class="breadcrumb-item"><a
+                    href="{% url 'wiki:get' path=ancestor.path %}">{{ ancestor.article.current_revision.title|truncatechars:25 }}</a>
+            </li>
+            {% endfor %}
+            <li class="breadcrumb-item active">{{ article.current_revision.title|truncatechars:35 }}</li>
+        </ol>
+    </nav>
+    {% if  perms.wiki.add_article  %}
+        <div class="btn-group" style="margin-left: 10px;">
+            <button class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#" style="padding: 7px;" type="button"
+                title="{% trans "Sub-articles for" %} {{ article.current_revision.title }}" aria-haspopup="true"
+                aria-expanded="false">
+                <span class="fa fa-sitemap"></span>
+                <span class="caret"></span>
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                {% for child in children_slice %}
+                    <a class="dropdown-item" href="{% url 'wiki:get' path=child.path %}">
+                        {{ child.article.current_revision.title }}
+                    </a>
+                {% empty %}
+                    <a class="dropdown-item" href="#"><em>{% trans "No sub-articles" %}</em></a>
+                {% endfor %}
+                {% if children_slice_more %}
+                    <a class="dropdown-item" href="#"><em>{% trans "...e mais" %}</em></a>
+                {% endif %}
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{% url 'wiki:dir' path=urlpath.path %}">Procure artigos neste nível &raquo;</a>
+            </div>
+        </div>
+        <div class="btn-group" style="margin-left: 10px;">
+            {% if not urlpath.get_ancestors|length == 0  %}
+                <button class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#" style="padding: 7px;" type="button"
+                    title="{% trans "Sub-articles for" %} {{ article.current_revision.title }}" aria-haspopup="true"
+                    aria-expanded="false">
+                    <span class="fa fa-file"></span>
+                    <span class="caret"></span>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    {% if urlpath.parent and urlpath.get_ancestors|length >= 3  %}
+                        <a class="dropdown-item" href="{% url 'wiki:create' path=urlpath.parent.path %}" style="padding: 7px;">
+                            <span class="fa fa-arrow-right"></span>
+                            {% blocktrans with article.current_revision.title as title %}Novo artigo ao lado de
+                            {{ title }}{% endblocktrans %}
+                        </a>
+                    {% endif %}
+                    {% if not  urlpath.get_ancestors|length >= 3  %}
+                        <a class="dropdown-item" href="{% url 'wiki:create' path=urlpath.path %}" style="padding: 7px;">
+                            <span class="fa fa-arrow-down"></span>
+                            {% blocktrans with article.current_revision.title as title %}Novo artigo abaixo
+                            {{ title }}{% endblocktrans %}
+                            
+                        </a>
+                    {% endif %}   
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="clearfix"></div>
+    {% endif%}
+</div>
+{% endif %}
