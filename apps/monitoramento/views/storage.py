@@ -17,7 +17,7 @@ from garb.views import ViewContextMixin
 
 class TotalStorageView(ViewContextMixin, TemplateView):
     template_name = "monitoramento/storage/total_storage.html"
-    title = "Total de Armazenamento por Storage"
+    title = "TOTAL DE ARMAZENAMENTO POR STORAGE"
 
     def get_context_data(self, **kwargs):
         storages = Storage.objects.all()
@@ -27,7 +27,7 @@ class TotalStorageView(ViewContextMixin, TemplateView):
 
 class TotalGrupoView(ViewContextMixin, TemplateView):
     template_name = "monitoramento/storage/total_grupo.html"
-    title = "Total de Armazenamento por Grupo de Trabalho"
+    title = "TOTAL DE ARMAZENAMENTO POR GRUPO DE TRABALHO"
 
     def get_context_data(self, **kwargs):
         grupos = GrupoTrabalho.objects.all()
