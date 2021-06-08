@@ -194,6 +194,7 @@ class PasswordResetConfirmView(ViewContextMixin, TemplateView):
             context.update({"validlink": True, "password": tmp_password})
         return context
 
+
 class SolicitacaoView(ViewContextMixin, LoginRequiredMixin, TemplateView):
     template_name = "colaborador/solicitacao.html"
     title = "SOLICITAÇÃO DE ACESSO"
@@ -352,6 +353,7 @@ class VPNFormularioView(ViewContextMixin, LoginRequiredMixin, PermissionRequired
         html = template.render(context)
         pisa.CreatePDF(html.encode("utf8"), dest=response)
         return response
+
 
 class ColaboradorExternoView(ViewContextMixin, LoginRequiredMixin, PermissionRequiredMixin, FormView):
     form_class = ColaboradorExternoForm

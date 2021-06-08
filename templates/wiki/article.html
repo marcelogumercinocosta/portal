@@ -34,7 +34,7 @@
         </ul>
     </nav>
     {% if user.is_authenticated and perms.wiki.add_article  %}
-        {% if article|can_write:user and not article.current_revision.locked %}
+        {% if  article|can_write:user and not article.current_revision.locked  or article.owner == user %}
             <nav id="article-menu-btn"  class="navbar navbar-expand-md nav-pills pt-0">
                 <ul class="nav navbar-nav ml-auto w-100 justify-content-end">
                     {% include "wiki/includes/article_menu.html" %}
