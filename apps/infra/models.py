@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from django.core.exceptions import NON_FIELD_ERRORS, EmptyResultSet, ObjectDoesNotExist
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from apps.infra.managers import EquipamentoGrupoAcessoManager, EquipamentoManager, HostnameIPManager, ServidorManager, ServidorNagiosServicoManager, StorageAreaGrupoTrabalhoManager, StorageAreaManager, StorageManager
+from apps.infra.managers import EquipamentoGrupoAcessoManager, EquipamentoManager, EquipamentoParteManager, HostnameIPManager, OcorrenciaServicoManager, ServidorManager, ServidorNagiosServicoManager, StorageAreaGrupoTrabalhoManager, StorageAreaManager, StorageManager, SupercomputadorManager
 
 LINHAS = [ "-", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM", 
             "AN", "AO", "AP", "AQ", "AR", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ", "BA", 
@@ -92,7 +92,7 @@ class Equipamento(models.Model):
     patrimonio = models.CharField("Patrimônio", max_length=255, null=True)
     descricao = models.CharField("Descrição", max_length=255, null=True)
     garantia = models.CharField("Garantia", max_length=255, null=True, blank=True)
-    status = models.CharField("Status", default="Ativo", max_length=255, null=True)
+    status = models.CharField("Status", default="Manutenção", max_length=255, null=True)
     rack = models.ForeignKey(Rack, verbose_name="Rack", on_delete=models.PROTECT, null=True, blank=False)
     rack_tamanho = models.IntegerField(default=2, verbose_name="Tamanho em U", null=True)
     rack_posicao = models.IntegerField(default=0, verbose_name="Posição no Rack", null=True)
@@ -134,8 +134,10 @@ class Supercomputador(Equipamento):
     memoria = models.CharField("Memória", max_length=255, blank=True, null=True)
     kafka_topico_realtime = models.CharField("Kafka Tópico Realtime", max_length=255, blank=True, null=True)
     kafka_topico_historico = models.CharField("Kafka Tópico Histórico", max_length=255, blank=True, null=True)
+    objects = SupercomputadorManager()
     racks = []
     update = None
+
 
     class Meta:
         verbose_name = "Supercomputador"
@@ -408,6 +410,7 @@ class StorageAreaGrupoTrabalho(models.Model):
 class EquipamentoParte(Equipamento):
     configuracao = models.TextField("Configuração", blank=True, null=True)
     vinculado = models.ForeignKey("infra.Equipamento", verbose_name="Equipamento Vinculado", blank=True, null=True, related_name="equipamentoparte_vinculo", on_delete=models.PROTECT)
+    objetcs = EquipamentoParteManager()
     nome = None
     nome_inline = None
 
@@ -430,7 +433,7 @@ class ServidorNagiosServico(models.Model):
     objects = ServidorNagiosServicoManager()
 
     def __str__(self):
-        return f"{self.servidor.nome} | {self.nagios_servico.servico}"
+        return f"{self.servidor.nome_completo() } | {self.nagios_servico.servico}"
 
 
 class EquipamentoGrupoAcesso(models.Model):
@@ -453,14 +456,10 @@ class Ocorrencia(models.Model):
     ocorrencia = models.CharField("Ocorrência", max_length=255, blank=True, null=True)
     descricao = models.CharField("Descrição", max_length=255, blank=True, null=True)
     data = models.DateTimeField("data", auto_now=True, blank=True, null=True)
-    equipamento = models.ForeignKey(
-        "infra.Equipamento",
-        verbose_name="Equipamento",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    status = models.CharField("status", max_length=255, blank=True, null=True)
+    equipamento = models.ForeignKey( "infra.Equipamento", verbose_name="Equipamento", on_delete=models.CASCADE,  blank=True, null=True, )
+    status = models.CharField("status", max_length=255, blank=True, null=True, default="Analisando")
+    checklist =  models.ForeignKey("noc.Checklist", null=True, blank=True,related_name="ocorrencia_checklist", on_delete=models.CASCADE)
+    objects = OcorrenciaServicoManager()
     class Meta:
         verbose_name = "Ocorrência"
         verbose_name_plural = "Ocorrências"

@@ -178,6 +178,13 @@ GARB_CONFIG = {
             ],
         },
         {
+            "label": "NOC",
+            "icon": "fa-user-clock",
+            "sub_itens": [
+                {"model": "noc.checklist"},
+            ],
+        },
+        {
             "label": "Conhecimento",
             "icon": "fa-book",
             "sub_itens": [

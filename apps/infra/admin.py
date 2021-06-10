@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from apps.core.utils.freeipa import FreeIPA
 from apps.infra.forms import (AmbienteVirtualServidorInLineForm,
                               EquipamentoGrupoAcessoForm, EquipamentoParteForm,
-                              HostnameIPForm, HostnameIPInLineForm,
+                              HostnameIPForm, HostnameIPInLineForm, OcorrenciaChecklistInLineForm,
                               OcorrenciaInLineForm, RackForm, ServidorForm, TemplateComandoInLineForm,
                               StorageAreaGrupoTrabalhoInLineForm)
 from apps.infra.models import (AmbienteVirtual, 
@@ -167,10 +167,19 @@ class ServicoNagiosInLine(admin.TabularInline):
     verbose_name = "Nagios Serviço"
     verbose_name_plural = "Nagios Serviços"
 
-    # def get_formset(self, request, obj=None, **kwargs):
-    #     formset = super(ServicoNagiosInLine, self).get_formset(request, obj, **kwargs)
-    #     formset.form.base_fields["nagiosservicos"].label = "Nagios Serviço"
-    #     return formset
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super(ServicoNagiosInLine, self).get_formset(request, obj, **kwargs)
+        formset.form.base_fields["nagios_servico"].label = "Serviço"
+        return formset
+
+
+class OcorrenciaChecklistInLine(admin.TabularInline):
+    model = Ocorrencia
+    fields = ("equipamento","descricao")
+    extra = 0
+    verbose_name = "Ocorrência de Equipamento"
+    verbose_name_plural =  "Ocorrências de Equipamento"
+    form = OcorrenciaChecklistInLineForm
 
 @admin.register(HostnameIP)
 class HostnameIPAdmin(admin.ModelAdmin):
@@ -211,6 +220,7 @@ class SupercomputadorAdmin(admin.ModelAdmin):
     search_fields = ["marca", "modelo"]
     list_display = ("marca", "modelo", "kafka_topico_realtime", "kafka_topico_historico", "status")
     exclude = ("rack", "rack_tamanho", "rack_posicao", "consumo", "grupos_acesso", "patrimonio", "serie", "descricao", "tipo_uso", "tipo", "status",)
+    inlines = (OcorrenciaInLine,)
 
 
 @admin.register(Storage)
@@ -219,7 +229,7 @@ class StorageAdmin(admin.ModelAdmin):
     readonly_fields = ("atualizacao",)
     list_display = ("marca", "modelo", "descricao", "capacidade",)
     exclude = ("rack", "rack_tamanho", "rack_posicao", "consumo", "grupos_acesso", "patrimonio", "serie",  "tipo_uso", "tipo", "status",)
-    inlines = (StorageAreaInLine,)
+    inlines = (StorageAreaInLine, OcorrenciaInLine)
 
 
 @admin.register(Servidor)
@@ -374,3 +384,5 @@ class AmbienteVirtualAdmin(admin.ModelAdmin):
 @admin.register(Rede)
 class RedeAdmin(admin.ModelAdmin):
     list_display = ("rede", "ip", "prioridade_montagem")
+
+

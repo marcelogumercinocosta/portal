@@ -171,4 +171,11 @@ class ServidorVMForm(GarbForm):
         fieldsets = [
             ("Nova VM", {"fields": ("servidor","template", "cpu", "memoria")}),
         ]
-    
+
+
+class OcorrenciaChecklistInLineForm(forms.ModelForm):
+    equipamento = forms.ModelChoiceField(Equipamento.objects.all().exclude(tipo='Servidor Virtual'), widget=forms.Select(attrs={"data-live-search": "True"}))
+
+    class Meta:
+        model = Ocorrencia
+        fields = ("equipamento","descricao")
