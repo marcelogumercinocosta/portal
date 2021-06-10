@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from django.core.exceptions import NON_FIELD_ERRORS, EmptyResultSet, ObjectDoesNotExist
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from apps.infra.managers import EquipamentoGrupoAcessoManager, EquipamentoManager, StorageAreaGrupoTrabalhoManager, StorageAreaManager, StorageManager
+from apps.infra.managers import EquipamentoGrupoAcessoManager, EquipamentoManager, HostnameIPManager, ServidorManager, ServidorNagiosServicoManager, StorageAreaGrupoTrabalhoManager, StorageAreaManager, StorageManager
 
 LINHAS = [ "-", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM", 
             "AN", "AO", "AP", "AQ", "AR", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ", "BA", 
@@ -125,6 +125,7 @@ class Equipamento(models.Model):
         else:
             return f"[ {self.tipo.upper()} ] {self.marca} {self.modelo}"
     
+
 class Supercomputador(Equipamento):
     arquitetura = models.CharField("Arquitetura", max_length=255, blank=True, null=True)
     nos = models.CharField("Nós Computacionais", max_length=255, blank=True, null=True)
@@ -228,6 +229,7 @@ class HostnameIP(models.Model):
     tipo = models.ForeignKey("infra.Rede", on_delete=models.PROTECT, blank=True, null=True)
     ip = models.CharField("IP", max_length=255, unique=True, null=True)
     reservado = models.BooleanField("Reservado", default=False, blank=True, null=True)
+    objects = HostnameIPManager()
 
     class Meta:
         verbose_name = "HostName IP"
@@ -248,6 +250,8 @@ class Servidor(Equipamento):
     conta = models.CharField("conta", default="Aguardando", max_length=255)
     vm_remover = models.BooleanField("Remover VM", default=False, blank=True, null=True)
     vm_ambiente_virtual = models.ForeignKey("infra.AmbienteVirtual", related_name="vm_ambiente_virtual", blank=True, null=True, on_delete=models.PROTECT)
+    nagios_servicos = models.ManyToManyField('monitoramento.NagiosServicos', blank=True,through="ServidorNagiosServico")
+    objects = ServidorManager()
 
     class Meta:
         verbose_name = "Servidor"
@@ -293,6 +297,7 @@ class TemplateVM(models.Model):
             return host.hostnameip.hostname, host.hostnameip.ip
         return None
 
+
 class TemplateComando(models.Model):
     comando = models.CharField(max_length=255, 
         help_text=' Variáveis dos comandos\n\
@@ -315,6 +320,7 @@ class TemplateComando(models.Model):
 
     def __str__(self):
         return self.comando
+
 
 class TemplateHostnameIP(models.Model):
     template = models.ForeignKey("infra.TemplateVM", on_delete=models.CASCADE)
@@ -418,6 +424,15 @@ class EquipamentoParte(Equipamento):
         super(EquipamentoParte, self).save(*args, **kwargs)
 
 
+class ServidorNagiosServico(models.Model):
+    servidor = models.ForeignKey("infra.Servidor", on_delete=models.CASCADE)
+    nagios_servico = models.ForeignKey("monitoramento.NagiosServicos", on_delete=models.CASCADE)
+    objects = ServidorNagiosServicoManager()
+
+    def __str__(self):
+        return f"{self.servidor.nome} | {self.nagios_servico.servico}"
+
+
 class EquipamentoGrupoAcesso(models.Model):
     equipamento = models.ForeignKey("infra.Equipamento", on_delete=models.CASCADE)
     grupo_acesso = models.ForeignKey("core.GrupoAcesso", on_delete=models.PROTECT)
@@ -445,7 +460,7 @@ class Ocorrencia(models.Model):
         blank=True,
         null=True,
     )
-
+    status = models.CharField("status", max_length=255, blank=True, null=True)
     class Meta:
         verbose_name = "Ocorrência"
         verbose_name_plural = "Ocorrências"

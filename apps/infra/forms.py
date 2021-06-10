@@ -2,10 +2,9 @@ import re
 from django import forms
 from django.db.models import Q
 from django.forms import ModelChoiceField
-from garb.forms import GarbForm, GarbModelForm
+from garb.forms import GarbForm
 
-from apps.core.models import GrupoAcesso, GrupoTrabalho, Predio
-from apps.infra.models import Equipamento, EquipamentoGrupoAcesso, EquipamentoParte, HostnameIP, Ocorrencia, Rack, Servidor, ServidorHostnameIP, StorageAreaGrupoTrabalho, Rede, TemplateComando, TemplateVM
+from apps.infra.models import Equipamento, EquipamentoGrupoAcesso, EquipamentoParte, HostnameIP, Ocorrencia, Rack, Servidor, ServidorHostnameIP, StorageAreaGrupoTrabalho, TemplateComando, TemplateVM
 from django.core.exceptions import ValidationError
 
 
@@ -99,7 +98,6 @@ class StorageAreaGrupoTrabalhoInLineForm(forms.ModelForm):
         widgets = {"storage_area": forms.Select(attrs={"data-live-search": "True"})}
 
 
-
 class TemplateComandoInLineForm(forms.ModelForm):
     TIPOS_Comando = (
         ("", ""),
@@ -113,6 +111,7 @@ class TemplateComandoInLineForm(forms.ModelForm):
         model = TemplateComando
         fields = ["comando", "configuracao", "prioridade"]
         
+
 class EquipamentoGrupoAcessoForm(forms.ModelForm):
     class Meta:
         model = EquipamentoGrupoAcesso
@@ -121,15 +120,25 @@ class EquipamentoGrupoAcessoForm(forms.ModelForm):
 
 
 class OcorrenciaInLineForm(forms.ModelForm):
+    
+    STATUS = (
+        ("Analisando", "Analisando"),
+        ("Aberto", "Aberto"),
+        ("Fechado", "Fechado"),
+        ("Suspenso", "Suspenso"),
+    )
+    status = forms.ChoiceField(choices = STATUS, initial='Analisando') 
     class Meta:
         model = Ocorrencia
         fields = ["ocorrencia", "descricao"]
 
     def __init__(self, *args, **kwargs):
         super(OcorrenciaInLineForm, self).__init__(*args, **kwargs)
-        if str(self.instance.ocorrencia) != "":
+        if str(self.instance.status) == "Fechado" and self.instance.ocorrencia != None :
             self.fields["ocorrencia"].widget.attrs["readonly"] = "readonly"
             self.fields["descricao"].widget.attrs["readonly"] = "readonly"
+            self.fields["status"].widget.attrs["disabled"] = "disabled"
+
 
 class AmbienteVirtualServidorInLineForm(forms.ModelForm):
     servidor = forms.ModelChoiceField(Servidor.objects.filter(tipo="Servidor Físico"), widget=forms.Select(attrs={"data-live-search": "True"}))
@@ -137,6 +146,7 @@ class AmbienteVirtualServidorInLineForm(forms.ModelForm):
     class Meta:
         model = Servidor
         fields = ["servidor"]
+
 
 class ServidorVMForm(GarbForm):
     CPU_CHOICES =( 

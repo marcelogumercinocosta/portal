@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'wiki.plugins.images.apps.ImagesConfig',
     'wiki.plugins.help.apps.HelpConfig',
     'wiki.plugins.macros.apps.MacrosConfig',
+    "apps.noc",
 ]
 
 MIDDLEWARE = [
@@ -173,6 +174,7 @@ GARB_CONFIG = {
                 {"label": "Ferramentas", "route": "monitoramento:ferramentas", "auth": "all"},
                 {"label": "RNP", "route": "monitoramento:rnp_home", "auth": "all"},
                 {"model": "monitoramento.tipomonitoramento"},
+                {"model": "monitoramento.nagiosServicos"},
             ],
         },
         {
@@ -253,3 +255,6 @@ MOSQUITTO_PORT = env('MOSQUITTO_PORT')
 WIKI_ACCOUNT_HANDLING = False
 WIKI_ACCOUNT_SIGNUP_ALLOWED = False
 SITE_ID = 1
+
+
+SILENCED_SYSTEM_CHECKS = ["models.W042"]

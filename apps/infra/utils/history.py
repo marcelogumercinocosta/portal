@@ -27,3 +27,11 @@ class HistoryInfra:
         object_repr=force_str(hostnameip), action_flag=ADDITION, 
         change_message=(f"Servidor {servidor.nome_completo()} liberou Hostname")
         )
+
+    def status_servidor(self, servidor):
+        LogEntry.objects.log_action( user_id=self.request.user.pk, 
+        content_type_id=ContentType.objects.get_for_model(servidor).pk, 
+        object_id=servidor.pk, 
+        object_repr=force_str(servidor), action_flag=ADDITION, 
+        change_message=(f"Alteração do status do Servidor para: {servidor.status} ")
+        )

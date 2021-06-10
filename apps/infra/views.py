@@ -1,5 +1,5 @@
 
-from django.http.response import Http404
+from apps.monitoramento.models.nagios import NagiosServicos
 from apps.infra.utils.xen_crud import XenCrud
 import base64
 import io
@@ -16,7 +16,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView
 from django.views.generic.base import RedirectView, TemplateView
-from django.views.generic.edit import CreateView, FormView, UpdateView
+from django.views.generic.edit import CreateView, FormView
 
 from apps.core.tasks import send_email_task
 from apps.core.utils.freeipa import FreeIPA
@@ -190,6 +190,28 @@ class CriarServidorLocalView(LoginRequiredMixin, PermissionRequiredMixin, Redire
         else:
             messages.add_message(self.request, messages.ERROR, "Confira o Cadastro, existe informação faltando ou não salva! É necessário um grupo de acesso! ")
         return reverse_lazy("admin:infra_servidor_change", kwargs={"object_id": servidor.id, })
+
+class AlterarStatusServidorView(LoginRequiredMixin, PermissionRequiredMixin, RedirectView):
+    permission_required = "infra.view_servidor"
+
+    def get_redirect_url(self, *args, **kwargs):
+        servidor = get_object_or_404(Servidor, id=kwargs["pk"])
+        if servidor.status == "Manutenção":
+            servidor.status = "Em uso"
+            nagios_servicos = NagiosServicos.objects.all().filter(padrao=True)
+            servidor_nagios_servicos = servidor.nagios_servicos.all()
+            [servidor.nagios_servicos.add(servico) for servico in nagios_servicos if servico not in servidor_nagios_servicos]
+            servidor.save()
+        else:
+            servidor.status = "Manutenção"
+            servidor.save()
+
+        messages.add_message(self.request, messages.SUCCESS, "Status do Servidor Alterado!")
+        HistoryInfra(self.request).status_servidor(servidor=servidor)
+        send_email_task.delay("Mudança de Status do Servidor",f"O Servidor: {servidor.nome} teve seu status alterado para: {servidor.status} por:{self.request.user.username}",[settings.EMAIL_SYSADMIN, settings.EMAIL_SUPORTE])
+        return reverse_lazy("admin:infra_servidor_change", kwargs={"object_id": servidor.id, })
+
+
 
 class CriarVmView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
     form_class = ServidorVMForm

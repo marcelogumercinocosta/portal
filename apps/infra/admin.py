@@ -1,7 +1,4 @@
 from apps.infra.utils.xen_crud import XenCrud
-from collections import OrderedDict
-from distutils.command import clean
-from distutils.command.clean import clean
 from secrets import choice
 
 from django.contrib import admin, messages
@@ -16,16 +13,15 @@ from apps.infra.forms import (AmbienteVirtualServidorInLineForm,
 from apps.infra.models import (AmbienteVirtual, 
                                EquipamentoGrupoAcesso, EquipamentoParte,
                                HostnameIP, Ocorrencia, Rack, Rede, Servidor,
-                               ServidorHostnameIP, Storage, StorageArea,
+                               ServidorHostnameIP, ServidorNagiosServico, Storage, StorageArea,
                                StorageAreaGrupoTrabalho, Supercomputador, TemplateComando, TemplateHostnameIP, TemplateVM)
 from apps.infra.utils.freeipa_location import Automount
 from apps.infra.utils.history import HistoryInfra
-from apps.infra.views import DataCenterMap
 
 
 class OcorrenciaInLine(admin.TabularInline):
     model = Ocorrencia
-    fields = ["ocorrencia", "descricao", "data"]
+    fields = ["ocorrencia", "descricao", "status", "data"]
     extra = 0
     form = OcorrenciaInLineForm
 
@@ -165,6 +161,17 @@ class AmbienteVirtualServidorInLine(admin.TabularInline):
     form = AmbienteVirtualServidorInLineForm
 
 
+class ServicoNagiosInLine(admin.TabularInline):
+    model = ServidorNagiosServico
+    extra = 0
+    verbose_name = "Nagios Serviço"
+    verbose_name_plural = "Nagios Serviços"
+
+    # def get_formset(self, request, obj=None, **kwargs):
+    #     formset = super(ServicoNagiosInLine, self).get_formset(request, obj, **kwargs)
+    #     formset.form.base_fields["nagiosservicos"].label = "Nagios Serviço"
+    #     return formset
+
 @admin.register(HostnameIP)
 class HostnameIPAdmin(admin.ModelAdmin):
     change_form_template = "infra/admin/change_form_hostnameip.html"
@@ -226,7 +233,7 @@ class ServidorAdmin(admin.ModelAdmin):
     fields = ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "conta", 'vm_remover']
     readonly_fields = ("status","conta")
     form = ServidorForm
-    inlines = (HostnameIPServidorInLine,)
+    inlines = [HostnameIPServidorInLine]
 
     def grupo(self, obj):
         return obj.grupo_acesso_name()
@@ -277,7 +284,7 @@ class ServidorAdmin(admin.ModelAdmin):
             self.fields = ["nome", "tipo", "tipo_uso", "predio", "descricao", "marca", "modelo", "serie", "patrimonio", "garantia", "consumo", "rack", "rack_tamanho", "vinculado", "status", "conta", ]
 
         self.readonly_fields = ("nome", "status", "conta", "tipo", "tipo_uso", "predio")
-        self.inlines = (HostnameIPServidorInLine, GrupoAcessoEquipamentoInLine, OcorrenciaInLine)
+        self.inlines = [HostnameIPServidorInLine, GrupoAcessoEquipamentoInLine, OcorrenciaInLine, ServicoNagiosInLine]
         return super().change_view(request, object_id, form_url=form_url, extra_context=extra_context)
 
     def save_formset(self, request, form, formset, change):
@@ -345,6 +352,7 @@ class TemplateVMAdmin(admin.ModelAdmin):
     def change_view(self, request, object_id, form_url="", extra_context=None):
         self.readonly_fields = ['ambiente_virtual']
         return super().change_view(request, object_id, form_url=form_url, extra_context=extra_context)
+
 
 @admin.register(EquipamentoParte)
 class EquipamentoParteAdmin(admin.ModelAdmin):
