@@ -16,6 +16,7 @@ urlpatterns = [
     path("estrutura/", include("apps.core.urls.noauth")),
     path("infra/", include("apps.infra.urls")),
     path("biblioteca/", include("apps.biblioteca.urls")),
+    path("noc/", include("apps.noc.urls")),
     path("garb/", include("garb.urls")),
     path("conta/password_reset/", auth_views.PasswordResetView.as_view(html_email_template_name="registration/password_reset_email_html.html"), name="password_reset"),
     path("conta/reset/<uidb64>/<token>/", PasswordResetConfirmView.as_view(), name="password_reset_confirm"),

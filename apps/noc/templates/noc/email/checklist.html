@@ -1,0 +1,40 @@
+{% extends 'base_email.html' %}
+{% load garb_tags %}
+{% load templatetags %}
+{% block content %}
+    <h1>Checklist<b> | {{checklist}}</b></h1>
+    <br>
+    <p><b>Respons&aacute;vel pelo turno</b></p>
+    {% for responsavel in checklist.responsaveis.all %}
+        <p> - {{responsavel}}<p>
+    {% endfor %}
+    <br>
+    <p><b>Geral</b></p>
+        {% if checklist.outros %}
+            <p>{{checklist.outros }}</p>
+        {% else %}
+            <p> - </p>
+        {% endif %}
+    <br>
+    <p><b>Alertas no Nagios</b></p>
+    {% for alerta in checklist.alerta_monitoramento.all %}
+        <p> - {{alerta}}<p>
+    {% empty %}
+        <p> - <p>
+    {% endfor %}
+    <br>
+    <p><b>Novas Ocorrências de Equipamento</b></p>
+    {% for ocorrencia in checklist.ocorrencia_checklist.all %}
+        <p> - {{ocorrencia.equipamento}} <b>/</b> {{ocorrencia.descricao}} <b>/</b> {{ocorrencia.status}}<p>
+    {% empty %}
+        <p> - <p>
+    {% endfor %}
+    <br>
+    <p><b>Ocorrências abertas</b></p>
+    {% for ocorrencia in ocorrencias_abertas %}
+        <p> - {{ocorrencia.equipamento}} <b>/</b> {{ocorrencia.descricao}} <b>/</b> {{ocorrencia.status}}<p>
+    {% empty %}
+        <p> - <p>
+    {% endfor %}
+    <br>
+{% endblock %}

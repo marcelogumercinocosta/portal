@@ -1,0 +1,43 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+{% load templatetags %}
+{% load i18n  garb_tags %}
+{% block after_field_sets %}
+
+<div class="tabular inline-related ">
+{% if add %}
+    <fieldset class="module ">
+        <div class="module-header">
+            <div class="legend">Automático</div>
+        </div>
+        <div class="row p-2 pb-0">
+            <div class="col-11 p-1" ><b class="txt_cor_primaria ">Responsável pelo turno:</b> {{ usuario_logado }}</div>
+        </div>
+        <div class="row p-2">
+            <div class="col-11  p-1" ><b class="txt_cor_primaria ">Ocorrências de Equipamento em Aberto</b>   <small>todas Ocorrências serão eviadas no email mas ficam ligadas ao checklist Original</small></div>
+            <div class="col-6 p-1"><b>Equipamento</b></div>
+            <div class="col-4 p-1"><b>Descrição</b></div>
+            <div class="col-1 p-1"><b>Status</b></div>
+            {% for ocorrencia in ocorrencias_abertas %}
+                <div class="col-6 p-1 ">{{ ocorrencia.equipamento }}</div>
+                <div class="col-4 p-1 ">{{ ocorrencia.descricao }}</div>
+                <div class="col-1 p-1">{{ ocorrencia.status|default_if_none:""  }}</div>
+            {% empty %}
+
+			<div class="box-garb">
+				<p>N&atilde;o existe Ocorrências abertas.</p>
+			</div>
+			{% endfor %}
+        </div>
+    </fieldset>
+{% endif %}
+</div>
+
+
+{% endblock %}
+
+{% block submit_buttons_extra_bottom %} 
+    {% if not add %}
+        <a href="{% url 'noc:checklist_enviar' object_id  %}" class=" btn btn-info" >Enviar</a>
+    {% endif %}
+{% endblock %}

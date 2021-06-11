@@ -53,7 +53,7 @@ class HostnameIPManager(models.Manager):
 
 class ServidorNagiosServicoManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().select_related("servidor", "servidor__equipamento_ptr").prefetch_related("nagios_servico")
+        return super().get_queryset().select_related("servidor", "servidor__equipamento_ptr", "servidor__equipamento_ptr__grupos_acesso").prefetch_related("nagios_servico")
 
 
 class OcorrenciaServicoManager(models.Manager):

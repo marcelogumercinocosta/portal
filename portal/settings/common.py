@@ -182,6 +182,7 @@ GARB_CONFIG = {
             "icon": "fa-user-clock",
             "sub_itens": [
                 {"model": "noc.checklist"},
+                {"model": "noc.checklistemail"},
             ],
         },
         {

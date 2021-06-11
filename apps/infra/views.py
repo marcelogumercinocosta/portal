@@ -1,6 +1,4 @@
 
-from apps.monitoramento.models.nagios import NagiosServicos
-from apps.infra.utils.xen_crud import XenCrud
 import base64
 import io
 import json
@@ -9,7 +7,8 @@ from itertools import chain
 import pyqrcode
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.mixins import (LoginRequiredMixin, PermissionRequiredMixin)
+from django.contrib.auth.mixins import (LoginRequiredMixin,
+                                        PermissionRequiredMixin)
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -17,16 +16,19 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView
 from django.views.generic.base import RedirectView, TemplateView
 from django.views.generic.edit import CreateView, FormView
+from garb.views import ViewContextMixin
 
+from apps.core.models import Predio
 from apps.core.tasks import send_email_task
 from apps.core.utils.freeipa import FreeIPA
 from apps.infra.forms import OcorrenciaForm, ServidorVMForm
-from apps.core.models import Predio
-from apps.infra.models import ( LINHAS, Equipamento, EquipamentoParte, Ocorrencia, Rack, Servidor, TemplateVM)
+from apps.infra.models import (LINHAS, Equipamento, EquipamentoParte,
+                               Ocorrencia, Rack, Servidor, TemplateVM)
+from apps.infra.utils.datacenter import DataCenterMap, RackMap
 from apps.infra.utils.freeipa_location import Automount
-from apps.infra.utils.datacenter import ( DataCenterMap, RackMap)
 from apps.infra.utils.history import HistoryInfra
-from garb.views import ViewContextMixin
+from apps.infra.utils.xen_crud import XenCrud
+from apps.monitoramento.models.nagios import NagiosServicos
 
 
 class DataCenterView(ViewContextMixin, TemplateView):

@@ -6,13 +6,16 @@ class Checklist(models.Model):
     enviado = models.DateTimeField( blank=True, null=True)
     responsaveis = models.ManyToManyField('colaborador.Colaborador', through="ChecklistResponsaveis")
     alerta_monitoramento = models.ManyToManyField('infra.ServidorNagiosServico', blank=True, through="ChecklistServidorNagiosServico")
-    outros = models.TextField('outros', blank=True, null=True)
+    outros = models.TextField('Geral', blank=True, null=True)
 
     class Meta :
         ordering = ['-criado','-turno',]
 
     def __str__(self):
-        return f"{self.turno} | {self.criado}"
+        if self.criado:
+            return f"{self.turno} | {self.criado.strftime('%Y-%m-%d %H:%M')}"
+        else:
+            return f"{self.turno}"
 
 
 class ChecklistServidorNagiosServico(models.Model):
@@ -27,3 +30,6 @@ class ChecklistResponsaveis(models.Model):
 
     def __str__(self):
         return self.responsavel.full_name
+
+class ChecklistEmail(models.Model):
+    email = models.CharField(max_length=255)
