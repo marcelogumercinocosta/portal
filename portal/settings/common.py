@@ -191,7 +191,7 @@ GARB_CONFIG = {
             "sub_itens": [
                 {"model": "biblioteca.documento"},
                 {"label": "Listar Documentos", "route": "biblioteca:documentos", "auth": "all"},
-                {"label": "3SWiki", "route": "wiki:root", "auth": "yes"},
+                {"label": "3SWiki", "route": "wiki:root", "auth": "all"},
             ],
         },
     ],

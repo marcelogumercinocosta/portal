@@ -207,6 +207,7 @@ def set_permissoes():
         "change_ocorrencia", "delete_ocorrencia", "view_ocorrencia","view_servidorhostnameip","view_storagearea","view_equipamentoparte",]},
         {"grupo": "Chefia da Divisão", "permission": ["chefia_colaborador"]},
         {"grupo": "Supercomputação", "permission": permission_suporte},
+        {"grupo": "3SWiki", "permission": []},
     )
 
     for grupo in permission_default:
@@ -253,6 +254,7 @@ def set_colaborador():
     colaborador.groups.add(Group.objects.get(name="Supercomputação"))
     colaborador.groups.add(Group.objects.get(name="Colaborador"))
     colaborador.groups.add(Group.objects.get(name="Chefia da Divisão"))
+    colaborador.groups.add(Group.objects.get(name="3SWiki"))
     colaborador.save()
     print(f"colaborador add Groups")
 
