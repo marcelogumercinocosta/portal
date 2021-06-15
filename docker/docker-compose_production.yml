@@ -75,3 +75,4 @@ services:
       - ./staticfiles:/app/staticfiles
     depends_on:
       - gunicorn
+      
