@@ -199,6 +199,7 @@ class Rede(models.Model):
     prioridade_montagem = models.IntegerField(
         "prioridade de montagem", null=True, help_text="A prioridade de montagem é utilizada quando o Portal cria o Automount Locations e o equipamento possui mais de uma rede com NFS de discos, o MAIOR VALOR tem a prioridade"
     )
+    monitorado = models.BooleanField("Monitorar no nagios", default=False)
     class Meta:
         ordering = [
             "rede",

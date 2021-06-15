@@ -20,7 +20,7 @@ from apps.infra.models import Servidor
 from apps.core.tasks import send_email_task
 from apps.core.utils.freeipa import FreeIPA
 from apps.core.utils.history import HistoryCore
-from apps.core.utils.updategrupo import UpdateGrupoAcesso, UpdateColaboradorGrupo
+from apps.core.utils.updategrupo import UpdateGrupoAcesso, UpdateColaboradorGrupo, UpdateGrupoVerificaDisco
 from garb.views import ViewContextMixin
 
 
@@ -68,7 +68,7 @@ class CriarContaGrupoTrabalhoView(LoginRequiredMixin, PermissionRequiredMixin, R
 
     def get_redirect_url(self, *args, **kwargs):
         grupo_trabalho = get_object_or_404(GrupoTrabalho, id=kwargs["pk"])
-        if grupo_trabalho.responsavelgrupotrabalho_set.all().exists() and grupo_trabalho.gid > 0 and grupo_trabalho.confirmacao == True:
+        if grupo_trabalho.responsavelgrupotrabalho_set.all().exists() and grupo_trabalho.gid > 0 and grupo_trabalho.confirmacao == True and UpdateGrupoVerificaDisco().verifica_disco(grupo_trabalho=grupo_trabalho, request=self.request):
             client_feeipa = FreeIPA(self.request)
             if client_feeipa.group_find_count(cn=grupo_trabalho.grupo_sistema) == 0:
                 # Cria Conta de User Group
@@ -92,12 +92,13 @@ class AtualizarContaGrupoTrabalhoView(LoginRequiredMixin, PermissionRequiredMixi
 
     def get_redirect_url(self, *args, **kwargs):
         grupo_trabalho = get_object_or_404(GrupoTrabalho, id=kwargs["pk"])
-        client_feeipa = FreeIPA(self.request)
-        history_core = HistoryCore(self.request)
-        history_core.update_grupo_acesso(grupo=grupo_trabalho, assunto="Atualização da conta de Grupo de Trabalho")
-        UpdateGrupoAcesso(client_feeipa=client_feeipa, history_core=history_core).update_acesso(grupo_trabalho)
-        UpdateColaboradorGrupo(client_feeipa=client_feeipa, history_core=history_core).update_user(grupo_trabalho)
-        messages.add_message(self.request, messages.SUCCESS, "Conta de Grupo de Trabalho Atualizada")
+        if UpdateGrupoVerificaDisco().verifica_disco(grupo_trabalho=grupo_trabalho, request=self.request):
+            client_feeipa = FreeIPA(self.request)
+            history_core = HistoryCore(self.request)
+            history_core.update_grupo_acesso(grupo=grupo_trabalho, assunto="Atualização da conta de Grupo de Trabalho")
+            UpdateGrupoAcesso(client_feeipa=client_feeipa, history_core=history_core).update_acesso(grupo_trabalho)
+            UpdateColaboradorGrupo(client_feeipa=client_feeipa, history_core=history_core).update_user(grupo_trabalho)
+            messages.add_message(self.request, messages.SUCCESS, "Conta de Grupo de Trabalho Atualizada")
         return reverse_lazy("admin:core_grupotrabalho_change", kwargs={"object_id": grupo_trabalho.id})
 
 

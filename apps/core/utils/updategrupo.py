@@ -1,3 +1,5 @@
+from django.contrib import messages
+from apps.infra.models import StorageGrupoAcessoMontagem
 import datetime
 from django.shortcuts import get_object_or_404
 from apps.core.models import GrupoAcesso, ColaboradorGrupoAcesso
@@ -43,3 +45,24 @@ class UpdateColaboradorGrupo:
                     colaborador_grupoacesso.save()
                     self.history_core.responsavel_grupo_acesso(colaborador=responsavel.responsavel,  grupo_acesso=grupo_acesso)
                     self.client_feeipa.add_user_group_hhac(responsavel.responsavel.username, grupo_acesso.hbac_freeipa, grupo_trabalho.grupo_sistema)
+
+class UpdateGrupoVerificaDisco:
+
+    def verifica_disco(self, grupo_trabalho, request):
+        discos_verificado = True
+        discos = [montagem.tipo for montagem in  StorageGrupoAcessoMontagem.objects.filter(grupo_trabalho=grupo_trabalho,svm_name='svm_int')]
+        if grupo_trabalho.pesquisa and not discos.count('PESQUISA') >= 3:
+            discos_verificado = False
+        if grupo_trabalho.operacional and not discos.count('OPERACIONAL') >= 3:
+            discos_verificado = False
+        if grupo_trabalho.desenvolvimento and not discos.count('DESENVOLVIMENTO') >= 3:
+            discos_verificado = False
+        if grupo_trabalho.documento and not discos.count('DOCUMENTO') >= 3:
+            discos_verificado = False
+        discos = [montagem.tipo for montagem in  StorageGrupoAcessoMontagem.objects.filter(grupo_trabalho=grupo_trabalho, svm_name='svm_share')]
+        if grupo_trabalho.share and not len(discos) >= 1:
+            discos_verificado = False
+        if not discos_verificado:
+            messages.add_message(request, messages.ERROR, "Verifique os tipos selecionados para o grupo, não estão compativeis com os discos, Crie os discos, verifique scripts do netapp ou coloque opções corretas!")
+        return discos_verificado
+
