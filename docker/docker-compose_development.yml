@@ -21,11 +21,6 @@ services:
       mode: host
     volumes:
       - ./docker/data/dev_db:/var/lib/mysql
-    healthcheck:
-        test: "/usr/bin/mysql --user=root --password=password --execute \"SHOW DATABASES;\""
-        interval: 5s
-        timeout: 30s
-        retries: 10
   redis:
     image: redis
     container_name: dev_redis
@@ -52,8 +47,7 @@ services:
     volumes:
       - .:/app
     depends_on:
-      mysql:
-        condition: service_healthy
+      - mysql
 
 networks:
   storm:

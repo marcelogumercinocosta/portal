@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.9'
 
 services:
   mysql:
@@ -19,11 +19,6 @@ services:
       mode: host
     volumes:
       - ./docker/data/prod_db:/var/lib/mysql
-    healthcheck:
-        test: "/usr/bin/mysql --user=root --password=password --execute \"SHOW DATABASES;\""
-        interval: 5s
-        timeout: 30s
-        retries: 10
   redis:
     image: redis
     container_name: prod_redis
@@ -47,8 +42,7 @@ services:
     volumes:
       - .:/app
     depends_on:
-      mysql:
-        condition: service_healthy
+      - mysql
   gunicorn:
     restart: always
     container_name: prod_gunicorn
@@ -75,4 +69,3 @@ services:
       - ./staticfiles:/app/staticfiles
     depends_on:
       - gunicorn
-      
