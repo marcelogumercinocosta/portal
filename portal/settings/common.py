@@ -175,6 +175,7 @@ GARB_CONFIG = {
                 {"label": "RNP", "route": "monitoramento:rnp_home", "auth": "all"},
                 {"model": "monitoramento.tipomonitoramento"},
                 {"model": "monitoramento.nagiosServicos"},
+                {"model": "monitoramento.prometheus"},
             ],
         },
         {
