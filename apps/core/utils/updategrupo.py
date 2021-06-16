@@ -1,5 +1,5 @@
 from django.contrib import messages
-from apps.infra.models import StorageGrupoAcessoMontagem
+from apps.infra.models import EquipamentoGrupoAcesso, StorageGrupoAcessoMontagem
 import datetime
 from django.shortcuts import get_object_or_404
 from apps.core.models import GrupoAcesso, ColaboradorGrupoAcesso
@@ -65,4 +65,17 @@ class UpdateGrupoVerificaDisco:
         if not discos_verificado:
             messages.add_message(request, messages.ERROR, "Verifique os tipos selecionados para o grupo, não estão compativeis com os discos, Crie os discos, verifique scripts do netapp ou coloque opções corretas!")
         return discos_verificado
+
+    def verifica_equipamento_grupoacesso(self, grupo_trabalho, request):
+        equipamento_verificado = True
+        tipos = [equipamentogrupoacesso.grupo_acesso.tipo for equipamentogrupoacesso in  EquipamentoGrupoAcesso.objects.filter(grupo_acesso__grupo_trabalho=grupo_trabalho)]
+        if not grupo_trabalho.pesquisa and tipos.count('PESQUISA') > 0:
+            equipamento_verificado = False
+        if not grupo_trabalho.operacional and tipos.count('OPERACIONAL') > 0:
+            equipamento_verificado = False
+        if not grupo_trabalho.desenvolvimento and tipos.count('DESENVOLVIMENTO') > 0:
+            equipamento_verificado = False
+        if not equipamento_verificado:
+            messages.add_message(request, messages.ERROR, "Um Grupo de Acesso desse Grupo de Trabalho esta  vinculado a algum Servidor, Remova o grupo de acesso correspondente antes!")
+        return equipamento_verificado
 

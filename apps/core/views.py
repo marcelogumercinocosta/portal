@@ -92,7 +92,10 @@ class AtualizarContaGrupoTrabalhoView(LoginRequiredMixin, PermissionRequiredMixi
 
     def get_redirect_url(self, *args, **kwargs):
         grupo_trabalho = get_object_or_404(GrupoTrabalho, id=kwargs["pk"])
-        if UpdateGrupoVerificaDisco().verifica_disco(grupo_trabalho=grupo_trabalho, request=self.request):
+
+
+        if ( UpdateGrupoVerificaDisco().verifica_disco(grupo_trabalho=grupo_trabalho, request=self.request) and
+        UpdateGrupoVerificaDisco().verifica_equipamento_grupoacesso(grupo_trabalho=grupo_trabalho, request=self.request)):
             client_feeipa = FreeIPA(self.request)
             history_core = HistoryCore(self.request)
             history_core.update_grupo_acesso(grupo=grupo_trabalho, assunto="Atualização da conta de Grupo de Trabalho")
