@@ -88,7 +88,7 @@ class DataCenterJSONView(TemplateView):
     def render_to_response(self, context, **response_kwargs):
         if self.search:
             servidores = chain(Servidor.objects.filter(nome__contains=str(self.search)), EquipamentoParte.objects.filter(marca__icontains=str(self.search)), EquipamentoParte.objects.filter(modelo__icontains=str(self.search)))
-            self.racks_id_templates = ['div[data-element="#rack_' + str(x.rack.id) + '"]' for x in servidores]
+            self.racks_id_templates = [f'div[data-element="#rack_{str(x.rack.id)}"]' for x in servidores if x.rack is not None ]
         return HttpResponse(json.dumps(list(dict.fromkeys(self.racks_id_templates))), content_type="application/json")
 
 

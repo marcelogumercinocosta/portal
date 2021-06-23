@@ -24,6 +24,8 @@ class ChecklistServidorNagiosServico(models.Model):
 
     def __str__(self):
         return f"{self.checklist} | {self.alerta_monitoramento}"
+
+
 class ChecklistResponsaveis(models.Model):
     checklist = models.ForeignKey("noc.Checklist", on_delete=models.CASCADE)
     responsavel = models.ForeignKey("colaborador.Colaborador", on_delete=models.CASCADE)
@@ -33,3 +35,6 @@ class ChecklistResponsaveis(models.Model):
 
 class ChecklistEmail(models.Model):
     email = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.email

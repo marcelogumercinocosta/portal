@@ -27,7 +27,7 @@ class EquipamentoManager(models.Manager):
 
 class ServidorManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().select_related("equipamento_ptr","equipamento_ptr__grupos_acesso").prefetch_related('servidorhostnameip_set','nagios_servicos')
+        return super().get_queryset().select_related("equipamento_ptr","equipamento_ptr__grupos_acesso","rack").prefetch_related('servidorhostnameip_set','nagios_servicos')
 
 class EquipamentoGrupoAcessoManager(models.Manager):
     def get_queryset(self):

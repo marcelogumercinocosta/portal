@@ -411,7 +411,7 @@ class StorageAreaGrupoTrabalho(models.Model):
 class EquipamentoParte(Equipamento):
     configuracao = models.TextField("Configuração", blank=True, null=True)
     vinculado = models.ForeignKey("infra.Equipamento", verbose_name="Equipamento Vinculado", blank=True, null=True, related_name="equipamentoparte_vinculo", on_delete=models.PROTECT)
-    objetcs = EquipamentoParteManager()
+    objects = EquipamentoParteManager()
     nome = None
     nome_inline = None
 
