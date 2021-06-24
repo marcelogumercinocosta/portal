@@ -434,8 +434,7 @@ class ServidorNagiosServico(models.Model):
     objects = ServidorNagiosServicoManager()
 
     def __str__(self):
-        return f"{self.servidor.nome_completo() } | {self.nagios_servico.servico}"
-
+        return f"{self.servidor.nome} [ {self.servidor.tipo_uso} ] {self.servidor.descricao} | {self.nagios_servico.servico}"
 
 class EquipamentoGrupoAcesso(models.Model):
     equipamento = models.ForeignKey("infra.Equipamento", on_delete=models.CASCADE)

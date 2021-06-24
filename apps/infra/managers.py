@@ -24,6 +24,8 @@ class StorageAreaGrupoTrabalhoManager(models.Manager):
 class EquipamentoManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().prefetch_related("grupos_acesso").select_related('servidor')
+    
+    
 
 class ServidorManager(models.Manager):
     def get_queryset(self):
@@ -53,7 +55,7 @@ class HostnameIPManager(models.Manager):
 
 class ServidorNagiosServicoManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().select_related("servidor", "servidor__equipamento_ptr", "servidor__equipamento_ptr__grupos_acesso").prefetch_related("nagios_servico")
+        return super().get_queryset().select_related("servidor","servidor__equipamento_ptr","servidor__equipamento_ptr__grupos_acesso","nagios_servico")
 
 
 class OcorrenciaServicoManager(models.Manager):

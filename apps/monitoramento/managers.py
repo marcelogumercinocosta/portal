@@ -37,3 +37,7 @@ class QuotaManager(models.Manager):
 class StorageHistoricoManager(models.Manager):
     def aggregate_grupo_historico_disco_sum(self):
         return super().get_queryset().values("storage_grupo_trabalho_id", "atualizacao").annotate(Avg("disco_used"))
+
+class NagiosServicosManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related("servidor_set")

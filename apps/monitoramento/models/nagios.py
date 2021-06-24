@@ -1,3 +1,4 @@
+from apps.monitoramento.managers import NagiosServicosManager
 from django.db import models
 
 

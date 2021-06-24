@@ -1,3 +1,4 @@
+from apps.noc.managers import ChecklistServidorNagiosServicoManager
 from django.db import models
 
 class Checklist(models.Model):
@@ -21,6 +22,7 @@ class Checklist(models.Model):
 class ChecklistServidorNagiosServico(models.Model):
     checklist = models.ForeignKey("noc.Checklist", on_delete=models.CASCADE)
     alerta_monitoramento = models.ForeignKey("infra.ServidorNagiosServico",  on_delete=models.CASCADE)
+    objects = ChecklistServidorNagiosServicoManager()
 
     def __str__(self):
         return f"{self.checklist} | {self.alerta_monitoramento}"

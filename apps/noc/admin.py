@@ -10,14 +10,6 @@ class ServidorNagiosInLine(admin.TabularInline):
     model = ChecklistServidorNagiosServico
     extra = 0
     verbose_name = "Alerta no Nagios"
-    verbose_name_plural =  "Alerta no Nagios"
-    form = ChecklistServidorNagiosServicoInlineForm
-
-
-class ServidorNagiosInLine(admin.TabularInline):
-    model = ChecklistServidorNagiosServico
-    extra = 0
-    verbose_name = "Alerta no Nagios"
     verbose_name_plural =  "Alertas no Nagios"
     form = ChecklistServidorNagiosServicoInlineForm
 
@@ -37,7 +29,7 @@ class ChecklistAdmin(admin.ModelAdmin):
     list_display = ["turno", "criado"]
     readonly_fields = ["criado", ]
     form = ChechlistForm
-    inlines = [ResponsaveisInLine,ServidorNagiosInLine, OcorrenciaChecklistInLine]
+    inlines = [ResponsaveisInLine, ServidorNagiosInLine, OcorrenciaChecklistInLine]
 
     def add_view(self, request, form_url="", extra_context=None):
         usuario_logado = request.user
