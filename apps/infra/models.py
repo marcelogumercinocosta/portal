@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from django.core.exceptions import NON_FIELD_ERRORS, EmptyResultSet, ObjectDoesNotExist
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.utils.text import Truncator
 from apps.infra.managers import EquipamentoGrupoAcessoManager, EquipamentoManager, EquipamentoParteManager, HostnameIPManager, OcorrenciaServicoManager, ServidorManager, ServidorNagiosServicoManager, StorageAreaGrupoTrabalhoManager, StorageAreaManager, StorageManager, SupercomputadorManager
 
 LINHAS = [ "-", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM", 
@@ -101,6 +102,7 @@ class Equipamento(models.Model):
     tipo_uso = models.CharField(verbose_name="Tipo de Uso", choices=TIPOS_USO, max_length=255)
     predio = models.ForeignKey("core.Predio", verbose_name="Prédio", null=True, on_delete=models.PROTECT)
     grupos_acesso = models.ManyToManyField("core.GrupoAcesso", verbose_name="Grupos de Acesso", through="EquipamentoGrupoAcesso")
+    grupos = models.CharField(verbose_name="grupos",  max_length=255, null=True, blank=False)
     objects = EquipamentoManager()
 
     def __str__(self):
@@ -113,13 +115,15 @@ class Equipamento(models.Model):
             return f"{self.marca} {self.modelo}"
 
     def grupo_acesso_name(self):
-        return " | ".join([x.grupo_acesso.replace(" | OPERACIONAL", "").replace(" | DESENVOLVIMENTO", "").replace(" | PESQUISA", "") for x in self.grupos_acesso.all()])
+        if self.grupos:
+            return self.grupos
+        else:
+            return  ""
 
     def nome_completo(self):
         if self.tipo == "Servidor Físico" or self.tipo == "Servidor Virtual":
-            grupos = " | ".join([x.grupo_acesso.replace(" | OPERACIONAL", "").replace(" | DESENVOLVIMENTO", "").replace(" | PESQUISA", "") for x in self.grupos_acesso.all()])
-            if grupos:
-                return f"{self.servidor.nome} [ {self.tipo_uso} - {grupos} ] {self.descricao}"
+            if self.grupos:
+                return f"{self.servidor.nome} [ {self.tipo_uso} - {self.grupos} ] {self.descricao}"
             else:
                 return f"{self.servidor.nome } [ {self.tipo_uso} ] {self.descricao}"
         else:
@@ -207,6 +211,7 @@ class Rede(models.Model):
 
     def __str__(self):
         return f"{self.rede} | {self.ip}"
+
 
 class StorageGrupoAcessoMontagem(models.Model):
     node = models.CharField(max_length=255, blank=True, null=True)
@@ -434,7 +439,8 @@ class ServidorNagiosServico(models.Model):
     objects = ServidorNagiosServicoManager()
 
     def __str__(self):
-        return f"{self.servidor.nome} [ {self.servidor.tipo_uso} ] {self.servidor.descricao} | {self.nagios_servico.servico}"
+        info = Truncator(f"{self.servidor.tipo_uso} - {self.servidor.grupo_acesso_name()}").chars(95)
+        return f"{self.servidor.nome} [ {info} ] {self.servidor.descricao} | {self.nagios_servico.servico}"
 
 class EquipamentoGrupoAcesso(models.Model):
     equipamento = models.ForeignKey("infra.Equipamento", on_delete=models.CASCADE)

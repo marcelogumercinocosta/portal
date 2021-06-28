@@ -262,6 +262,8 @@ class ServidorAdmin(admin.ModelAdmin):
             hostname.save()
             super().save_model(request, obj, form, change)
             ServidorHostnameIP.objects.create(servidor=obj, hostnameip=hostname)
+        obj.grupos = " | ".join([x.grupo_acesso.replace(" | OPERACIONAL", "").replace(" | DESENVOLVIMENTO", "").replace(" | PESQUISA", "") for x in obj.grupos_acesso.all()])
+        obj.save()
 
     def delete_model(self, request, obj):
         for server_hostnameip in ServidorHostnameIP.objects.filter(servidor__id=obj.pk):
