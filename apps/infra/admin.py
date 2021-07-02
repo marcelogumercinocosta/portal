@@ -262,8 +262,7 @@ class ServidorAdmin(admin.ModelAdmin):
             hostname.save()
             super().save_model(request, obj, form, change)
             ServidorHostnameIP.objects.create(servidor=obj, hostnameip=hostname)
-        obj.grupos = " | ".join([x.grupo_acesso.replace(" | OPERACIONAL", "").replace(" | DESENVOLVIMENTO", "").replace(" | PESQUISA", "") for x in obj.grupos_acesso.all()])
-        obj.save()
+        
 
     def delete_model(self, request, obj):
         for server_hostnameip in ServidorHostnameIP.objects.filter(servidor__id=obj.pk):
@@ -319,6 +318,11 @@ class ServidorAdmin(admin.ModelAdmin):
                 hostnameip.reservado = False
                 hostnameip.save()
         return super().save_formset(request, form, formset, change)
+
+    def response_change(self, request, obj):
+        obj.grupos = " | ".join([x.grupo_acesso.replace(" | OPERACIONAL", "").replace(" | DESENVOLVIMENTO", "").replace(" | PESQUISA", "") for x in obj.grupos_acesso.all()])
+        obj.save()
+        return super(ServidorAdmin, self).response_change(request, obj)
 
     def get_form(self, request, obj=None, **kwargs):
             request._obj_ = obj
