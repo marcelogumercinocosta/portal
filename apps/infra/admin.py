@@ -218,8 +218,8 @@ class RackAdmin(admin.ModelAdmin):
 @admin.register(Supercomputador)
 class SupercomputadorAdmin(admin.ModelAdmin):
     search_fields = ["marca", "modelo"]
-    list_display = ("marca", "modelo", "kafka_topico_realtime", "kafka_topico_historico", "status")
-    exclude = ("rack", "rack_tamanho", "rack_posicao", "consumo", "grupos_acesso", "patrimonio", "serie", "descricao", "tipo_uso", "tipo", "status",)
+    list_display = ("marca", "modelo", "kafka_topico_realtime", "kafka_topico_historico",)
+    exclude = ("rack", "rack_tamanho", "rack_posicao", "consumo", "grupos_acesso", "patrimonio", "serie", "descricao", "tipo_uso", "tipo", "status", "grupos",)
     inlines = (OcorrenciaInLine,)
 
 
@@ -228,7 +228,7 @@ class StorageAdmin(admin.ModelAdmin):
     search_fields = ["marca", "modelo"]
     readonly_fields = ("atualizacao",)
     list_display = ("marca", "modelo", "descricao", "capacidade",)
-    exclude = ("rack", "rack_tamanho", "rack_posicao", "consumo", "grupos_acesso", "patrimonio", "serie",  "tipo_uso", "tipo", "status",)
+    exclude = ("rack", "rack_tamanho", "rack_posicao", "consumo", "grupos_acesso", "patrimonio", "serie",  "tipo_uso", "tipo", "status", "grupos",)
     inlines = (StorageAreaInLine, OcorrenciaInLine)
 
 
